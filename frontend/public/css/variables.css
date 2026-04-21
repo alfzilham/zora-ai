@@ -1,28 +1,53 @@
 :root {
-    --color-bg: #0a0a0f;
-    --color-bg-elevated: #12131b;
-    --color-bg-soft: #181b24;
-    --color-border: rgba(255, 255, 255, 0.08);
-    --color-border-strong: rgba(0, 212, 255, 0.28);
-    --color-text: #ffffff;
-    --color-text-muted: #a0a0b0;
-    --color-accent: #00d4ff;
-    --color-accent-strong: #0066ff;
+    /* Dark Mode (Default) */
+    --bg-main: #0A0A0A;
+    --bg-sidebar: #111111;
+    --bg-card: #1A1A1A;
+    --bg-input: #1A1A1A;
+    --text-primary: #FFFFFF;
+    --text-secondary: #888888;
+    --text-muted: #555555;
+    --accent: #FF4B4B;
+    --accent-light: #FF6B6B;
+    --toggle-active: #00D4FF;
+    --border: #2A2A2A;
+    --border-hover: #3A3A3A;
+    --hover: #222222;
+    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --transition-smooth: 0.2s ease;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 999px;
+}
+
+.light-mode {
+    /* Light Mode */
+    --bg-main: #F5F5F5;
+    --bg-sidebar: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-input: #FFFFFF;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --text-muted: #999999;
+    --accent: #0099CC;
+    --accent-light: #00BBDD;
+    --toggle-active: #FF4B4B;
+    --border: #E5E5E5;
+    --border-hover: #CCCCCC;
+    --hover: #F0F0F0;
+    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Base colors that don't change */
+:root {
     --color-success: #17c964;
     --color-danger: #ff4d67;
     --color-info: #2d8cff;
-    --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 0 1px rgba(0, 212, 255, 0.16), 0 16px 40px rgba(0, 102, 255, 0.18);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 24px;
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-5: 20px;
-    --space-6: 24px;
-    --space-8: 32px;
-    --space-10: 40px;
-    --space-12: 48px;
+    --color-cyan: #00D4FF;
+    --color-orb-glow-dark: rgba(100, 150, 255, 0.3);
+    --color-orb-glow-light: rgba(255, 75, 75, 0.2);
 }
