@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="ZORA AI SuperIntelligence Autonomous AI">
+    <meta name="theme-color" content="#00D4FF">
+    <meta property="og:title" content="ZORA AI">
+    <meta property="og:description" content="SuperIntelligence Autonomous AI">
+    <meta property="og:image" content="/assets/images/logo/logo.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">`r`n    <title>Developer Dashboard - ZORA AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/global.css">`r`n    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <main class="dashboard-shell">
+        <header class="dashboard-header">
+            <div class="dashboard-brand">
+                <div class="dashboard-brand-icon">Z</div>
+                <div>
+                    <p class="dashboard-kicker">ZORA AI</p>
+                    <h1>Developer Dashboard</h1>
+                </div>
+            </div>
+            <button id="dashboardLogoutButton" class="dashboard-logout" type="button">Logout</button>
+        </header>
+
+        <p id="dashboardStatus" class="dashboard-status"></p>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <p class="stat-label">Total Users</p>
+                <div class="stat-value-row">
+                    <span class="stat-icon">👥</span>
+                    <strong id="totalUsersValue">0</strong>
+                </div>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Total Earnings</p>
+                <div class="stat-value-row">
+                    <span class="stat-icon">💸</span>
+                    <strong id="totalEarningsValue">Rp0</strong>
+                </div>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Users This Month</p>
+                <div class="stat-value-row">
+                    <span class="stat-icon">📈</span>
+                    <strong id="usersThisMonthValue">0</strong>
+                </div>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Users This Year</p>
+                <div class="stat-value-row">
+                    <span class="stat-icon">🗓️</span>
+                    <strong id="usersThisYearValue">0</strong>
+                </div>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="dashboard-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Growth</p>
+                        <h2>Users per Month</h2>
+                    </div>
+                </div>
+                <div class="chart-shell">
+                    <canvas id="usersByMonthChart"></canvas>
+                </div>
+            </article>
+
+            <article class="dashboard-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Geography</p>
+                        <h2>Top Countries</h2>
+                    </div>
+                </div>
+                <div class="table-shell">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Users</th>
+                            </tr>
+                        </thead>
+                        <tbody id="countriesTableBody"></tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <section class="dashboard-grid dashboard-grid--bottom">
+            <article class="dashboard-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Recent Activity</p>
+                        <h2>Recent Signups</h2>
+                    </div>
+                </div>
+                <div class="table-shell">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Country</th>
+                                <th>Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentSignupsBody"></tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="dashboard-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-kicker">Monetization</p>
+                        <h2>Withdraw Earnings</h2>
+                    </div>
+                </div>
+                <form id="withdrawForm" class="withdraw-form">
+                    <label class="withdraw-field">
+                        <span>Amount (Rp)</span>
+                        <input id="withdrawAmount" type="number" min="1" placeholder="1000000" required>
+                    </label>
+                    <label class="withdraw-field">
+                        <span>Bank Code</span>
+                        <input id="withdrawBankCode" type="text" placeholder="BCA" required>
+                    </label>
+                    <label class="withdraw-field">
+                        <span>Account Number</span>
+                        <input id="withdrawAccountNumber" type="text" placeholder="1234567890" required>
+                    </label>
+                    <label class="withdraw-field">
+                        <span>Account Holder Name</span>
+                        <input id="withdrawAccountHolderName" type="text" placeholder="Your Name" required>
+                    </label>
+                    <button class="withdraw-button" type="submit">Withdraw</button>
+                    <p id="withdrawStatus" class="withdraw-status"></p>
+                </form>
+            </article>
+        </section>
+    </main>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/auth.js"></script>
+    <script defer src="/js/dashboard.js"></script>
+</body>
+</html>
+
+
+
+
+

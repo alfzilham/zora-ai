@@ -1,0 +1,241 @@
+/*
+ * ZORA AI - Dashboard Styles
+ * ==========================
+ * Developer dashboard styling for stats, charts, tables, and withdrawals.
+ */
+
+:root {
+    --dashboard-bg: #0a0a0f;
+    --dashboard-surface: rgba(16, 20, 32, 0.96);
+    --dashboard-surface-soft: rgba(255, 255, 255, 0.03);
+    --dashboard-border: rgba(255, 255, 255, 0.08);
+    --dashboard-text: #ffffff;
+    --dashboard-text-secondary: #a0a0b0;
+    --dashboard-accent: #00d4ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Inter", system-ui, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(0, 212, 255, 0.16), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(0, 102, 255, 0.1), transparent 20%),
+        var(--dashboard-bg);
+    color: var(--dashboard-text);
+}
+
+.dashboard-shell {
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.dashboard-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dashboard-brand-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(0, 102, 255, 0.18));
+    color: var(--dashboard-accent);
+    font-weight: 800;
+}
+
+.dashboard-kicker,
+.panel-kicker,
+.stat-label,
+.dashboard-status,
+.withdraw-status {
+    margin: 0;
+    color: var(--dashboard-text-secondary);
+}
+
+.dashboard-header h1,
+.panel-heading h2 {
+    margin: 0;
+}
+
+.dashboard-logout,
+.withdraw-button {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid var(--dashboard-border);
+    font: inherit;
+    cursor: pointer;
+}
+
+.dashboard-logout {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--dashboard-text);
+}
+
+.withdraw-button {
+    background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+    color: #041018;
+    font-weight: 800;
+}
+
+.dashboard-status {
+    min-height: 20px;
+    margin-bottom: 16px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.stat-card,
+.dashboard-panel {
+    padding: 20px;
+    border-radius: 22px;
+    border: 1px solid var(--dashboard-border);
+    background: linear-gradient(180deg, rgba(17, 20, 31, 0.98) 0%, rgba(11, 13, 20, 0.98) 100%);
+}
+
+.stat-value-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.stat-value-row strong {
+    font-size: 1.9rem;
+    letter-spacing: -0.03em;
+}
+
+.stat-icon {
+    font-size: 1.4rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.dashboard-grid--bottom {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+.panel-heading {
+    margin-bottom: 16px;
+}
+
+.chart-shell {
+    min-height: 320px;
+}
+
+.table-shell {
+    overflow: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dashboard-table thead th {
+    color: var(--dashboard-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.dashboard-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dashboard-table tbody tr:hover {
+    background: rgba(0, 212, 255, 0.06);
+}
+
+.withdraw-form {
+    display: grid;
+    gap: 14px;
+}
+
+.withdraw-field {
+    display: grid;
+    gap: 8px;
+}
+
+.withdraw-field span {
+    color: var(--dashboard-text-secondary);
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.withdraw-field input {
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid var(--dashboard-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--dashboard-text);
+    font: inherit;
+    outline: none;
+}
+
+.withdraw-status {
+    min-height: 20px;
+}
+
+@media (max-width: 1120px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid,
+    .dashboard-grid--bottom {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-shell {
+        padding: 16px;
+    }
+
+    .dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

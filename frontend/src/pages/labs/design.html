@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="ZORA AI SuperIntelligence Autonomous AI">
+    <meta name="theme-color" content="#00D4FF">
+    <meta property="og:title" content="ZORA AI">
+    <meta property="og:description" content="SuperIntelligence Autonomous AI">
+    <meta property="og:image" content="/assets/images/logo/logo.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">`r`n    <title>Zora Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/global.css">`r`n    <link rel="stylesheet" href="../../css/labs.css">
+</head>
+<body data-lab="design">
+    <main class="lab-shell">
+        <header class="lab-header">
+            <div class="lab-brand">
+                <div class="lab-brand-icon">Z</div>
+                <div>
+                    <p class="lab-kicker">ZORA LABS</p>
+                    <h1>Zora Design</h1>
+                </div>
+            </div>
+            <a class="lab-back" href="../chat/index.html">Back to Chat</a>
+        </header>
+
+        <section class="lab-layout lab-layout--stack">
+            <article class="lab-panel">
+                <p class="lab-panel-title">Prompt</p>
+                <div class="lab-tabs" id="designTypeTabs">
+                    <button class="lab-tab is-active" type="button" data-type="brief">Brief</button>
+                    <button class="lab-tab" type="button" data-type="copy">Copywriting</button>
+                    <button class="lab-tab" type="button" data-type="concept">Concept</button>
+                </div>
+                <label class="lab-field">
+                    <span>Describe your design or brand</span>
+                    <textarea id="designPrompt" class="lab-textarea" placeholder="Describe the product, brand, or concept you want Zora Design to shape..."></textarea>
+                </label>
+                <div class="lab-actions">
+                    <button id="designGenerateButton" class="lab-button" type="button">Generate</button>
+                </div>
+                <p id="designStatus" class="lab-status"></p>
+            </article>
+
+            <article class="lab-panel">
+                <div id="designLoading" class="lab-loading hidden">
+                    <div class="lab-spinner"></div>
+                    <span>Generating design direction...</span>
+                </div>
+                <div class="lab-output-grid">
+                    <section class="lab-output-card">
+                        <h2>Concept</h2>
+                        <p id="designConcept">Your concept summary will appear here.</p>
+                    </section>
+                    <section class="lab-output-card">
+                        <h2>Colors</h2>
+                        <p id="designColors">Color direction will appear here.</p>
+                    </section>
+                    <section class="lab-output-card">
+                        <h2>Typography</h2>
+                        <p id="designTypography">Typography guidance will appear here.</p>
+                    </section>
+                    <section class="lab-output-card">
+                        <h2>Tone</h2>
+                        <p id="designTone">Tone guidance will appear here.</p>
+                    </section>
+                    <section class="lab-output-card lab-output-card--wide">
+                        <h2>Copy</h2>
+                        <p id="designCopy">Suggested copy will appear here.</p>
+                    </section>
+                </div>
+            </article>
+        </section>
+    </main>
+
+        <script defer src="../../js/utils/helpers.js"></script>
+    <script defer src="../../js/utils/api.js"></script>
+    <script defer src="../../js/auth.js"></script>
+    <script defer src="../../js/labs.js"></script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,10 @@
+.env
+.env.local
+*.env
+backend/.env
+*.pyc
+__pycache__/
+backend/static/generated/*
+!backend/static/generated/.gitkeep
+.vercel
+node_modules/
