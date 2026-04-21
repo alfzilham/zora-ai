@@ -38,6 +38,38 @@ function getDisplayName() {
     );
 }
 
+function getUserEmail() {
+    return chatState.user?.email || '';
+}
+
+function truncateEmail(email = '', length = 22) {
+    if (email.length <= length) {
+        return email;
+    }
+    return `${email.slice(0, length - 3)}...`;
+}
+
+function getResponseData(response) {
+    return response?.data || response || {};
+}
+
+function isNotFoundError(error) {
+    const message = String(error?.message || '').toLowerCase();
+    return error?.status === 404 || message.includes('404') || message.includes('not found');
+}
+
+async function apiCallOrWarn(endpoint, method = 'GET', body = null, requireAuth = true) {
+    try {
+        return await apiCall(endpoint, method, body, requireAuth);
+    } catch (error) {
+        if (isNotFoundError(error)) {
+            console.warn(`Endpoint unavailable: ${method} ${endpoint}`);
+            return null;
+        }
+        throw error;
+    }
+}
+
 function getGreetingLabel() {
     const hour = new Date().getHours();
     if (hour >= 5 && hour <= 11) {
@@ -142,6 +174,47 @@ function getHistoryGroupLabel(dateString) {
     return `${diff} days ago`;
 }
 
+function closeAllHistoryDropdowns() {
+    document.querySelectorAll('.chat-item-dropdown').forEach((dropdown) => dropdown.classList.add('hidden'));
+    document.querySelectorAll('.chat-history-item.menu-open').forEach((item) => item.classList.remove('menu-open'));
+}
+
+function closeSettingsDropdown() {
+    qs('settings-dropdown')?.classList.add('hidden');
+}
+
+function createHistoryItem(conversation) {
+    const item = document.createElement('div');
+    item.className = 'chat-history-item';
+    item.dataset.sessionId = conversation.id;
+    if (String(chatState.currentConversationId) === String(conversation.id)) {
+        item.classList.add('active');
+    }
+    if (conversation.starred) {
+        item.classList.add('starred');
+    }
+
+    item.innerHTML = `
+        <span class="chat-history-title">${truncateLine(conversation.title || 'New Chat')}</span>
+        <button class="chat-item-menu-btn" type="button" aria-label="More options">
+            <i class="fi fi-br-menu-dots-vertical"></i>
+        </button>
+        <div class="chat-item-dropdown hidden">
+            <button class="chat-action-btn" type="button" data-action="star">
+                <i class="fi fi-br-star"></i> Star
+            </button>
+            <button class="chat-action-btn" type="button" data-action="rename">
+                <i class="fi fi-br-edit"></i> Rename
+            </button>
+            <button class="chat-action-btn" type="button" data-action="archive">
+                <i class="fi fi-br-inbox"></i> Archive
+            </button>
+        </div>
+    `;
+
+    return item;
+}
+
 function renderConversationList() {
     const container = qs('conversationList');
     container.innerHTML = '';
@@ -152,7 +225,7 @@ function renderConversationList() {
     }
 
     if (!chatState.filteredConversations.length) {
-        container.innerHTML = '<p class="history-empty">No chats yet. Start a new conversation.</p>';
+        container.innerHTML = '<p class="history-empty">No chats yet. Start a conversation!</p>';
         return;
     }
 
@@ -171,21 +244,16 @@ function renderConversationList() {
             container.appendChild(group);
         }
 
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'history-item';
-        if (chatState.currentConversationId === conversation.id) {
-            item.classList.add('active');
-        }
-        item.textContent = truncateLine(conversation.title || 'New Chat');
-        item.addEventListener('click', () => selectConversation(conversation.id));
-        currentWrapper.appendChild(item);
+        currentWrapper.appendChild(createHistoryItem(conversation));
     });
 }
 
 function filterConversations(query = '') {
     const normalized = query.trim().toLowerCase();
     chatState.filteredConversations = chatState.conversations.filter((conversation) => {
+        if (conversation.archived) {
+            return false;
+        }
         if (!normalized) {
             return true;
         }
@@ -265,11 +333,24 @@ async function loadCurrentUser() {
 
     try {
         const response = await apiCall('/auth/me', 'GET', null, true);
-        const user = response.data || {};
+        const user = getResponseData(response);
+        const displayName = user.display_name || user.name || 'ZORA User';
+        const avatar = qs('profileAvatar');
         chatState.user = user;
-        qs('profileName').textContent = user.name || 'ZORA User';
-        qs('profileEmail').textContent = user.email || '';
-        qs('profileAvatar').textContent = (user.name || 'Z').charAt(0).toUpperCase();
+        qs('profileName').textContent = displayName;
+        qs('profileEmail').textContent = truncateEmail(user.email || '');
+        qs('settingsDropdownEmail').textContent = user.email || '';
+
+        if (user.avatar_url) {
+            avatar.innerHTML = `<img src="${user.avatar_url}" alt="${displayName} avatar">`;
+            avatar.style.background = '#f0f0f0';
+            avatar.style.color = '#111111';
+        } else {
+            avatar.textContent = displayName.charAt(0).toUpperCase();
+            avatar.style.background = '#0099CC';
+            avatar.style.color = '#FFFFFF';
+        }
+
         updateGreeting();
         return true;
     } catch (_error) {
@@ -282,7 +363,10 @@ async function loadCurrentUser() {
 async function loadHistory() {
     try {
         const response = await apiCall('/chat/history', 'GET', null, true);
-        chatState.conversations = response.data?.conversations || [];
+        const data = getResponseData(response);
+        chatState.conversations = Array.isArray(data)
+            ? data
+            : (data.conversations || data.history || []);
         filterConversations(qs('historySearch').value);
     } catch (error) {
         console.error('Failed to load history:', error);
@@ -291,17 +375,28 @@ async function loadHistory() {
 
 async function ensureConversation() {
     if (chatState.currentConversationId && !String(chatState.currentConversationId).startsWith('incognito-')) {
-        return;
+        return chatState.currentConversationId;
     }
 
     if (chatState.incognito) {
         chatState.currentConversationId = `incognito-${Date.now()}`;
-        return;
+        return chatState.currentConversationId;
     }
 
-    const response = await apiCall('/chat/new', 'POST', { is_incognito: false }, true);
-    chatState.currentConversationId = response.data?.conversation_id || null;
+    const sessionResponse = await apiCallOrWarn('/chat/sessions', 'POST', {}, true);
+    const sessionData = getResponseData(sessionResponse);
+
+    if (sessionData.session_id) {
+        chatState.currentConversationId = sessionData.session_id;
+        chatState.currentConversationTitle = sessionData.title || 'New Chat';
+    } else {
+        const response = await apiCall('/chat/new', 'POST', { is_incognito: false }, true);
+        const data = getResponseData(response);
+        chatState.currentConversationId = data.conversation_id || data.session_id || null;
+    }
+
     updateUrl(chatState.currentConversationId || '');
+    return chatState.currentConversationId;
 }
 
 async function selectConversation(conversationId) {
@@ -311,9 +406,12 @@ async function selectConversation(conversationId) {
 
     try {
         const response = await apiCall(`/chat/${conversationId}/messages`, 'GET', null, true);
+        const data = getResponseData(response);
         chatState.currentConversationId = conversationId;
-        chatState.currentConversationTitle = response.data?.conversation?.title || 'Chat Title';
-        chatState.messages = response.data?.messages || [];
+        chatState.currentConversationTitle = data.conversation?.title
+            || chatState.conversations.find((conversation) => conversation.id === conversationId)?.title
+            || 'Chat Title';
+        chatState.messages = data.messages || [];
         renderMessages();
         updateUrl(conversationId);
         filterConversations(qs('historySearch').value);
@@ -332,6 +430,7 @@ function clearConversationState() {
     chatState.messages = [];
     qs('messageList').innerHTML = '';
     setTypingIndicator(false);
+    closeAllHistoryDropdowns();
     updateShellState();
     updateUrl('');
 }
@@ -341,11 +440,59 @@ function startNewChat() {
     qs('chatInput').focus();
 }
 
-function renameCurrentChat() {
+async function persistSessionPatch(sessionId, payload) {
+    if (!sessionId || String(sessionId).startsWith('incognito-')) {
+        return null;
+    }
+    return apiCallOrWarn(`/chat/sessions/${sessionId}`, 'PATCH', payload, true);
+}
+
+function updateConversationInState(sessionId, updates = {}) {
+    const index = chatState.conversations.findIndex((conversation) => conversation.id === sessionId);
+    if (index !== -1) {
+        chatState.conversations[index] = {
+            ...chatState.conversations[index],
+            ...updates,
+        };
+    } else if (!updates.archived) {
+        chatState.conversations.unshift({
+            id: sessionId,
+            title: updates.title || 'New Chat',
+            created_at: new Date().toISOString(),
+            ...updates,
+        });
+    }
+
+    if (chatState.currentConversationId === sessionId && updates.title) {
+        chatState.currentConversationTitle = updates.title;
+    }
+
+    filterConversations(qs('historySearch').value);
+    updateShellState();
+}
+
+function getFallbackGeneratedTitle(message) {
+    return truncateLine(message, 40) || 'New Chat';
+}
+
+async function maybeGenerateSessionTitle(firstMessage) {
+    if (chatState.incognito || !chatState.currentConversationId || String(chatState.currentConversationId).startsWith('incognito-')) {
+        return;
+    }
+
+    const endpoint = `/chat/sessions/${chatState.currentConversationId}/generate-title`;
+    const response = await apiCallOrWarn(endpoint, 'POST', { first_message: firstMessage }, true);
+    const data = getResponseData(response);
+    const nextTitle = data.title || getFallbackGeneratedTitle(firstMessage);
+    updateConversationInState(chatState.currentConversationId, { title: nextTitle });
+}
+
+async function renameCurrentChat() {
     const nextTitle = window.prompt('Rename chat title', chatState.currentConversationTitle || 'Chat Title');
     if (nextTitle && nextTitle.trim()) {
-        chatState.currentConversationTitle = nextTitle.trim();
-        updateShellState();
+        const title = nextTitle.trim();
+        updateConversationInState(chatState.currentConversationId, { title });
+        await persistSessionPatch(chatState.currentConversationId, { title });
     }
 }
 
@@ -378,9 +525,15 @@ function parseSseChunk(buffer, onEvent) {
     return remainder || '';
 }
 
-async function streamAssistantReply(message) {
-    await ensureConversation();
+async function streamAssistantReply(message, options = {}) {
+    const sessionId = await ensureConversation();
     setTypingIndicator(true);
+
+    if (!chatState.incognito && sessionId) {
+        updateConversationInState(sessionId, {
+            title: chatState.currentConversationTitle || 'New Chat',
+        });
+    }
 
     const assistantNode = appendMessage('assistant', '', { skipStatePush: true });
     const markdownNode = assistantNode.querySelector('.markdown-body');
@@ -423,6 +576,11 @@ async function streamAssistantReply(message) {
                     updateUrl(payload.conversation_id);
                 }
                 chatState.currentConversationTitle = payload.title || chatState.currentConversationTitle;
+                if (!chatState.incognito && chatState.currentConversationId) {
+                    updateConversationInState(chatState.currentConversationId, {
+                        title: chatState.currentConversationTitle || 'New Chat',
+                    });
+                }
                 updateShellState();
             }
 
@@ -448,6 +606,9 @@ async function streamAssistantReply(message) {
     updateShellState();
 
     if (!chatState.incognito) {
+        if (options.isFirstMessageInNewChat) {
+            await maybeGenerateSessionTitle(message);
+        }
         await loadHistory();
     }
 }
@@ -464,12 +625,13 @@ async function sendMessage() {
     }
 
     chatState.isStreaming = true;
+    const isFirstMessageInNewChat = !chatState.incognito && chatState.messages.length === 0;
     appendMessage('user', message);
     input.value = '';
     autoResizeTextarea();
 
     try {
-        await streamAssistantReply(message);
+        await streamAssistantReply(message, { isFirstMessageInNewChat });
     } catch (error) {
         console.error('Send failed:', error);
         setTypingIndicator(false);
@@ -522,6 +684,135 @@ function bindOrbBehavior() {
     }, 6000);
 }
 
+async function handleHistoryAction(action, sessionId, item) {
+    if (!sessionId || !item) {
+        return;
+    }
+
+    if (action === 'star') {
+        const starred = !item.classList.contains('starred');
+        item.classList.toggle('starred', starred);
+        updateConversationInState(sessionId, { starred });
+        await persistSessionPatch(sessionId, { starred });
+        return;
+    }
+
+    if (action === 'rename') {
+        const titleNode = item.querySelector('.chat-history-title');
+        if (!titleNode) {
+            return;
+        }
+
+        const currentTitle = titleNode.textContent || 'New Chat';
+        const input = document.createElement('input');
+        input.className = 'rename-input';
+        input.value = currentTitle;
+        titleNode.replaceWith(input);
+        input.focus();
+        input.select();
+
+        let saved = false;
+        const saveRename = async () => {
+            if (saved) {
+                return;
+            }
+            saved = true;
+            const nextTitle = (input.value || '').trim() || currentTitle;
+            const span = document.createElement('span');
+            span.className = 'chat-history-title';
+            span.textContent = truncateLine(nextTitle);
+            input.replaceWith(span);
+            updateConversationInState(sessionId, { title: nextTitle });
+            await persistSessionPatch(sessionId, { title: nextTitle });
+        };
+
+        input.addEventListener('keydown', async (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                await saveRename();
+            }
+        }, { once: true });
+
+        input.addEventListener('blur', async () => {
+            await saveRename();
+        }, { once: true });
+
+        return;
+    }
+
+    if (action === 'archive') {
+        item.classList.add('archiving');
+        window.setTimeout(() => {
+            updateConversationInState(sessionId, { archived: true });
+            item.remove();
+        }, 300);
+        await persistSessionPatch(sessionId, { archived: true });
+    }
+}
+
+function bindHistoryMenu() {
+    qs('conversationList').addEventListener('click', async (event) => {
+        const menuButton = event.target.closest('.chat-item-menu-btn');
+        if (menuButton) {
+            event.stopPropagation();
+            const item = menuButton.closest('.chat-history-item');
+            const dropdown = item?.querySelector('.chat-item-dropdown');
+            const isHidden = dropdown?.classList.contains('hidden');
+            closeAllHistoryDropdowns();
+            if (item && dropdown && isHidden) {
+                item.classList.add('menu-open');
+                dropdown.classList.remove('hidden');
+            }
+            return;
+        }
+
+        const actionButton = event.target.closest('.chat-action-btn');
+        if (actionButton) {
+            event.stopPropagation();
+            const item = actionButton.closest('.chat-history-item');
+            const sessionId = item?.dataset.sessionId;
+            closeAllHistoryDropdowns();
+            await handleHistoryAction(actionButton.dataset.action, sessionId, item);
+            return;
+        }
+
+        const historyItem = event.target.closest('.chat-history-item');
+        if (historyItem) {
+            await selectConversation(historyItem.dataset.sessionId);
+        }
+    });
+}
+
+async function logoutUser() {
+    await apiCallOrWarn('/auth/logout', 'POST', {}, true);
+    localStorage.removeItem('zora_token');
+    window.location.href = '/auth/login.html';
+}
+
+function bindSettingsDropdown() {
+    qs('settingsGearButton').addEventListener('click', (event) => {
+        event.stopPropagation();
+        qs('settings-dropdown').classList.toggle('hidden');
+    });
+
+    qs('settings-dropdown').addEventListener('click', async (event) => {
+        const actionButton = event.target.closest('.settings-action-btn');
+        if (!actionButton) {
+            return;
+        }
+
+        const action = actionButton.dataset.action;
+        if (action === 'settings') {
+            window.location.href = '/settings/index.html';
+            return;
+        }
+
+        if (action === 'logout') {
+            await logoutUser();
+        }
+    });
+}
+
 function bindEvents() {
     qs('sidebarToggle').addEventListener('click', toggleSidebar);
     qs('historySearch').addEventListener('input', (event) => filterConversations(event.target.value));
@@ -546,8 +837,18 @@ function bindEvents() {
             await sendMessage();
         }
     });
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.chat-history-item')) {
+            closeAllHistoryDropdowns();
+        }
+        if (!event.target.closest('.user-profile-section')) {
+            closeSettingsDropdown();
+        }
+    });
 
     window.addEventListener('resize', initializeSidebarState);
+    bindHistoryMenu();
+    bindSettingsDropdown();
     bindSuggestionCards();
     bindOrbBehavior();
 }
