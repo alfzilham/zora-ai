@@ -1,19 +1,13 @@
 {
   "version": 2,
-  "functions": {
-    "backend/app/vercel_app.py": {
-      "runtime": "python3.12",
-      "maxDuration": 30
-    }
-  },
   "routes": [
-    { "src": "/api/(.*)", "dest": "backend/app/vercel_app.py" },
-    { "src": "/static/(.*)", "dest": "backend/app/vercel_app.py" },
-    { "src": "/", "dest": "frontend/public/index.html" },
-    { "src": "/(.*\\.html)", "dest": "frontend/public/$1" },
-    { "src": "/(.*\\.css)", "dest": "frontend/public/$1" },
-    { "src": "/(.*\\.js)", "dest": "frontend/public/$1" },
-    { "src": "/(.*\\.png|.*\\.jpg|.*\\.ico|.*\\.webp|.*\\.svg)", "dest": "frontend/public/$1" },
-    { "src": "/(.*)", "dest": "frontend/public/$1" }
+    { "src": "/api/(.*)", "dest": "/api/index.py" },
+    { "src": "/static/(.*)", "dest": "/api/index.py" },
+    { "src": "/", "dest": "/frontend/public/index.html" },
+    { "src": "/(.*\\.html)", "dest": "/frontend/public/$1" },
+    { "src": "/(.*\\.css)", "dest": "/frontend/public/$1" },
+    { "src": "/(.*\\.js)", "dest": "/frontend/public/$1" },
+    { "src": "/(.*\\.png|.*\\.jpg|.*\\.ico|.*\\.webp|.*\\.svg)", "dest": "/frontend/public/$1" },
+    { "src": "/(.*)", "dest": "/frontend/public/$1" }
   ]
 }
