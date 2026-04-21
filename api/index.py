@@ -10,7 +10,7 @@ async def startup():
 
     try:
         from app.routers import auth, onboarding, chat, labs, dashboard
-        from app import settings as settings_router
+        from app.routers import settings as settings_router
         from app.database import engine, Base
 
         app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
@@ -21,7 +21,6 @@ async def startup():
         app.include_router(settings_router.router, tags=["Settings"])
 
         async with engine.begin() as conn:
-            from app.database import Base
             await conn.run_sync(Base.metadata.create_all)
 
     except Exception as e:
