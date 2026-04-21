@@ -120,17 +120,22 @@ function saveSidebarState() {
 }
 
 function initializeSidebarState() {
-    const stored = localStorage.getItem('zora_sidebar');
+    const sidebar = qs('chatSidebar');
+    const savedSidebar = localStorage.getItem('zora_sidebar');
+
+    chatState.sidebarCollapsed = savedSidebar === 'collapsed';
     if (window.innerWidth < 768) {
         chatState.sidebarCollapsed = true;
-    } else {
-        chatState.sidebarCollapsed = stored === 'collapsed';
     }
+
+    sidebar.classList.toggle('collapsed', chatState.sidebarCollapsed);
     updateShellState();
 }
 
 function toggleSidebar() {
-    chatState.sidebarCollapsed = !chatState.sidebarCollapsed;
+    const sidebar = qs('chatSidebar');
+    sidebar.classList.toggle('collapsed');
+    chatState.sidebarCollapsed = sidebar.classList.contains('collapsed');
     saveSidebarState();
     updateShellState();
 }
