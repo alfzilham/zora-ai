@@ -58,8 +58,14 @@ async function handleSignup(name, email, password) {
  */
 function handleGoogleAuth() {
     // Google OAuth configuration
-    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // Replace with actual client ID
-    const REDIRECT_URI = window.location.origin + '/frontend/src/pages/auth/google-callback.html';
+    const GOOGLE_CLIENT_ID = window.ZORA_CONFIG?.GOOGLE_CLIENT_ID || '';
+    if (!GOOGLE_CLIENT_ID) {
+        showError('Google Sign-In is not configured. Please try email login.');
+        return;
+    }
+    // Callback page lives at /auth/google-callback.html in production
+    // and at the same path locally  always derived from current origin
+    const REDIRECT_URI = window.location.origin + '/auth/google-callback.html';
 
     // Build Google OAuth URL
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +

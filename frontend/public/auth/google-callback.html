@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Authenticating...</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #0d0d0d;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+    }
+    .msg { font-size: 14px; opacity: 0.6; }
+  </style>
+</head>
+<body>
+  <p class="msg">Completing sign-in...</p>
+
+  <script>
+    (function () {
+      // Parse the URL hash that Google appends after redirect
+      // e.g. #access_token=ya29.xxx&token_type=Bearer&...
+      const hash = window.location.hash.substring(1);
+      const params = Object.fromEntries(
+        hash.split('&').map((pair) => pair.split('=').map(decodeURIComponent))
+      );
+
+      if (params.access_token) {
+        // Send token to parent window (login.html or signup.html)
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage(
+            { type: 'GOOGLE_AUTH_SUCCESS', token: params.access_token },
+            window.location.origin
+          );
+        }
+      } else if (params.error) {
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage(
+            { type: 'GOOGLE_AUTH_ERROR', error: params.error },
+            window.location.origin
+          );
+        }
+      }
+
+      // Close popup after a short delay
+      setTimeout(() => window.close(), 300);
+    })();
+  </script>
+</body>
+</html>
