@@ -13,12 +13,13 @@ async def startup():
         from app.routers import settings as settings_router
         from app.database import engine, Base
 
-        app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-        app.include_router(onboarding.router, prefix="/onboarding", tags=["Onboarding"])
-        app.include_router(chat.router, prefix="/chat", tags=["Chat"])
-        app.include_router(labs.router, prefix="/labs", tags=["Labs"])
-        app.include_router(dashboard.router, tags=["Dashboard"])
-        app.include_router(settings_router.router, tags=["Settings"])
+        # Tambahkan prefix /api agar cocok dengan panggilan frontend
+        app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+        app.include_router(onboarding.router, prefix="/api/onboarding", tags=["Onboarding"])
+        app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
+        app.include_router(labs.router, prefix="/api/labs", tags=["Labs"])
+        app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
+        app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
