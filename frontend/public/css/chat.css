@@ -61,6 +61,16 @@ textarea {
     width: 56px;
     min-width: 56px;
     flex-basis: 56px;
+    padding-left: 0;
+    padding-right: 0;
+    align-items: center;
+}
+
+.sidebar.collapsed .sidebar-content,
+.chat-sidebar.collapsed .sidebar-content {
+    padding-left: 0;
+    padding-right: 0;
+    align-items: center;
 }
 
 .sidebar-content {
@@ -111,7 +121,15 @@ textarea {
 .sidebar-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.sidebar-logo-icon {
+    display: block !important;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -124,6 +142,10 @@ textarea {
 }
 
 .chat-sidebar.collapsed .sidebar-logo {
+    justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-brand {
     justify-content: center;
 }
 
@@ -214,10 +236,13 @@ textarea {
 }
 
 .chat-sidebar.collapsed .nav-item,
-.sidebar.collapsed .nav-item {
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .sidebar-link {
     justify-content: center;
     padding: 12px 0;
-    width: 100%;
+    width: 56px;
+    display: flex;
+    align-items: center;
 }
 
 .sidebar-link i {
@@ -227,9 +252,19 @@ textarea {
 }
 
 .chat-sidebar.collapsed .nav-item i,
-.sidebar.collapsed .nav-item i {
+.sidebar.collapsed .nav-item i,
+.sidebar.collapsed .sidebar-link i,
+.sidebar.collapsed .nav-icon,
+.chat-sidebar.collapsed .nav-icon {
     font-size: 1.2rem;
     margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sidebar-link:hover {
@@ -454,6 +489,7 @@ textarea {
     justify-content: center;
     padding: 12px 0;
     margin-top: auto;
+    width: 56px;
 }
 
 .chat-sidebar.collapsed .user-avatar,
@@ -482,6 +518,16 @@ textarea {
     font-size: 0.9rem;
     font-weight: 700;
     overflow: hidden;
+}
+
+.sidebar-user .user-avatar,
+.sidebar-user img {
+    display: block !important;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .sidebar-user-avatar img {
