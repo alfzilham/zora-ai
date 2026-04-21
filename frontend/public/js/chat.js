@@ -107,17 +107,16 @@ function setTypingIndicator(visible) {
 
 function updateShellState() {
     const shell = qs('chatShell');
-    const mobile = window.innerWidth < 768;
+    const sidebar = qs('chatSidebar');
     shell.classList.toggle('has-messages', chatState.messages.length > 0);
-    shell.classList.toggle('sidebar-collapsed', !mobile && chatState.sidebarCollapsed);
-    shell.classList.toggle('sidebar-open-mobile', mobile && !chatState.sidebarCollapsed);
+    sidebar.classList.toggle('collapsed', chatState.sidebarCollapsed);
     qs('incognitoButton').classList.toggle('active', chatState.incognito);
     qs('extendedToggle').classList.toggle('active', chatState.extended);
     qs('chatTitle').textContent = chatState.currentConversationTitle || 'Chat Title';
 }
 
 function saveSidebarState() {
-    localStorage.setItem('zora_sidebar', chatState.sidebarCollapsed ? 'collapsed' : 'open');
+    localStorage.setItem('zora_sidebar', chatState.sidebarCollapsed ? 'collapsed' : 'expanded');
 }
 
 function initializeSidebarState() {
@@ -362,11 +361,22 @@ async function loadCurrentUser() {
 
 async function loadHistory() {
     try {
-        const response = await apiCall('/chat/history', 'GET', null, true);
-        const data = getResponseData(response);
-        chatState.conversations = Array.isArray(data)
-            ? data
-            : (data.conversations || data.history || []);
+        const sessionResponse = await apiCallOrWarn('/chat/sessions', 'GET', null, true);
+        const sessionData = getResponseData(sessionResponse);
+
+        if (sessionResponse) {
+            const sessions = Array.isArray(sessionData)
+                ? sessionData
+                : (sessionData.sessions || sessionData.conversations || []);
+            chatState.conversations = sessions.filter((session) => !session.archived && !session.deleted);
+        } else {
+            const response = await apiCall('/chat/history', 'GET', null, true);
+            const data = getResponseData(response);
+            chatState.conversations = (Array.isArray(data)
+                ? data
+                : (data.conversations || data.history || [])
+            ).filter((conversation) => !conversation.archived && !conversation.deleted);
+        }
         filterConversations(qs('historySearch').value);
     } catch (error) {
         console.error('Failed to load history:', error);
@@ -415,10 +425,6 @@ async function selectConversation(conversationId) {
         renderMessages();
         updateUrl(conversationId);
         filterConversations(qs('historySearch').value);
-        if (window.innerWidth < 768) {
-            chatState.sidebarCollapsed = true;
-            updateShellState();
-        }
     } catch (error) {
         console.error('Failed to select conversation:', error);
     }
@@ -741,13 +747,43 @@ async function handleHistoryAction(action, sessionId, item) {
     }
 
     if (action === 'archive') {
+        const response = await persistSessionPatch(sessionId, { archived: true });
+        if (!response) {
+            console.warn(`Archive skipped for session ${sessionId}`);
+            return;
+        }
+
         item.classList.add('archiving');
         window.setTimeout(() => {
             updateConversationInState(sessionId, { archived: true });
             item.remove();
         }, 300);
-        await persistSessionPatch(sessionId, { archived: true });
+        return;
     }
+
+    if (action === 'delete') {
+        const response = await apiCallOrWarn(`/chat/sessions/${sessionId}`, 'DELETE', null, true);
+        if (!response) {
+            console.warn(`Delete skipped for session ${sessionId}`);
+            return;
+        }
+
+        item.classList.add('archiving');
+        window.setTimeout(() => {
+            chatState.conversations = chatState.conversations.filter((conversation) => String(conversation.id) !== String(sessionId));
+            filterConversations(qs('historySearch').value);
+            item.remove();
+        }, 300);
+    }
+}
+
+function applyNavTooltips() {
+    document.querySelectorAll('.nav-item').forEach((item) => {
+        const label = item.querySelector('.nav-label')?.textContent;
+        if (label) {
+            item.setAttribute('title', label);
+        }
+    });
 }
 
 function bindHistoryMenu() {
@@ -814,7 +850,7 @@ function bindSettingsDropdown() {
 }
 
 function bindEvents() {
-    qs('sidebarToggle').addEventListener('click', toggleSidebar);
+    qs('sidebar-toggle-btn').addEventListener('click', toggleSidebar);
     qs('historySearch').addEventListener('input', (event) => filterConversations(event.target.value));
     qs('chatTitleButton').addEventListener('click', renameCurrentChat);
     qs('newChatIconButton').addEventListener('click', startNewChat);
@@ -847,6 +883,7 @@ function bindEvents() {
     });
 
     window.addEventListener('resize', initializeSidebarState);
+    applyNavTooltips();
     bindHistoryMenu();
     bindSettingsDropdown();
     bindSuggestionCards();

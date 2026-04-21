@@ -25,18 +25,14 @@
 </head>
 <body>
     <div class="chat-shell" id="chatShell">
-        <button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Toggle sidebar">
-            <i class="fi fi-br-sidebar" aria-hidden="true"></i>
-        </button>
-
-        <aside class="chat-sidebar" id="chatSidebar">
+        <aside class="chat-sidebar sidebar" id="chatSidebar">
             <div class="sidebar-content">
-                <div class="sidebar-brand">
+                <div class="sidebar-brand sidebar-logo">
                     <img src="/assets/images/logo/logo.png" alt="ZORA AI logo" loading="lazy">
-                    <span>ZORA AI</span>
+                    <span class="sidebar-logo-text">ZORA AI</span>
                 </div>
 
-                <label class="sidebar-search">
+                <label class="sidebar-search search-bar">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M10.5 4a6.5 6.5 0 1 0 4.09 11.55l4.43 4.43 1.41-1.41L16 14.14A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9a4.5 4.5 0 0 1 0-9Z"></path>
                     </svg>
@@ -44,16 +40,16 @@
                 </label>
 
                 <nav class="sidebar-nav" aria-label="Primary">
-                    <a class="sidebar-link active" href="#"><i class="fi fi-br-house-chimney"></i><span>Home</span></a>
-                    <a class="sidebar-link" href="#"><i class="fi fi-br-pending"></i><span>History</span></a>
-                    <a class="sidebar-link" href="/labs/code.html"><i class="fi fi-br-terminal"></i><span>Code</span></a>
-                    <a class="sidebar-link" href="/labs/research.html"><i class="fi fi-br-flask"></i><span>Labs</span></a>
-                    <a class="sidebar-link" href="/settings/index.html"><i class="fi fi-br-feedback-review"></i><span>FeedBack</span></a>
+                    <a class="sidebar-link nav-item active" href="#"><i class="fi fi-br-house-chimney"></i><span class="nav-label">Home</span></a>
+                    <a class="sidebar-link nav-item" href="#"><i class="fi fi-br-pending"></i><span class="nav-label">History</span></a>
+                    <a class="sidebar-link nav-item" href="/labs/code.html"><i class="fi fi-br-terminal"></i><span class="nav-label">Code</span></a>
+                    <a class="sidebar-link nav-item" href="/labs/research.html"><i class="fi fi-br-flask"></i><span class="nav-label">Labs</span></a>
+                    <a class="sidebar-link nav-item" href="/settings/index.html"><i class="fi fi-br-feedback-review"></i><span class="nav-label">FeedBack</span></a>
                 </nav>
 
                 <div class="sidebar-divider"></div>
 
-                <section class="sidebar-history">
+                <section class="sidebar-history chat-history-section">
                     <h2>Chat History</h2>
                     <div id="historyScroll" class="history-scroll">
                         <div id="conversationList"></div>
@@ -62,12 +58,16 @@
 
                 <div class="sidebar-divider"></div>
 
+                <button id="sidebar-toggle-btn" class="sidebar-toggle-btn" type="button" title="Toggle Sidebar">
+                    <i class="fi fi-br-sidebar"></i>
+                </button>
+
                 <div class="user-profile-section">
                     <div class="sidebar-user">
-                        <div id="profileAvatar" class="sidebar-user-avatar">Z</div>
+                        <div id="profileAvatar" class="sidebar-user-avatar user-avatar">Z</div>
                         <div class="sidebar-user-info">
-                            <p id="profileName" class="sidebar-user-name">Loading...</p>
-                            <p id="profileEmail" class="sidebar-user-email"></p>
+                            <p id="profileName" class="sidebar-user-name user-name">Loading...</p>
+                            <p id="profileEmail" class="sidebar-user-email user-email"></p>
                         </div>
                         <button id="settingsGearButton" class="sidebar-settings-link settings-gear-btn" type="button" aria-label="Open settings menu">
                             <i class="fi fi-br-settings" aria-hidden="true"></i>
