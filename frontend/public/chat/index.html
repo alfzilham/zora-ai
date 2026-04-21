@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/chat.css">
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -25,9 +26,7 @@
 <body>
     <div class="chat-shell" id="chatShell">
         <button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Toggle sidebar">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14.7 6.3a1 1 0 0 1 0 1.4L10.41 12l4.29 4.3a1 1 0 0 1-1.41 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.41 0Z"></path>
-            </svg>
+            <i class="fi fi-br-sidebar" aria-hidden="true"></i>
         </button>
 
         <aside class="chat-sidebar" id="chatSidebar">
@@ -45,11 +44,11 @@
                 </label>
 
                 <nav class="sidebar-nav" aria-label="Primary">
-                    <a class="sidebar-link" href="#">Home</a>
-                    <a class="sidebar-link" href="#">History</a>
-                    <a class="sidebar-link" href="/labs/code.html">Code</a>
-                    <a class="sidebar-link" href="/labs/research.html">Labs</a>
-                    <a class="sidebar-link" href="/settings/index.html">FeedBack</a>
+                    <a class="sidebar-link active" href="#"><i class="fi fi-br-house-chimney"></i><span>Home</span></a>
+                    <a class="sidebar-link" href="#"><i class="fi fi-br-pending"></i><span>History</span></a>
+                    <a class="sidebar-link" href="/labs/code.html"><i class="fi fi-br-terminal"></i><span>Code</span></a>
+                    <a class="sidebar-link" href="/labs/research.html"><i class="fi fi-br-flask"></i><span>Labs</span></a>
+                    <a class="sidebar-link" href="/settings/index.html"><i class="fi fi-br-feedback-review"></i><span>FeedBack</span></a>
                 </nav>
 
                 <div class="sidebar-divider"></div>
