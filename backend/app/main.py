@@ -51,13 +51,14 @@ def log_error_to_file(request: Request, status_code: int, message: str, detail=N
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup/shutdown events."""
-    # Startup: create tables
-    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass  # Read-only filesystem on Vercel serverless  safe to ignore
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
-    # Shutdown: dispose engine
     await engine.dispose()
 
 
@@ -80,7 +81,8 @@ app.add_middleware(
 )
 app.add_middleware(SecurityHeadersMiddleware)
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.middleware("http")

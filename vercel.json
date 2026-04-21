@@ -1,19 +1,19 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "backend/app/main.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "50mb" }
-    },
-    {
-      "src": "frontend/public/**",
-      "use": "@vercel/static"
+  "functions": {
+    "backend/app/vercel_app.py": {
+      "runtime": "python3.12",
+      "maxDuration": 30
     }
-  ],
+  },
   "routes": [
-    { "src": "/api/(.*)", "dest": "backend/app/main.py" },
-    { "src": "/static/(.*)", "dest": "backend/app/main.py" },
+    { "src": "/api/(.*)", "dest": "backend/app/vercel_app.py" },
+    { "src": "/static/(.*)", "dest": "backend/app/vercel_app.py" },
+    { "src": "/", "dest": "frontend/public/index.html" },
+    { "src": "/(.*\\.html)", "dest": "frontend/public/$1" },
+    { "src": "/(.*\\.css)", "dest": "frontend/public/$1" },
+    { "src": "/(.*\\.js)", "dest": "frontend/public/$1" },
+    { "src": "/(.*\\.png|.*\\.jpg|.*\\.ico|.*\\.webp|.*\\.svg)", "dest": "frontend/public/$1" },
     { "src": "/(.*)", "dest": "frontend/public/$1" }
   ]
 }

@@ -8,3 +8,5 @@ backend/static/generated/*
 !backend/static/generated/.gitkeep
 .vercel
 node_modules/
+
+.vercel
