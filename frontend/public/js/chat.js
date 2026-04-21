@@ -107,7 +107,7 @@ function setTypingIndicator(visible) {
 
 function updateShellState() {
     const shell = qs('chatShell');
-    const sidebar = qs('chatSidebar');
+    const sidebar = document.getElementById('sidebar') || qs('chatSidebar');
     shell.classList.toggle('has-messages', chatState.messages.length > 0);
     sidebar.classList.toggle('collapsed', chatState.sidebarCollapsed);
     qs('incognitoButton').classList.toggle('active', chatState.incognito);
@@ -117,13 +117,15 @@ function updateShellState() {
 
 function saveSidebarState() {
     localStorage.setItem('zora_sidebar', chatState.sidebarCollapsed ? 'collapsed' : 'expanded');
+    localStorage.setItem('sidebarCollapsed', String(chatState.sidebarCollapsed));
 }
 
 function initializeSidebarState() {
-    const sidebar = qs('chatSidebar');
-    const savedSidebar = localStorage.getItem('zora_sidebar');
+    const sidebar = document.getElementById('sidebar') || qs('chatSidebar');
+    const savedSidebar = localStorage.getItem('sidebarCollapsed');
+    const legacySidebar = localStorage.getItem('zora_sidebar');
 
-    chatState.sidebarCollapsed = savedSidebar === 'collapsed';
+    chatState.sidebarCollapsed = savedSidebar === 'true' || legacySidebar === 'collapsed';
     if (window.innerWidth < 768) {
         chatState.sidebarCollapsed = true;
     }
@@ -133,7 +135,7 @@ function initializeSidebarState() {
 }
 
 function toggleSidebar() {
-    const sidebar = qs('chatSidebar');
+    const sidebar = document.getElementById('sidebar') || qs('chatSidebar');
     sidebar.classList.toggle('collapsed');
     chatState.sidebarCollapsed = sidebar.classList.contains('collapsed');
     saveSidebarState();
@@ -855,7 +857,7 @@ function bindSettingsDropdown() {
 }
 
 function bindEvents() {
-    qs('sidebar-toggle-btn').addEventListener('click', toggleSidebar);
+    (document.getElementById('sidebar-toggle') || qs('sidebar-toggle-btn')).addEventListener('click', toggleSidebar);
     qs('historySearch').addEventListener('input', (event) => filterConversations(event.target.value));
     qs('chatTitleButton').addEventListener('click', renameCurrentChat);
     qs('newChatIconButton').addEventListener('click', startNewChat);

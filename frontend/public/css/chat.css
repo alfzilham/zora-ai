@@ -40,22 +40,27 @@ textarea {
     overflow: hidden;
 }
 
-.chat-sidebar {
+.chat-sidebar,
+.sidebar {
     width: 260px;
-    min-width: 260px;
+    min-width: 56px;
     flex: 0 0 260px;
     display: flex;
     flex-direction: column;
     background: #ffffff;
     border-right: 1px solid #e5e5e5;
-    transition: width 0.3s ease, min-width 0.3s ease;
+    transition: width 0.25s ease, opacity 0.2s ease;
     overflow: hidden;
     flex-shrink: 0;
+    height: 100vh;
+    position: relative;
 }
 
-.chat-sidebar.collapsed {
-    width: 60px;
-    min-width: 60px;
+.chat-sidebar.collapsed,
+.sidebar.collapsed {
+    width: 56px;
+    min-width: 56px;
+    flex-basis: 56px;
 }
 
 .sidebar-content {
@@ -69,13 +74,38 @@ textarea {
 }
 
 .chat-sidebar.collapsed .sidebar-logo-text,
+.chat-sidebar.collapsed .sidebar-search,
 .chat-sidebar.collapsed .search-bar,
 .chat-sidebar.collapsed .nav-label,
 .chat-sidebar.collapsed .chat-history-section,
 .chat-sidebar.collapsed .user-name,
 .chat-sidebar.collapsed .user-email,
-.chat-sidebar.collapsed .settings-gear-btn {
-    display: none;
+.chat-sidebar.collapsed .settings-gear-btn,
+.chat-sidebar.collapsed .user-info,
+.chat-sidebar.collapsed .user-settings-btn,
+.chat-sidebar.collapsed .sidebar-brand-name,
+.sidebar.collapsed .sidebar-logo-text,
+.sidebar.collapsed .sidebar-search,
+.sidebar.collapsed .search-bar,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .chat-history-section,
+.sidebar.collapsed .user-name,
+.sidebar.collapsed .user-email,
+.sidebar.collapsed .settings-gear-btn,
+.sidebar.collapsed .user-info,
+.sidebar.collapsed .user-settings-btn,
+.sidebar.collapsed .sidebar-brand-name {
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.chat-sidebar.collapsed .chat-history-section,
+.sidebar.collapsed .chat-history-section {
+    margin: 0;
+    min-height: 0;
 }
 
 .sidebar-brand {
@@ -159,7 +189,32 @@ textarea {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.chat-sidebar.collapsed .nav-item {
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+}
+
+.nav-item .nav-label {
+    transition: opacity 0.2s ease, width 0.25s ease;
+    white-space: nowrap;
+}
+
+.nav-icon {
+    width: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+}
+
+.chat-sidebar.collapsed .nav-item,
+.sidebar.collapsed .nav-item {
     justify-content: center;
     padding: 12px 0;
     width: 100%;
@@ -171,7 +226,8 @@ textarea {
     transition: color 0.2s ease;
 }
 
-.chat-sidebar.collapsed .nav-item i {
+.chat-sidebar.collapsed .nav-item i,
+.sidebar.collapsed .nav-item i {
     font-size: 1.2rem;
     margin: 0;
 }
@@ -393,16 +449,15 @@ textarea {
     position: relative;
 }
 
-.chat-sidebar.collapsed .user-profile-section {
+.chat-sidebar.collapsed .sidebar-user,
+.sidebar.collapsed .sidebar-user {
     justify-content: center;
     padding: 12px 0;
+    margin-top: auto;
 }
 
-.chat-sidebar.collapsed .sidebar-user {
-    justify-content: center;
-}
-
-.chat-sidebar.collapsed .user-avatar {
+.chat-sidebar.collapsed .user-avatar,
+.sidebar.collapsed .user-avatar {
     margin: 0;
 }
 
@@ -410,6 +465,9 @@ textarea {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 12px 16px;
+    margin-top: auto;
+    transition: padding 0.25s ease;
 }
 
 .sidebar-user-avatar {
@@ -432,7 +490,8 @@ textarea {
     object-fit: cover;
 }
 
-.sidebar-user-info {
+.sidebar-user-info,
+.user-info {
     flex: 1;
     min-width: 0;
 }
@@ -526,12 +585,14 @@ textarea {
     margin: 0 auto;
 }
 
-.chat-sidebar.collapsed .sidebar-header {
+.chat-sidebar.collapsed .sidebar-header,
+.sidebar.collapsed .sidebar-header {
     justify-content: center;
     padding: 16px 0;
 }
 
-.chat-sidebar.collapsed .sidebar-toggle-btn i {
+.chat-sidebar.collapsed .sidebar-toggle-btn i,
+.sidebar.collapsed .sidebar-toggle-btn i {
     transform: rotate(180deg);
 }
 
