@@ -1,102 +1,26 @@
 /**
- * ZORA AI - Chat Module
- * Complete rebuild with theme support, orb tracking, and chat functionality
+ * ZORA AI - Public Chat Controller
+ * Handles light mode chat UI, history, streaming, orb animation, and sidebar state.
  */
 
-// State Management
-const state = {
+const chatState = {
     user: null,
     conversations: [],
-    currentConversationId: null,
+    filteredConversations: [],
     messages: [],
-    isIncognito: false,
-    isExtendedThinking: false,
+    currentConversationId: null,
+    currentConversationTitle: 'Chat Title',
+    incognito: false,
+    extended: false,
     isStreaming: false,
-    sidebarCollapsed: false
+    sidebarCollapsed: false,
 };
 
-// Utility Functions
-const $ = (id) => document.getElementById(id);
-const $$ = (sel) => document.querySelectorAll(sel);
-
-/**
- * Theme Management
- */
-function initTheme() {
-    const savedTheme = localStorage.getItem('zora_theme');
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-    }
+function qs(id) {
+    return document.getElementById(id);
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    localStorage.setItem('zora_theme', isLight ? 'light' : 'dark');
-}
-
-function isLightMode() {
-    return document.body.classList.contains('light-mode');
-}
-
-/**
- * Time-based Greeting
- */
-function getGreeting() {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return 'Good Morning';
-    if (hour >= 12 && hour < 18) return 'Good Afternoon';
-    return 'Good Evening';
-}
-
-function updateGreeting() {
-    const userName = state.user?.name || localStorage.getItem('zora_onboarding_name') || 'there';
-    const greetingEl = $('greetingText');
-    if (greetingEl) {
-        greetingEl.textContent = `${getGreeting()}, ${userName}!`;
-    }
-}
-
-/**
- * Orb Cursor Tracking
- */
-function initOrbTracking() {
-    const orb = $('zora-orb');
-    if (!orb) return;
-
-    document.addEventListener('mousemove', (e) => {
-        const rect = orb.getBoundingClientRect();
-        const orbCenterX = rect.left + rect.width / 2;
-        const orbCenterY = rect.top + rect.height / 2;
-
-        const angle = Math.atan2(e.clientY - orbCenterY, e.clientX - orbCenterX);
-        const distance = Math.min(8, Math.hypot(e.clientX - orbCenterX, e.clientY - orbCenterY) / 20);
-
-        const eyeOffsetX = Math.cos(angle) * distance;
-        const eyeOffsetY = Math.sin(angle) * distance;
-
-        $$('.orb-eye').forEach(eye => {
-            eye.style.transform = `translate(${eyeOffsetX}px, ${eyeOffsetY}px)`;
-        });
-    });
-}
-
-/**
- * Orb Blinking Animation
- */
-function initOrbBlinking() {
-    setInterval(() => {
-        $$('.orb-eye').forEach(eye => {
-            eye.classList.add('blinking');
-            setTimeout(() => eye.classList.remove('blinking'), 300);
-        });
-    }, 6000);
-}
-
-/**
- * Authentication Check
- */
-async function checkAuth() {
+function getTokenOrRedirect() {
     const token = localStorage.getItem('zora_token');
     if (!token) {
         window.location.href = '/auth/login.html';
@@ -105,743 +29,545 @@ async function checkAuth() {
     return token;
 }
 
-/**
- * Load Current User
- */
-async function loadUser() {
-    try {
-        const token = await checkAuth();
-        if (!token) return;
-
-        const response = await apiCall('/auth/me', 'GET', null, true);
-        state.user = response.data || response;
-
-        updateUserProfile();
-        updateGreeting();
-    } catch (error) {
-        console.error('Failed to load user:', error);
-        if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
-            localStorage.removeItem('zora_token');
-            window.location.href = '/auth/login.html';
-        }
-    }
-}
-
-function updateUserProfile() {
-    if (!state.user) return;
-
-    const displayName = localStorage.getItem('zora_onboarding_name') || state.user.name || 'User';
-    const email = state.user.email || '';
-    const initial = displayName.charAt(0).toUpperCase();
-
-    const nameEl = $('userName');
-    const emailEl = $('userEmail');
-    const avatarEl = $('userAvatar');
-
-    if (nameEl) nameEl.textContent = displayName;
-    if (emailEl) emailEl.textContent = email;
-    if (avatarEl) avatarEl.textContent = initial;
-}
-
-/**
- * Chat History Management
- */
-async function loadChatHistory() {
-    if (state.isIncognito) {
-        renderChatHistory([]);
-        return;
-    }
-
-    try {
-        const response = await apiCall('/chat/history', 'GET', null, true);
-        state.conversations = response.data?.conversations || response.conversations || [];
-        renderChatHistory(state.conversations);
-    } catch (error) {
-        console.error('Failed to load chat history:', error);
-        renderChatHistory([]);
-    }
-}
-
-function renderChatHistory(conversations) {
-    const container = $('chatHistory');
-    if (!container) return;
-
-    if (state.isIncognito) {
-        container.innerHTML = '<div class="history-group"><div class="history-group-label">Incognito Mode</div><div class="history-item">No history saved in this mode</div></div>';
-        return;
-    }
-
-    if (!conversations || conversations.length === 0) {
-        container.innerHTML = '<div class="history-group"><div class="history-item" style="opacity:0.6;cursor:default;">No chat history yet</div></div>';
-        return;
-    }
-
-    // Group conversations by date
-    const groups = groupConversationsByDate(conversations);
-
-    container.innerHTML = Object.entries(groups).map(([label, items]) => `
-        <div class="history-group">
-            <div class="history-group-label">${label}</div>
-            ${items.map(conv => `
-                <div class="history-item ${conv.id === state.currentConversationId ? 'active' : ''}"
-                     data-conversation-id="${conv.id}"
-                     title="${escapeHtml(conv.title || 'New Chat')}">
-                    ${escapeHtml(conv.title || 'New Chat')}
-                </div>
-            `).join('')}
-        </div>
-    `).join('');
-
-    // Add click handlers
-    $$('.history-item[data-conversation-id]').forEach(item => {
-        item.addEventListener('click', () => {
-            const id = item.dataset.conversationId;
-            if (id) loadConversation(id);
-        });
-    });
-}
-
-function groupConversationsByDate(conversations) {
-    const groups = {};
-    const now = new Date();
-
-    conversations.forEach(conv => {
-        const date = new Date(conv.created_at);
-        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-
-        let label;
-        if (diffDays === 0) label = 'Today';
-        else if (diffDays === 1) label = 'Yesterday';
-        else if (diffDays < 7) label = `${diffDays} days ago`;
-        else if (diffDays < 30) label = `${Math.floor(diffDays / 7)} weeks ago`;
-        else label = `${Math.floor(diffDays / 30)} months ago`;
-
-        if (!groups[label]) groups[label] = [];
-        groups[label].push(conv);
-    });
-
-    return groups;
-}
-
-async function loadConversation(id) {
-    if (!id || id.startsWith('incognito-')) return;
-
-    try {
-        const response = await apiCall(`/chat/${id}/messages`, 'GET', null, true);
-        state.currentConversationId = id;
-        state.messages = response.data?.messages || response.messages || [];
-
-        const conversation = state.conversations.find(c => c.id === id);
-        updateChatTitle(conversation?.title || 'Chat');
-
-        showChatView();
-        renderMessages();
-        renderChatHistory(state.conversations);
-    } catch (error) {
-        console.error('Failed to load conversation:', error);
-        showStatus('Failed to load conversation');
-    }
-}
-
-function updateChatTitle(title) {
-    const titleEl = $('chatTitle');
-    if (titleEl) titleEl.textContent = title || 'New Chat';
-}
-
-/**
- * Chat View Management
- */
-function showWelcomeView() {
-    const welcome = $('welcomeState');
-    const chatMessages = $('chatMessages');
-    const suggestions = $('suggestionsContainer');
-
-    if (welcome) welcome.classList.remove('hidden');
-    if (chatMessages) chatMessages.classList.add('hidden');
-    if (suggestions) suggestions.classList.remove('hidden');
-}
-
-function showChatView() {
-    const welcome = $('welcomeState');
-    const chatMessages = $('chatMessages');
-    const suggestions = $('suggestionsContainer');
-
-    if (welcome) welcome.classList.add('hidden');
-    if (chatMessages) chatMessages.classList.remove('hidden');
-    if (suggestions) suggestions.classList.add('hidden');
-}
-
-function renderMessages() {
-    const container = $('chatMessages');
-    if (!container) return;
-
-    container.innerHTML = state.messages.map(msg => {
-        const isUser = msg.role === 'user';
-        return `
-            <div class="message ${isUser ? 'user-message' : 'zora-message'} fade-in">
-                ${!isUser ? `
-                    <div class="message-header">
-                        <img src="/assets/images/logo/logo.png" alt="ZORA" class="zora-avatar">
-                        <span class="message-label">ZORA</span>
-                    </div>
-                ` : `
-                    <div class="message-header" style="justify-content: flex-end;">
-                        <span class="message-label">You</span>
-                    </div>
-                `}
-                <div class="message-content ${isUser ? '' : 'markdown-body'}">
-                    ${isUser ? escapeHtml(msg.content) : marked.parse(msg.content || '')}
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    scrollToBottom();
-}
-
-function appendMessage(role, content, isStreaming = false) {
-    const container = $('chatMessages');
-    if (!container) return;
-
-    const isUser = role === 'user';
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user-message' : 'zora-message'} fade-in`;
-    messageDiv.id = isStreaming ? 'streamingMessage' : '';
-
-    messageDiv.innerHTML = `
-        ${!isUser ? `
-            <div class="message-header">
-                <img src="/assets/images/logo/logo.png" alt="ZORA" class="zora-avatar">
-                <span class="message-label">ZORA</span>
-            </div>
-        ` : `
-            <div class="message-header" style="justify-content: flex-end;">
-                <span class="message-label">You</span>
-            </div>
-        `}
-        <div class="message-content ${isUser ? '' : 'markdown-body'}">
-            ${isUser ? escapeHtml(content) : (isStreaming ? '' : marked.parse(content || ''))}
-        </div>
-    `;
-
-    container.appendChild(messageDiv);
-    scrollToBottom();
-    return messageDiv.querySelector('.message-content');
-}
-
-function updateStreamingMessage(content) {
-    const contentDiv = $('streamingMessage')?.querySelector('.message-content');
-    if (contentDiv) {
-        contentDiv.innerHTML = marked.parse(content || '');
-        scrollToBottom();
-    }
-}
-
-function finalizeStreamingMessage() {
-    const messageDiv = $('streamingMessage');
-    if (messageDiv) {
-        messageDiv.removeAttribute('id');
-    }
-}
-
-function scrollToBottom() {
-    const chatCenter = $('chatCenter');
-    if (chatCenter) {
-        chatCenter.scrollTop = chatCenter.scrollHeight;
-    }
-}
-
-/**
- * Typing Indicator
- */
-function showTypingIndicator() {
-    const indicator = $('typingIndicator');
-    if (indicator) indicator.classList.remove('hidden');
-    scrollToBottom();
-}
-
-function hideTypingIndicator() {
-    const indicator = $('typingIndicator');
-    if (indicator) indicator.classList.add('hidden');
-}
-
-/**
- * Message Sending
- */
-async function sendMessage(content) {
-    if (!content.trim() || state.isStreaming) return;
-
-    state.isStreaming = true;
-
-    // Create conversation if needed
-    if (!state.currentConversationId && !state.isIncognito) {
-        try {
-            const response = await apiCall('/chat/new', 'POST', { is_incognito: false }, true);
-            state.currentConversationId = response.data?.conversation_id || response.conversation_id;
-        } catch (error) {
-            console.error('Failed to create conversation:', error);
-            showStatus('Failed to start chat');
-            state.isStreaming = false;
-            return;
-        }
-    }
-
-    // Add user message
-    state.messages.push({ role: 'user', content });
-
-    // Switch to chat view
-    showChatView();
-    appendMessage('user', content);
-
-    // Clear input
-    const input = $('messageInput');
-    if (input) {
-        input.value = '';
-        input.style.height = 'auto';
-    }
-
-    // Show typing indicator
-    showTypingIndicator();
-
-    try {
-        const response = await fetch(`${window.BASE_URL}/chat/send`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'text/event-stream',
-                'Authorization': `Bearer ${localStorage.getItem('zora_token')}`
-            },
-            body: JSON.stringify({
-                conversation_id: state.isIncognito ? null : state.currentConversationId,
-                message: content,
-                extended_thinking: state.isExtendedThinking,
-                incognito: state.isIncognito
-            })
-        });
-
-        if (!response.ok || !response.body) {
-            throw new Error('Failed to connect to ZORA');
-        }
-
-        hideTypingIndicator();
-        const contentDiv = appendMessage('assistant', '', true);
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        let fullMessage = '';
-
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n\n');
-            buffer = lines.pop() || '';
-
-            for (const chunk of lines) {
-                if (!chunk.trim()) continue;
-
-                const lines = chunk.split('\n');
-                let eventName = 'message';
-                let data = '';
-
-                for (const line of lines) {
-                    if (line.startsWith('event:')) {
-                        eventName = line.replace('event:', '').trim();
-                    } else if (line.startsWith('data:')) {
-                        data += line.replace('data:', '').trim();
-                    }
-                }
-
-                if (data) {
-                    try {
-                        const parsed = JSON.parse(data);
-
-                        if (eventName === 'metadata') {
-                            if (!state.isIncognito && parsed.conversation_id) {
-                                state.currentConversationId = parsed.conversation_id;
-                            }
-                            if (parsed.title) {
-                                updateChatTitle(parsed.title);
-                            }
-                        } else if (eventName === 'chunk') {
-                            fullMessage += parsed.delta || '';
-                            if (contentDiv) {
-                                contentDiv.innerHTML = marked.parse(fullMessage);
-                                scrollToBottom();
-                            }
-                        } else if (eventName === 'done') {
-                            fullMessage = parsed.message || fullMessage;
-                            if (contentDiv) {
-                                contentDiv.innerHTML = marked.parse(fullMessage);
-                            }
-                        } else if (eventName === 'error') {
-                            throw new Error(parsed.message || 'Streaming error');
-                        }
-                    } catch (e) {
-                        console.error('Parse error:', e);
-                    }
-                }
-            }
-        }
-
-        finalizeStreamingMessage();
-        state.messages.push({ role: 'assistant', content: fullMessage });
-
-        // Refresh history
-        if (!state.isIncognito) {
-            await loadChatHistory();
-        }
-
-    } catch (error) {
-        console.error('Send error:', error);
-        hideTypingIndicator();
-        showStatus(error.message || 'Failed to send message');
-    } finally {
-        state.isStreaming = false;
-    }
-}
-
-/**
- * New Chat
- */
-async function startNewChat() {
-    state.currentConversationId = null;
-    state.messages = [];
-
-    if (state.isIncognito) {
-        state.currentConversationId = `incognito-${Date.now()}`;
-    } else {
-        try {
-            const response = await apiCall('/chat/new', 'POST', { is_incognito: false }, true);
-            state.currentConversationId = response.data?.conversation_id || response.conversation_id;
-        } catch (error) {
-            console.error('Failed to create new chat:', error);
-        }
-    }
-
-    updateChatTitle(state.isIncognito ? 'Incognito Chat' : 'New Chat');
-    showWelcomeView();
-    renderChatHistory(state.conversations);
-}
-
-/**
- * Incognito Mode Toggle
- */
-function toggleIncognito() {
-    state.isIncognito = !state.isIncognito;
-    const btn = $('incognitoBtn');
-
-    if (btn) {
-        btn.classList.toggle('active', state.isIncognito);
-    }
-
-    // Reset chat
-    state.currentConversationId = null;
-    state.messages = [];
-    updateChatTitle(state.isIncognito ? 'Incognito Chat' : 'New Chat');
-    showWelcomeView();
-    renderChatHistory([]);
-
-    showStatus(state.isIncognito ? 'Incognito mode enabled' : 'Incognito mode disabled');
-}
-
-/**
- * Extended Thinking Toggle
- */
-function toggleExtendedThinking() {
-    state.isExtendedThinking = !state.isExtendedThinking;
-    const switchEl = $('extendedSwitch');
-
-    if (switchEl) {
-        switchEl.classList.toggle('active', state.isExtendedThinking);
-    }
-}
-
-/**
- * Sidebar Toggle
- */
-function toggleSidebar() {
-    state.sidebarCollapsed = !state.sidebarCollapsed;
-    const sidebar = $('chatSidebar');
-
-    if (sidebar) {
-        sidebar.classList.toggle('collapsed', state.sidebarCollapsed);
-    }
-
-    localStorage.setItem('zora_sidebar', state.sidebarCollapsed ? 'collapsed' : 'open');
-}
-
-function initSidebar() {
-    const saved = localStorage.getItem('zora_sidebar');
-    if (saved === 'collapsed') {
-        state.sidebarCollapsed = true;
-        const sidebar = $('chatSidebar');
-        if (sidebar) sidebar.classList.add('collapsed');
-    }
-}
-
-/**
- * Settings Modal
- */
-function openSettings() {
-    const overlay = $('settingsOverlay');
-    const content = $('settingsContent');
-
-    if (!overlay || !content) return;
-
-    content.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:20px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg-input);border-radius:var(--radius-md);">
-                <div>
-                    <div style="font-weight:600;margin-bottom:4px;">Theme</div>
-                    <div style="font-size:0.85rem;color:var(--text-secondary);">Switch between dark and light mode</div>
-                </div>
-                <button class="toolbar-btn" id="themeToggleBtn" style="width:auto;padding:8px 16px;border-radius:var(--radius-full);background:var(--bg-card);border:1px solid var(--border);">
-                    ${isLightMode() ? '🌙 Dark' : '☀️ Light'}
-                </button>
-            </div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg-input);border-radius:var(--radius-md);">
-                <div>
-                    <div style="font-weight:600;margin-bottom:4px;">Account</div>
-                    <div style="font-size:0.85rem;color:var(--text-secondary);">${state.user?.email || 'Not logged in'}</div>
-                </div>
-                <button class="toolbar-btn" id="logoutBtn" style="width:auto;padding:8px 16px;border-radius:var(--radius-full);background:var(--color-danger);color:white;border:none;">
-                    Logout
-                </button>
-            </div>
-
-            <div style="padding:12px;background:var(--bg-input);border-radius:var(--radius-md);">
-                <div style="font-weight:600;margin-bottom:8px;">Keyboard Shortcuts</div>
-                <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">
-                    <div>Enter — Send message</div>
-                    <div>Shift + Enter — New line</div>
-                    <div>Cmd/Ctrl + / — Toggle sidebar</div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    overlay.classList.add('active');
-
-    // Theme toggle
-    $('themeToggleBtn')?.addEventListener('click', () => {
-        toggleTheme();
-        openSettings(); // Re-render
-    });
-
-    // Logout
-    $('logoutBtn')?.addEventListener('click', () => {
-        localStorage.removeItem('zora_token');
-        localStorage.removeItem('zora_onboarding_name');
-        window.location.href = '/auth/login.html';
-    });
-}
-
-function closeSettings() {
-    const overlay = $('settingsOverlay');
-    if (overlay) overlay.classList.remove('active');
-}
-
-/**
- * Search Functionality
- */
-function filterHistory(query) {
-    const normalized = query.trim().toLowerCase();
-
-    if (!normalized) {
-        renderChatHistory(state.conversations);
-        return;
-    }
-
-    const filtered = state.conversations.filter(c =>
-        (c.title || 'New Chat').toLowerCase().includes(normalized)
+function getDisplayName() {
+    return (
+        localStorage.getItem('zora_onboarding_name')
+        || chatState.user?.display_name
+        || chatState.user?.name
+        || 'User'
     );
-
-    renderChatHistory(filtered);
 }
 
-/**
- * Textarea Auto-resize
- */
-function autoResizeTextarea() {
-    const input = $('messageInput');
-    if (!input) return;
+function getGreetingLabel() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour <= 11) {
+        return 'Good Morning';
+    }
+    if (hour >= 12 && hour <= 17) {
+        return 'Good Afternoon';
+    }
+    return 'Good Evening';
+}
 
+function updateGreeting() {
+    qs('welcomeLineOne').textContent = `${getGreetingLabel()}, ${getDisplayName()}!`;
+}
+
+function autoResizeTextarea() {
+    const input = qs('chatInput');
     input.style.height = 'auto';
     input.style.height = `${Math.min(input.scrollHeight, 200)}px`;
 }
 
-/**
- * Suggestion Cards
- */
-function initSuggestionCards() {
-    $$('.suggestion-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const prompt = card.dataset.prompt;
-            if (prompt) {
-                const input = $('messageInput');
-                if (input) {
-                    input.value = prompt;
-                    autoResizeTextarea();
-                    input.focus();
-                }
-            }
-        });
+function scrollMessagesToBottom() {
+    requestAnimationFrame(() => {
+        const scroller = qs('messageScroller');
+        scroller.scrollTop = scroller.scrollHeight;
     });
 }
 
-/**
- * Utility: Escape HTML
- */
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+function setTypingIndicator(visible) {
+    qs('typingIndicator').classList.toggle('hidden', !visible);
+    if (visible) {
+        scrollMessagesToBottom();
+    }
 }
 
-/**
- * Status Message
- */
-function showStatus(message) {
-    // Could be implemented as a toast notification
-    console.log('[Status]', message);
+function updateShellState() {
+    const shell = qs('chatShell');
+    const mobile = window.innerWidth < 768;
+    shell.classList.toggle('has-messages', chatState.messages.length > 0);
+    shell.classList.toggle('sidebar-collapsed', !mobile && chatState.sidebarCollapsed);
+    shell.classList.toggle('sidebar-open-mobile', mobile && !chatState.sidebarCollapsed);
+    qs('incognitoButton').classList.toggle('active', chatState.incognito);
+    qs('extendedToggle').classList.toggle('active', chatState.extended);
+    qs('chatTitle').textContent = chatState.currentConversationTitle || 'Chat Title';
 }
 
-/**
- * URL Parameter Handling
- */
-function handleUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    const conversationId = params.get('conversation');
+function saveSidebarState() {
+    localStorage.setItem('zora_sidebar', chatState.sidebarCollapsed ? 'collapsed' : 'open');
+}
 
+function initializeSidebarState() {
+    const stored = localStorage.getItem('zora_sidebar');
+    if (window.innerWidth < 768) {
+        chatState.sidebarCollapsed = true;
+    } else {
+        chatState.sidebarCollapsed = stored === 'collapsed';
+    }
+    updateShellState();
+}
+
+function toggleSidebar() {
+    chatState.sidebarCollapsed = !chatState.sidebarCollapsed;
+    saveSidebarState();
+    updateShellState();
+}
+
+function truncateLine(text, length = 42) {
+    const normalized = (text || '').replace(/\s+/g, ' ').trim();
+    if (normalized.length <= length) {
+        return normalized;
+    }
+    return `${normalized.slice(0, length - 3)}...`;
+}
+
+function daysDifference(date) {
+    const now = new Date();
+    const midnightNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const midnightDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return Math.round((midnightNow - midnightDate) / 86400000);
+}
+
+function getHistoryGroupLabel(dateString) {
+    if (!dateString) {
+        return 'Earlier';
+    }
+
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) {
+        return 'Earlier';
+    }
+
+    const diff = daysDifference(date);
+    if (diff <= -1) {
+        return 'Tomorrow';
+    }
+    if (diff === 0) {
+        return 'Today';
+    }
+    if (diff === 1) {
+        return 'Yesterday';
+    }
+    return `${diff} days ago`;
+}
+
+function renderConversationList() {
+    const container = qs('conversationList');
+    container.innerHTML = '';
+
+    if (chatState.incognito) {
+        container.innerHTML = '<p class="history-empty">Incognito mode hides chat history for this session.</p>';
+        return;
+    }
+
+    if (!chatState.filteredConversations.length) {
+        container.innerHTML = '<p class="history-empty">No chats yet. Start a new conversation.</p>';
+        return;
+    }
+
+    let currentGroup = '';
+    let currentWrapper = null;
+
+    chatState.filteredConversations.forEach((conversation) => {
+        const label = getHistoryGroupLabel(conversation.created_at);
+        if (label !== currentGroup) {
+            currentGroup = label;
+            const group = document.createElement('section');
+            group.className = 'history-group';
+            group.innerHTML = `<h3 class="history-group-label">${label}</h3>`;
+            currentWrapper = document.createElement('div');
+            group.appendChild(currentWrapper);
+            container.appendChild(group);
+        }
+
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'history-item';
+        if (chatState.currentConversationId === conversation.id) {
+            item.classList.add('active');
+        }
+        item.textContent = truncateLine(conversation.title || 'New Chat');
+        item.addEventListener('click', () => selectConversation(conversation.id));
+        currentWrapper.appendChild(item);
+    });
+}
+
+function filterConversations(query = '') {
+    const normalized = query.trim().toLowerCase();
+    chatState.filteredConversations = chatState.conversations.filter((conversation) => {
+        if (!normalized) {
+            return true;
+        }
+        return (conversation.title || 'New Chat').toLowerCase().includes(normalized);
+    });
+    renderConversationList();
+}
+
+function updateUrl(conversationId = '') {
+    const url = new URL(window.location.href);
     if (conversationId) {
-        loadConversation(conversationId);
+        url.searchParams.set('conversation', conversationId);
+    } else {
+        url.searchParams.delete('conversation');
+    }
+    window.history.replaceState({}, '', url);
+}
+
+function createMessageElement(role, content) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `message ${role === 'assistant' ? 'zora-message' : 'user-message'}`;
+
+    if (role === 'assistant') {
+        wrapper.innerHTML = `
+            <div class="msg-header">
+                <img src="/assets/images/logo/logo.png" class="zora-msg-avatar" alt="ZORA AI logo">
+                <span class="msg-sender">ZORA</span>
+            </div>
+            <div class="msg-content markdown-body"></div>
+        `;
+        wrapper.querySelector('.markdown-body').innerHTML = window.marked
+            ? window.marked.parse(content || '')
+            : content;
+    } else {
+        wrapper.innerHTML = `
+            <span class="msg-sender">You</span>
+            <div class="msg-content"></div>
+        `;
+        wrapper.querySelector('.msg-content').textContent = content || '';
+    }
+
+    return wrapper;
+}
+
+function renderMessages() {
+    const list = qs('messageList');
+    list.innerHTML = '';
+
+    chatState.messages.forEach((message) => {
+        list.appendChild(createMessageElement(message.role, message.content));
+    });
+
+    updateGreeting();
+    updateShellState();
+    scrollMessagesToBottom();
+}
+
+function appendMessage(role, content = '', options = {}) {
+    const list = qs('messageList');
+    const element = createMessageElement(role, content);
+    list.appendChild(element);
+    scrollMessagesToBottom();
+
+    if (!options.skipStatePush) {
+        chatState.messages.push({ role, content });
+        updateShellState();
+    }
+
+    return element;
+}
+
+async function loadCurrentUser() {
+    const token = getTokenOrRedirect();
+    if (!token) {
+        return false;
+    }
+
+    try {
+        const response = await apiCall('/auth/me', 'GET', null, true);
+        const user = response.data || {};
+        chatState.user = user;
+        qs('profileName').textContent = user.name || 'ZORA User';
+        qs('profileEmail').textContent = user.email || '';
+        qs('profileAvatar').textContent = (user.name || 'Z').charAt(0).toUpperCase();
+        updateGreeting();
+        return true;
+    } catch (_error) {
+        localStorage.removeItem('zora_token');
+        window.location.href = '/auth/login.html';
+        return false;
     }
 }
 
-/**
- * Event Listeners
- */
-function bindEvents() {
-    // Sidebar toggle
-    $('sidebarToggle')?.addEventListener('click', toggleSidebar);
-    $('sidebarBackdrop')?.addEventListener('click', () => {
-        const sidebar = $('chatSidebar');
-        if (sidebar) sidebar.classList.remove('open');
+async function loadHistory() {
+    try {
+        const response = await apiCall('/chat/history', 'GET', null, true);
+        chatState.conversations = response.data?.conversations || [];
+        filterConversations(qs('historySearch').value);
+    } catch (error) {
+        console.error('Failed to load history:', error);
+    }
+}
+
+async function ensureConversation() {
+    if (chatState.currentConversationId && !String(chatState.currentConversationId).startsWith('incognito-')) {
+        return;
+    }
+
+    if (chatState.incognito) {
+        chatState.currentConversationId = `incognito-${Date.now()}`;
+        return;
+    }
+
+    const response = await apiCall('/chat/new', 'POST', { is_incognito: false }, true);
+    chatState.currentConversationId = response.data?.conversation_id || null;
+    updateUrl(chatState.currentConversationId || '');
+}
+
+async function selectConversation(conversationId) {
+    if (!conversationId || String(conversationId).startsWith('incognito-')) {
+        return;
+    }
+
+    try {
+        const response = await apiCall(`/chat/${conversationId}/messages`, 'GET', null, true);
+        chatState.currentConversationId = conversationId;
+        chatState.currentConversationTitle = response.data?.conversation?.title || 'Chat Title';
+        chatState.messages = response.data?.messages || [];
+        renderMessages();
+        updateUrl(conversationId);
+        filterConversations(qs('historySearch').value);
+        if (window.innerWidth < 768) {
+            chatState.sidebarCollapsed = true;
+            updateShellState();
+        }
+    } catch (error) {
+        console.error('Failed to select conversation:', error);
+    }
+}
+
+function clearConversationState() {
+    chatState.currentConversationId = null;
+    chatState.currentConversationTitle = 'Chat Title';
+    chatState.messages = [];
+    qs('messageList').innerHTML = '';
+    setTypingIndicator(false);
+    updateShellState();
+    updateUrl('');
+}
+
+function startNewChat() {
+    clearConversationState();
+    qs('chatInput').focus();
+}
+
+function renameCurrentChat() {
+    const nextTitle = window.prompt('Rename chat title', chatState.currentConversationTitle || 'Chat Title');
+    if (nextTitle && nextTitle.trim()) {
+        chatState.currentConversationTitle = nextTitle.trim();
+        updateShellState();
+    }
+}
+
+function parseSseChunk(buffer, onEvent) {
+    const parts = buffer.split('\n\n');
+    const remainder = parts.pop();
+
+    parts.forEach((part) => {
+        if (!part.trim()) {
+            return;
+        }
+
+        let eventName = 'message';
+        let data = '';
+
+        part.split('\n').forEach((line) => {
+            if (line.startsWith('event:')) {
+                eventName = line.replace('event:', '').trim();
+            }
+            if (line.startsWith('data:')) {
+                data += line.replace('data:', '').trim();
+            }
+        });
+
+        if (data) {
+            onEvent(eventName, JSON.parse(data));
+        }
     });
 
-    // New chat
-    $('newChatBtn')?.addEventListener('click', startNewChat);
+    return remainder || '';
+}
 
-    // Incognito
-    $('incognitoBtn')?.addEventListener('click', toggleIncognito);
+async function streamAssistantReply(message) {
+    await ensureConversation();
+    setTypingIndicator(true);
 
-    // Extended thinking
-    $('extendedToggle')?.addEventListener('click', toggleExtendedThinking);
+    const assistantNode = appendMessage('assistant', '', { skipStatePush: true });
+    const markdownNode = assistantNode.querySelector('.markdown-body');
 
-    // Settings
-    $('settingsBtn')?.addEventListener('click', openSettings);
-    $('closeSettings')?.addEventListener('click', closeSettings);
-    $('settingsOverlay')?.addEventListener('click', (e) => {
-        if (e.target === $('settingsOverlay')) closeSettings();
+    const response = await fetch(`${window.BASE_URL}/chat/send`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream',
+            'Authorization': `Bearer ${localStorage.getItem('zora_token') || ''}`,
+        },
+        body: JSON.stringify({
+            conversation_id: chatState.incognito ? null : chatState.currentConversationId,
+            message,
+            extended_thinking: chatState.extended,
+            incognito: chatState.incognito,
+        }),
     });
 
-    // Search
-    $('historySearch')?.addEventListener('input', (e) => filterHistory(e.target.value));
+    if (!response.ok || !response.body) {
+        throw new Error('Unable to stream response from ZORA.');
+    }
 
-    // Message input
-    const input = $('messageInput');
-    if (input) {
-        input.addEventListener('input', autoResizeTextarea);
-        input.addEventListener('keydown', async (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                await sendMessage(input.value);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let assistantText = '';
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        buffer = parseSseChunk(buffer, (eventName, payload) => {
+            if (eventName === 'metadata') {
+                if (!chatState.incognito && payload.conversation_id) {
+                    chatState.currentConversationId = payload.conversation_id;
+                    updateUrl(payload.conversation_id);
+                }
+                chatState.currentConversationTitle = payload.title || chatState.currentConversationTitle;
+                updateShellState();
+            }
+
+            if (eventName === 'chunk') {
+                assistantText += payload.delta || '';
+                markdownNode.innerHTML = window.marked
+                    ? window.marked.parse(assistantText)
+                    : assistantText;
+                scrollMessagesToBottom();
+            }
+
+            if (eventName === 'done') {
+                assistantText = payload.message || assistantText;
+                markdownNode.innerHTML = window.marked
+                    ? window.marked.parse(assistantText)
+                    : assistantText;
             }
         });
     }
 
-    // Voice button (placeholder)
-    $('voiceBtn')?.addEventListener('click', () => {
-        showStatus('Voice input coming soon');
-    });
+    chatState.messages.push({ role: 'assistant', content: assistantText });
+    setTypingIndicator(false);
+    updateShellState();
 
-    // Attachment button (placeholder)
-    $('attachmentBtn')?.addEventListener('click', () => {
-        showStatus('File upload coming soon');
-    });
-
-    // Chat title dropdown
-    $('chatTitleDropdown')?.addEventListener('click', () => {
-        showStatus('Chat options coming soon');
-    });
-
-    // Keyboard shortcut for sidebar
-    document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === '/') {
-            e.preventDefault();
-            toggleSidebar();
-        }
-    });
-
-    // Mobile: swipe to open sidebar
-    let touchStartX = 0;
-    document.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-    }, { passive: true });
-
-    document.addEventListener('touchend', (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const diff = touchEndX - touchStartX;
-
-        // Swipe right from left edge to open sidebar
-        if (diff > 50 && touchStartX < 20) {
-            const sidebar = $('chatSidebar');
-            if (sidebar) sidebar.classList.add('open');
-        }
-    }, { passive: true });
+    if (!chatState.incognito) {
+        await loadHistory();
+    }
 }
 
-/**
- * Initialization
- */
-async function init() {
-    // Check auth first
-    const token = await checkAuth();
-    if (!token) return;
+async function sendMessage() {
+    if (chatState.isStreaming) {
+        return;
+    }
 
-    // Initialize theme before any rendering
-    initTheme();
+    const input = qs('chatInput');
+    const message = input.value.trim();
+    if (!message) {
+        return;
+    }
 
-    // Initialize sidebar state
-    initSidebar();
+    chatState.isStreaming = true;
+    appendMessage('user', message);
+    input.value = '';
+    autoResizeTextarea();
 
-    // Initialize orb features
-    initOrbTracking();
-    initOrbBlinking();
+    try {
+        await streamAssistantReply(message);
+    } catch (error) {
+        console.error('Send failed:', error);
+        setTypingIndicator(false);
+    } finally {
+        chatState.isStreaming = false;
+    }
+}
 
-    // Load user data
-    await loadUser();
+function bindSuggestionCards() {
+    document.querySelectorAll('.suggestion-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            qs('chatInput').value = card.dataset.suggestion || '';
+            autoResizeTextarea();
+            qs('chatInput').focus();
+        });
+    });
+}
 
-    // Load chat history
-    await loadChatHistory();
+function bindOrbBehavior() {
+    const orb = qs('zoraOrb');
+    if (!orb) {
+        return;
+    }
 
-    // Initialize UI
-    initSuggestionCards();
+    document.addEventListener('mousemove', (event) => {
+        const rect = orb.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const angle = Math.atan2(event.clientY - cy, event.clientX - cx);
+        const dist = Math.min(8, Math.hypot(event.clientX - cx, event.clientY - cy) / 20);
+        const ox = Math.cos(angle) * dist;
+        const oy = Math.sin(angle) * dist;
+
+        document.querySelectorAll('.orb-eye').forEach((eye) => {
+            eye.style.transform = `translate(${ox}px, ${oy}px)`;
+        });
+    });
+
+    document.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.orb-eye').forEach((eye) => {
+            eye.style.transform = 'translate(0px, 0px)';
+        });
+    });
+
+    window.setInterval(() => {
+        document.querySelectorAll('.orb-eye').forEach((eye) => {
+            eye.classList.add('blinking');
+            window.setTimeout(() => eye.classList.remove('blinking'), 300);
+        });
+    }, 6000);
+}
+
+function bindEvents() {
+    qs('sidebarToggle').addEventListener('click', toggleSidebar);
+    qs('historySearch').addEventListener('input', (event) => filterConversations(event.target.value));
+    qs('chatTitleButton').addEventListener('click', renameCurrentChat);
+    qs('newChatIconButton').addEventListener('click', startNewChat);
+    qs('incognitoButton').addEventListener('click', () => {
+        chatState.incognito = !chatState.incognito;
+        clearConversationState();
+        updateShellState();
+        filterConversations(qs('historySearch').value);
+    });
+    qs('extendedToggle').addEventListener('click', () => {
+        chatState.extended = !chatState.extended;
+        updateShellState();
+    });
+    qs('voiceButton').addEventListener('click', () => console.info('Voice input is not connected yet.'));
+    qs('attachButton').addEventListener('click', () => console.info('Attachment UI is not connected yet.'));
+    qs('chatInput').addEventListener('input', autoResizeTextarea);
+    qs('chatInput').addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            await sendMessage();
+        }
+    });
+
+    window.addEventListener('resize', initializeSidebarState);
+    bindSuggestionCards();
+    bindOrbBehavior();
+}
+
+async function bootstrapChat() {
+    if (!await loadCurrentUser()) {
+        return;
+    }
+
+    initializeSidebarState();
     bindEvents();
+    autoResizeTextarea();
+    updateGreeting();
+    renderMessages();
+    await loadHistory();
 
-    // Handle URL params
-    handleUrlParams();
-
-    console.log('ZORA Chat initialized');
+    const initialConversation = new URL(window.location.href).searchParams.get('conversation');
+    if (initialConversation) {
+        await selectConversation(initialConversation);
+    }
 }
 
-// Start when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
+document.addEventListener('DOMContentLoaded', bootstrapChat);
