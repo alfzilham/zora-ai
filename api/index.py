@@ -1,11 +1,14 @@
-from fastapi import FastAPI
+import os
+import sys
 
-app = FastAPI()
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
-@app.get("/api/health")
-async def health():
-    return {"status": "ok", "message": "ZORA AI is running"}
+try:
+    from app.main import app
+except Exception:
+    from fastapi import FastAPI
+    app = FastAPI()
 
-@app.get("/health")
-async def health2():
-    return {"status": "ok"}
+    @app.get("/api/health")
+    async def health():
+        return {"status": "ok", "message": "ZORA AI is running"}
