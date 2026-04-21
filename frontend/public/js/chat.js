@@ -63,21 +63,34 @@ function appendMessageBubble(role, content = '', options = {}) {
     const messageList = qs('messageList');
     const row = document.createElement('div');
     row.className = `message-row ${role}`;
+    const stack = document.createElement('div');
+    stack.className = 'message-stack';
 
     if (role === 'assistant') {
         const avatar = document.createElement('div');
-        avatar.className = 'message-avatar';
-        avatar.textContent = 'Z';
+        avatar.className = 'message-avatar message-avatar--assistant';
+        avatar.innerHTML = '<img src="/assets/images/logo/logo.png" alt="ZORA AI logo">';
         row.appendChild(avatar);
+
+        const author = document.createElement('p');
+        author.className = 'message-author';
+        author.textContent = 'AI Zora';
+        stack.appendChild(author);
     }
 
     const bubble = document.createElement('div');
     bubble.className = 'message-bubble';
     bubble.textContent = content;
-    row.appendChild(bubble);
+    stack.appendChild(bubble);
 
     if (role === 'user') {
-        row.appendChild(document.createElement('div'));
+        row.appendChild(stack);
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar message-avatar--user';
+        avatar.textContent = (getDisplayName() || 'Y').charAt(0).toUpperCase();
+        row.appendChild(avatar);
+    } else {
+        row.appendChild(stack);
     }
 
     messageList.appendChild(row);
@@ -126,6 +139,12 @@ function renderConversationList() {
     items.forEach((conversation) => {
         const wrapper = document.createElement('div');
         wrapper.className = `conversation-item ${chatState.currentConversationId === conversation.id ? 'is-active' : ''}`;
+        const title = conversation.title || 'New Chat';
+        const preview = title.length > 54 ? `${title.slice(0, 54)}...` : title;
+        const createdAt = conversation.created_at ? new Date(conversation.created_at) : null;
+        const timestamp = createdAt
+            ? createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : '';
 
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button';
@@ -137,9 +156,12 @@ function renderConversationList() {
         });
 
         wrapper.innerHTML = `
-            <div>
-                <span class="conversation-title">${conversation.title || 'New Chat'}</span>
-                <span class="conversation-meta">${new Date(conversation.created_at).toLocaleString()}</span>
+            <div class="conversation-main">
+                <div class="conversation-topline">
+                    <span class="conversation-title">${title}</span>
+                    <span class="conversation-time">${timestamp}</span>
+                </div>
+                <span class="conversation-preview">${preview}</span>
             </div>
         `;
         wrapper.appendChild(deleteButton);
