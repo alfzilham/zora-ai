@@ -79,26 +79,23 @@
                 <div class="sidebar-divider"></div>
 
                 <div class="user-profile-section">
-                    <div class="sidebar-user">
-                        <div id="profileAvatar" class="sidebar-user-avatar user-avatar">Z</div>
-                        <div class="sidebar-user-info user-info">
-                            <p id="profileName" class="sidebar-user-name user-name">Loading...</p>
-                            <p id="profileEmail" class="sidebar-user-email user-email"></p>
-                        </div>
-                        <button id="settingsGearButton" class="sidebar-settings-link settings-gear-btn user-settings-btn" type="button" aria-label="Open settings menu">
-                            <i class="fi fi-br-settings" aria-hidden="true"></i>
-                        </button>
-                    </div>
-
-                    <div id="settings-dropdown" class="settings-dropdown hidden">
+                    <div id="settings-dropdown" class="settings-dropdown">
                         <div id="settingsDropdownEmail" class="settings-dropdown-email"></div>
                         <div class="settings-divider"></div>
-                        <button class="settings-action-btn" data-action="settings" type="button">
-                            <i class="fi fi-br-settings"></i> Settings
-                        </button>
-                        <div class="settings-divider"></div>
-                        <button class="settings-action-btn logout-btn" data-action="logout" type="button">
-                            <i class="fi fi-br-exit"></i> Log out
+                        <div class="settings-action-btn logout-btn" id="logout-button">
+                            <i class="fi fi-br-sign-out-alt"></i>
+                            <span>Log out</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-user">
+                        <div id="profileAvatar" class="sidebar-user-avatar">Z</div>
+                        <div class="sidebar-user-info">
+                            <p id="profileName" class="sidebar-user-name">Loading...</p>
+                            <p id="profileEmail" class="sidebar-user-email"></p>
+                        </div>
+                        <button id="settings-gear" class="sidebar-settings-link" type="button" aria-label="Open settings">
+                            <i class="fi fi-br-settings"></i>
                         </button>
                     </div>
                 </div>
