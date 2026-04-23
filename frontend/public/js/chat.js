@@ -342,29 +342,6 @@ function bindHistoryMenu() {
             return;
         }
 
-        // Action: Star
-        const starBtn = e.target.closest('[data-action="star"]');
-        if (starBtn) {
-            e.stopPropagation();
-            const item = starBtn.closest('.chat-history-item');
-            item.classList.toggle('starred');
-            const isStarred = item.classList.contains('starred');
-
-            // Update dropdown icon & label
-            const dropIcon = starBtn.querySelector('i');
-            const dropLabel = starBtn.querySelector('span');
-            if (dropIcon) {
-                dropIcon.className = isStarred ? 'fi fi-sr-star' : 'fi fi-rr-star';
-                dropIcon.style.color = isStarred ? '#0099CC' : '#111111';
-                dropIcon.style.display = 'inline-block';
-            }
-            if (dropLabel) dropLabel.textContent = isStarred ? 'Unstar' : 'Star';
-
-            // Update star indicator visibility (handled by CSS .starred class)
-            closeAllHistoryDropdowns();
-            return;
-        }
-
         // Action: Rename
         const renameBtn = e.target.closest('[data-action="rename"]');
         if (renameBtn) {
@@ -562,14 +539,10 @@ function renderConversationList(conversations) {
             <div class="chat-history-item ${conv.id === chatState.currentConversationId ? 'active' : ''}"
                  data-conv-id="${conv.id}">
                 <span class="chat-history-title">${truncateLine(conv.title || 'New Chat', 36)}</span>
-                <i class="fi fi-sr-star item-star-indicator"></i>
                 <button class="item-menu-btn" type="button" aria-label="More options">
                     <i class="fi fi-br-menu-dots-vertical"></i>
                 </button>
                 <div class="chat-item-dropdown hidden">
-                    <div class="chat-item-action" data-action="star">
-                        <i class="fi fi-rr-star"></i> <span>Star</span>
-                    </div>
                     <div class="chat-item-action" data-action="rename">
                         <i class="fi fi-ss-pencil"></i> <span>Rename</span>
                     </div>

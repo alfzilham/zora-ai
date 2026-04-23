@@ -618,6 +618,8 @@ textarea {
     border-radius: 50%;
     overflow: hidden;
     z-index: 0;
+    filter: drop-shadow(0 0 18px rgba(120, 100, 255, 0.18))
+            drop-shadow(0 0 40px rgba(100, 180, 255, 0.10));
 }
 
 .orb-canvas-container canvas {
@@ -648,14 +650,14 @@ textarea {
 
 .orb-eyes {
     display: flex;
-    gap: 12px;
+    gap: 20px;
     align-items: center;
 }
 
 .orb-eye {
-    width: 8px;
-    height: 20px;
-    background: #ffffff;
+    width: 10px;
+    height: 35px;
+    background: #1a1a1a;
     border-radius: 4px;
     display: block;
     transition: transform 0.08s ease-out;
@@ -1054,20 +1056,6 @@ textarea {
 
 .lightbox-btn-confirm:hover {
     background: #e03a3a;
-}
-
-/* ─── STAR ICON di samping titik tiga ───────────────── */
-.chat-history-item .item-star-indicator {
-    display: none;
-    font-size: 0.72rem;
-    color: #0099CC;
-    flex-shrink: 0;
-    line-height: 1;
-}
-
-.chat-history-item.starred .item-star-indicator {
-    display: flex;
-    align-items: center;
 }
 
 /* Rename lightbox input */
