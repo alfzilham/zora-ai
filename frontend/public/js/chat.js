@@ -324,6 +324,7 @@ function bindEvents() {
     });
 
     qs('voiceButton')?.addEventListener('click', () => console.info('Voice input is not connected yet.'));
+    qs('sendButton')?.addEventListener('click', async () => await sendMessage());
     qs('attachButton')?.addEventListener('click', () => console.info('Attachment UI is not connected yet.'));
 
     const chatInput = qs('chatInput');

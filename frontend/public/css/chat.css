@@ -900,3 +900,27 @@ textarea {
 .chat-panels {
     flex-shrink: 0;
 }
+
+/* Send button */
+.send-btn {
+    background: #0099CC;
+    border-color: #0099CC;
+    color: #ffffff;
+}
+
+.send-btn:hover {
+    background: #007aaa;
+    border-color: #007aaa;
+    color: #ffffff;
+}
+
+/* Flaticon icon sizing normalization */
+.topbar-icon-button i,
+.icon-button i,
+.sidebar-toggle-btn i,
+.nav-icon i {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+}
