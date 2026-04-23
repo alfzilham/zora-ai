@@ -942,3 +942,108 @@ textarea {
 .history-scroll::-webkit-scrollbar-thumb:hover {
     background: #0099CC;
 }
+
+/* ─── ARCHIVE LIGHTBOX ──────────────────────────────── */
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeInOverlay 0.2s ease;
+}
+
+.lightbox-overlay.hidden {
+    display: none;
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.lightbox-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 28px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    animation: slideUpCard 0.2s ease;
+}
+
+@keyframes slideUpCard {
+    from { transform: translateY(12px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.lightbox-icon {
+    font-size: 2rem;
+    color: #FF4B4B;
+    margin-bottom: 12px;
+}
+
+.lightbox-title {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111111;
+}
+
+.lightbox-desc {
+    margin: 0 0 24px;
+    font-size: 0.875rem;
+    color: #999999;
+}
+
+.lightbox-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.lightbox-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.lightbox-btn-cancel {
+    background: #f0f0f0;
+    color: #111111;
+}
+
+.lightbox-btn-cancel:hover {
+    background: #e5e5e5;
+}
+
+.lightbox-btn-confirm {
+    background: #FF4B4B;
+    color: #ffffff;
+}
+
+.lightbox-btn-confirm:hover {
+    background: #e03a3a;
+}
+
+/* ─── STAR ICON di samping titik tiga ───────────────── */
+.chat-history-item .item-star-indicator {
+    display: none;
+    font-size: 0.72rem;
+    color: #f5c518;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.chat-history-item.starred .item-star-indicator {
+    display: flex;
+    align-items: center;
+}

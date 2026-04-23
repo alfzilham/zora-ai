@@ -223,6 +223,47 @@ function bindSettingsDropdown() {
     });
 }
 
+// ─── ARCHIVE LIGHTBOX ────────────────────────────────────────────────────────
+
+let archivePendingId = null;
+
+function showArchiveLightbox(convId) {
+    archivePendingId = convId;
+    qs('archiveLightbox').classList.remove('hidden');
+}
+
+function hideArchiveLightbox() {
+    archivePendingId = null;
+    qs('archiveLightbox').classList.add('hidden');
+}
+
+function bindArchiveLightbox() {
+    qs('archiveCancelBtn')?.addEventListener('click', hideArchiveLightbox);
+
+    qs('archiveConfirmBtn')?.addEventListener('click', async () => {
+        const convId = archivePendingId;
+        if (!convId) return;
+
+        hideArchiveLightbox();
+
+        // Remove from state
+        chatState.conversations = chatState.conversations.filter((c) => c.id !== convId);
+        chatState.filteredConversations = chatState.filteredConversations.filter((c) => c.id !== convId);
+        renderConversationList(chatState.filteredConversations);
+
+        await apiCallOrWarn(`/chat/${convId}`, 'DELETE');
+
+        if (convId === chatState.currentConversationId) {
+            startNewChat();
+        }
+    });
+
+    // Close on overlay click
+    qs('archiveLightbox')?.addEventListener('click', (e) => {
+        if (e.target === qs('archiveLightbox')) hideArchiveLightbox();
+    });
+}
+
 function bindHistoryMenu() {
     const list = qs('conversationList');
     if (!list) return;
@@ -248,11 +289,15 @@ function bindHistoryMenu() {
             e.stopPropagation();
             const item = starBtn.closest('.chat-history-item');
             item.classList.toggle('starred');
-            const starIcon = starBtn.querySelector('i');
-            if (starIcon) {
-                const isStarred = item.classList.contains('starred');
-                starIcon.className = isStarred ? 'fi fi-sr-star' : 'fi fi-rr-star';
-            }
+            const isStarred = item.classList.contains('starred');
+
+            // Update dropdown icon & label
+            const dropIcon = starBtn.querySelector('i');
+            const dropLabel = starBtn.querySelector('span');
+            if (dropIcon) dropIcon.className = isStarred ? 'fi fi-sr-star' : 'fi fi-rr-star';
+            if (dropLabel) dropLabel.textContent = isStarred ? 'Unstar' : 'Star';
+
+            // Update star indicator visibility (handled by CSS .starred class)
             closeAllHistoryDropdowns();
             return;
         }
@@ -287,26 +332,8 @@ function bindHistoryMenu() {
             const convId = item?.dataset.convId;
             if (!convId) return;
 
-            if (confirm('Archive this chat?')) {
-                // Remove from local state
-                chatState.conversations = chatState.conversations.filter(
-                    (c) => c.id !== convId
-                );
-                chatState.filteredConversations = chatState.filteredConversations.filter(
-                    (c) => c.id !== convId
-                );
-
-                // Re-render list from updated state
-                renderConversationList(chatState.filteredConversations);
-
-                // Call backend
-                apiCallOrWarn(`/chat/${convId}`, 'DELETE');
-
-                if (convId === chatState.currentConversationId) {
-                    startNewChat();
-                }
-            }
             closeAllHistoryDropdowns();
+            showArchiveLightbox(convId);
             return;
         }
 
@@ -367,6 +394,7 @@ function bindEvents() {
     bindSettingsDropdown();
     bindSuggestionCards();
     bindOrbBehavior();
+    bindArchiveLightbox();
 }
 
 async function bootstrapChat() {
@@ -477,6 +505,7 @@ function renderConversationList(conversations) {
             <div class="chat-history-item ${conv.id === chatState.currentConversationId ? 'active' : ''}"
                  data-conv-id="${conv.id}">
                 <span class="chat-history-title">${truncateLine(conv.title || 'New Chat', 36)}</span>
+                <i class="fi fi-sr-star item-star-indicator"></i>
                 <button class="item-menu-btn" type="button" aria-label="More options">•••</button>
                 <div class="chat-item-dropdown hidden">
                     <div class="chat-item-action" data-action="star">
