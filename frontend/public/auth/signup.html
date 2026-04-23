@@ -1,127 +1,759 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="ZORA AI SuperIntelligence Autonomous AI">
-    <meta name="theme-color" content="#00D4FF">
+    <meta name="description" content="ZORA AI SuperIntelligence Autonomous AI">
+    <meta name="theme-color" content="#0099CC">
     <meta property="og:title" content="ZORA AI">
     <meta property="og:description" content="SuperIntelligence Autonomous AI">
     <meta property="og:image" content="/assets/images/logo/logo.png">
     <meta property="og:type" content="website">
     <link rel="icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">`r`n    <meta name="google-client-id" content="1095758885377-qlpco50qic72as6hrcqlkghesop9b3dm.apps.googleusercontent.com">
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+    <meta name="google-client-id" content="1095758885377-qlpco50qic72as6hrcqlkghesop9b3dm.apps.googleusercontent.com">
     <title>Sign Up - ZORA AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/global.css">`r`n    <link rel="stylesheet" href="/css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #F5F5F5;
+            --white: #FFFFFF;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --text-muted: #999999;
+            --accent: #0099CC;
+            --accent-hover: #007AA8;
+            --border: #E5E5E5;
+            --hover: #F0F0F0;
+            --error: #E53E3E;
+            --font: 'Sora', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Layout ── */
+        .auth-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        /* ── Visual Panel (Left) ── */
+        .visual-panel {
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            gap: 36px;
+        }
+
+        .visual-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 153, 204, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 153, 204, 0.04) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+
+        .visual-panel::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 153, 204, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── Orb ── */
+        .zora-orb {
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: orbFloat 3s ease-in-out infinite;
+            cursor: default;
+            position: relative;
+            overflow: visible;
+            background: transparent;
+            z-index: 1;
+        }
+
+        .orb-canvas-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 0;
+            filter: drop-shadow(0 0 28px rgba(120, 100, 255, 0.22)) drop-shadow(0 0 60px rgba(100, 180, 255, 0.12));
+        }
+
+        .orb-canvas-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50%;
+            background: transparent !important;
+        }
+
+        .orb-eyes {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .orb-eye {
+            width: 12px;
+            height: 44px;
+            background: #252525;
+            border-radius: 6px;
+            display: block;
+            transition: transform 0.08s ease-out;
+        }
+
+        .orb-eye.blinking {
+            animation: eyeBlink 0.3s ease-in-out;
+        }
+
+        @keyframes eyeBlink {
+            0% {
+                transform: scaleY(1);
+            }
+
+            40% {
+                transform: scaleY(0.05);
+            }
+
+            100% {
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes orbFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+
+        /* ── Visual Branding ── */
+        .visual-brand {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .visual-brand-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+        }
+
+        .visual-brand-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 400;
+            max-width: 240px;
+            line-height: 1.6;
+        }
+
+        .visual-brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 153, 204, 0.08);
+            border: 1px solid rgba(0, 153, 204, 0.2);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 99px;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .badge-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ── Form Panel (Right) ── */
+        .form-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 48px 64px;
+            background: var(--white);
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+        .form-inner {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .form-logo img {
+            height: 36px;
+            width: auto;
+        }
+
+        .form-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .form-heading {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-subheading {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+
+        /* ── Form Fields ── */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+            letter-spacing: 0.1px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(0, 153, 204, 0.10);
+        }
+
+        /* ── Error ── */
+        .error-message {
+            font-size: 13px;
+            color: var(--error);
+            min-height: 16px;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            width: 100%;
+            padding: 13px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.18s ease;
+            letter-spacing: 0.1px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #FFFFFF;
+            margin-bottom: 14px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 153, 204, 0.28);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-google {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-google:hover {
+            background: var(--hover);
+            border-color: #CCCCCC;
+        }
+
+        .google-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* ── Divider ── */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* ── Footer Link ── */
+        .auth-footer {
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .auth-link {
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .auth-link:hover {
+            color: var(--accent-hover);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .auth-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .visual-panel {
+                display: none;
+            }
+
+            .form-panel {
+                padding: 40px 28px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-logo">
-                <img loading="lazy" src="/assets/images/logo/logo.png" alt="ZORA AI Logo" class="logo-img">
+    <div class="auth-layout">
+
+        <!-- ── LEFT: Visual Panel ── -->
+        <div class="visual-panel">
+            <div id="zoraOrb" class="zora-orb">
+                <div id="orbCanvas" class="orb-canvas-container"></div>
+                <div class="orb-eyes">
+                    <span class="orb-eye"></span>
+                    <span class="orb-eye"></span>
+                </div>
             </div>
 
-            <h1 class="auth-heading">Create your account</h1>
-            <p class="auth-subheading">Join ZORA AI and experience the future</p>
-
-            <form id="signupForm" class="auth-form">
-                <div class="form-group">
-                    <label for="name" class="form-label">Full Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        class="form-input"
-                        placeholder="Enter your full name"
-                        required
-                        autocomplete="name"
-                    >
+            <div class="visual-brand">
+                <div class="visual-brand-badge">
+                    <span class="badge-dot"></span>
+                    SuperIntelligence
                 </div>
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        class="form-input"
-                        placeholder="Enter your email"
-                        required
-                        autocomplete="email"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        class="form-input"
-                        placeholder="Create a password (min 6 characters)"
-                        required
-                        minlength="6"
-                        autocomplete="new-password"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        class="form-input"
-                        placeholder="Confirm your password"
-                        required
-                        autocomplete="new-password"
-                    >
-                </div>
-
-                <div id="errorMessage" class="error-message"></div>
-
-                <button type="submit" class="btn btn-primary">
-                    <span class="btn-text">Sign Up</span>
-                    <span class="btn-loader hidden">Loading...</span>
-                </button>
-            </form>
-
-            <div class="auth-divider">
-                <span class="divider-line"></span>
-                <span class="divider-text">or</span>
-                <span class="divider-line"></span>
+                <div class="visual-brand-title">Join ZORA AI</div>
+                <p class="visual-brand-sub">Create your account and experience autonomous intelligence built for you.
+                </p>
             </div>
-
-            <button id="googleBtn" class="btn btn-google" type="button">
-                <svg class="google-icon" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Continue with Google
-            </button>
-
-            <p class="auth-footer">
-                Already have an account?
-                <a href="/auth/login.html" class="auth-link">Login</a>
-            </p>
         </div>
+
+        <!-- ── RIGHT: Form Panel ── -->
+        <div class="form-panel">
+            <div class="form-inner">
+
+                <div class="form-logo">
+                    <img src="/assets/images/logo/logo.png" alt="ZORA AI Logo">
+                    <span class="form-logo-text">ZORA AI</span>
+                </div>
+
+                <h1 class="form-heading">Create your account</h1>
+                <p class="form-subheading">Join ZORA AI and experience the future</p>
+
+                <form id="signupForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="Enter your full name"
+                            required autocomplete="name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email"
+                            required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input"
+                            placeholder="Create a password (min 6 characters)" required minlength="6"
+                            autocomplete="new-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+                            placeholder="Confirm your password" required autocomplete="new-password">
+                    </div>
+
+                    <div id="errorMessage" class="error-message"></div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Sign Up</span>
+                        <span class="btn-loader hidden">Loading...</span>
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-text">or</span>
+                    <span class="divider-line"></span>
+                </div>
+
+                <button id="googleBtn" class="btn btn-google" type="button">
+                    <svg class="google-icon" viewBox="0 0 24 24">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Continue with Google
+                </button>
+
+                <p class="auth-footer">
+                    Already have an account?
+                    <a href="/auth/login.html" class="auth-link">Login</a>
+                </p>
+
+            </div>
+        </div>
+
     </div>
 
     <script defer src="/js/utils/helpers.js"></script>
     <script defer src="/js/utils/api.js"></script>
-    <script src="../js/config.js"></script>
+    <script src="/js/config.js"></script>
     <script defer src="/js/auth.js"></script>
+
     <script>
-        // Check auth status on page load
+        // ── Orb Behavior ──────────────────────────────────────
+        function bindOrbBehavior() {
+            const orb = document.getElementById('zoraOrb');
+            const container = document.getElementById('orbCanvas');
+            if (!orb || !container) return;
+
+            document.addEventListener('mousemove', (e) => {
+                const rect = orb.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+                const dist = Math.min(28, Math.hypot(e.clientX - cx, e.clientY - cy) / 8);
+                document.querySelectorAll('.orb-eye').forEach((eye) => {
+                    eye.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
+                });
+            });
+
+            document.addEventListener('mouseleave', () => {
+                document.querySelectorAll('.orb-eye').forEach((eye) => {
+                    eye.style.transform = 'translate(0px, 0px)';
+                });
+            });
+
+            setInterval(() => {
+                document.querySelectorAll('.orb-eye').forEach((eye) => {
+                    eye.classList.add('blinking');
+                    setTimeout(() => eye.classList.remove('blinking'), 300);
+                });
+            }, 6000);
+
+            initWebGLOrb(container);
+        }
+
+        async function initWebGLOrb(container) {
+            try {
+                const { Renderer, Program, Mesh, Triangle, Vec3 } =
+                    await import('https://cdn.jsdelivr.net/npm/ogl@1.0.9/src/index.js');
+
+                const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
+                const gl = renderer.gl;
+                gl.clearColor(0, 0, 0, 0);
+                container.appendChild(gl.canvas);
+
+                const vert = `
+                    precision highp float;
+                    attribute vec2 position;
+                    attribute vec2 uv;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = vec4(position, 0.0, 1.0);
+                    }
+                `;
+
+                const frag = `
+                    precision highp float;
+                    uniform float iTime;
+                    uniform vec3 iResolution;
+                    uniform float hue;
+                    uniform float hover;
+                    uniform float rot;
+                    uniform float hoverIntensity;
+                    uniform vec3 backgroundColor;
+                    varying vec2 vUv;
+
+                    vec3 rgb2yiq(vec3 c) {
+                        return vec3(dot(c,vec3(0.299,0.587,0.114)),dot(c,vec3(0.596,-0.274,-0.322)),dot(c,vec3(0.211,-0.523,0.312)));
+                    }
+                    vec3 yiq2rgb(vec3 c) {
+                        return vec3(c.x+0.956*c.y+0.621*c.z,c.x-0.272*c.y-0.647*c.z,c.x-1.106*c.y+1.703*c.z);
+                    }
+                    vec3 adjustHue(vec3 color, float hueDeg) {
+                        float hueRad=hueDeg*3.14159265/180.0;
+                        vec3 yiq=rgb2yiq(color);
+                        float cosA=cos(hueRad); float sinA=sin(hueRad);
+                        yiq.y=yiq.y*cosA-yiq.z*sinA;
+                        yiq.z=yiq.y*sinA+yiq.z*cosA;
+                        return yiq2rgb(yiq);
+                    }
+                    vec3 hash33(vec3 p3) {
+                        p3=fract(p3*vec3(0.1031,0.11369,0.13787));
+                        p3+=dot(p3,p3.yxz+19.19);
+                        return -1.0+2.0*fract(vec3(p3.x+p3.y,p3.x+p3.z,p3.y+p3.z)*p3.zyx);
+                    }
+                    float snoise3(vec3 p) {
+                        const float K1=0.333333333; const float K2=0.166666667;
+                        vec3 i=floor(p+(p.x+p.y+p.z)*K1);
+                        vec3 d0=p-(i-(i.x+i.y+i.z)*K2);
+                        vec3 e=step(vec3(0.0),d0-d0.yzx);
+                        vec3 i1=e*(1.0-e.zxy); vec3 i2=1.0-e.zxy*(1.0-e);
+                        vec3 d1=d0-(i1-K2); vec3 d2=d0-(i2-K1); vec3 d3=d0-0.5;
+                        vec4 h=max(0.6-vec4(dot(d0,d0),dot(d1,d1),dot(d2,d2),dot(d3,d3)),0.0);
+                        vec4 n=h*h*h*h*vec4(dot(d0,hash33(i)),dot(d1,hash33(i+i1)),dot(d2,hash33(i+i2)),dot(d3,hash33(i+1.0)));
+                        return dot(vec4(31.316),n);
+                    }
+                    vec4 extractAlpha(vec3 colorIn) {
+                        float a=max(max(colorIn.r,colorIn.g),colorIn.b);
+                        return vec4(colorIn.rgb/(a+1e-5),a);
+                    }
+                    const vec3 baseColor1=vec3(0.611765,0.262745,0.996078);
+                    const vec3 baseColor2=vec3(0.298039,0.760784,0.913725);
+                    const vec3 baseColor3=vec3(0.062745,0.078431,0.600000);
+                    const float innerRadius=0.6;
+                    const float noiseScale=0.65;
+                    float light1(float i,float a,float d){return i/(1.0+d*a);}
+                    float light2(float i,float a,float d){return i/(1.0+d*d*a);}
+                    vec4 draw(vec2 uv) {
+                        vec3 color1=adjustHue(baseColor1,hue);
+                        vec3 color2=adjustHue(baseColor2,hue);
+                        vec3 color3=adjustHue(baseColor3,hue);
+                        float ang=atan(uv.y,uv.x); float len=length(uv);
+                        float invLen=len>0.0?1.0/len:0.0;
+                        float bgLum=dot(backgroundColor,vec3(0.299,0.587,0.114));
+                        float n0=snoise3(vec3(uv*noiseScale,iTime*0.5))*0.5+0.5;
+                        float r0=mix(mix(innerRadius,1.0,0.4),mix(innerRadius,1.0,0.6),n0);
+                        float d0=distance(uv,(r0*invLen)*uv);
+                        float v0=light1(1.0,10.0,d0);
+                        v0*=smoothstep(r0*1.05,r0,len);
+                        float innerFade=smoothstep(r0*0.8,r0*0.95,len);
+                        v0*=mix(innerFade,1.0,bgLum*0.7);
+                        float cl=cos(ang+iTime*2.0)*0.5+0.5;
+                        float a=iTime*-1.0;
+                        vec2 pos=vec2(cos(a),sin(a))*r0;
+                        float d=distance(uv,pos);
+                        float v1=light2(1.5,5.0,d)*light1(1.0,50.0,d0);
+                        float v2=smoothstep(1.0,mix(innerRadius,1.0,n0*0.5),len);
+                        float v3=smoothstep(innerRadius,mix(innerRadius,1.0,0.5),len);
+                        vec3 colBase=mix(color1,color2,cl);
+                        float fadeAmount=mix(1.0,0.1,bgLum);
+                        vec3 darkCol=clamp((mix(color3,colBase,v0)+v1)*v2*v3,0.0,1.0);
+                        vec3 lightCol=clamp(mix(backgroundColor,colBase+v1,v0)*mix(1.0,v2*v3,fadeAmount),0.0,1.0);
+                        return extractAlpha(mix(darkCol,lightCol,bgLum));
+                    }
+                    void main() {
+                        vec2 center=iResolution.xy*0.5;
+                        float size=min(iResolution.x,iResolution.y);
+                        vec2 uv=(vUv*iResolution.xy-center)/size*2.0;
+                        float s=sin(rot); float c=cos(rot);
+                        uv=vec2(c*uv.x-s*uv.y,s*uv.x+c*uv.y);
+                        uv.x+=hover*hoverIntensity*0.1*sin(uv.y*10.0+iTime);
+                        uv.y+=hover*hoverIntensity*0.1*sin(uv.x*10.0+iTime);
+                        vec4 col=draw(uv);
+                        gl_FragColor=vec4(col.rgb*col.a,col.a);
+                    }
+                `;
+
+                const geometry = new Triangle(gl);
+                const program = new Program(gl, {
+                    vertex: vert,
+                    fragment: frag,
+                    uniforms: {
+                        iTime: { value: 0 },
+                        iResolution: { value: new Vec3(320, 320, 1) },
+                        hue: { value: 0 },
+                        hover: { value: 0 },
+                        rot: { value: 0 },
+                        hoverIntensity: { value: 0.2 },
+                        backgroundColor: { value: new Vec3(0.961, 0.961, 0.961) },
+                    }
+                });
+
+                const mesh = new Mesh(gl, { geometry, program });
+
+                function resize() {
+                    const dpr = window.devicePixelRatio || 1;
+                    const w = container.clientWidth;
+                    const h = container.clientHeight;
+                    renderer.setSize(w * dpr, h * dpr);
+                    gl.canvas.style.width = w + 'px';
+                    gl.canvas.style.height = h + 'px';
+                    program.uniforms.iResolution.value.set(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height);
+                }
+                window.addEventListener('resize', resize);
+                resize();
+
+                let targetHover = 0;
+                let currentRot = 0;
+                let lastTime = 0;
+
+                container.addEventListener('mousemove', (e) => {
+                    const rect = container.getBoundingClientRect();
+                    const uvX = ((e.clientX - rect.left - rect.width / 2) / Math.min(rect.width, rect.height)) * 2;
+                    const uvY = ((e.clientY - rect.top - rect.height / 2) / Math.min(rect.width, rect.height)) * 2;
+                    targetHover = Math.hypot(uvX, uvY) < 0.8 ? 1 : 0;
+                });
+                container.addEventListener('mouseleave', () => { targetHover = 0; });
+
+                (function loop(t) {
+                    requestAnimationFrame(loop);
+                    const dt = (t - lastTime) * 0.001;
+                    lastTime = t;
+                    program.uniforms.iTime.value = t * 0.001;
+                    program.uniforms.hover.value += (targetHover - program.uniforms.hover.value) * 0.1;
+                    if (targetHover > 0.5) currentRot += dt * 0.3;
+                    program.uniforms.rot.value = currentRot;
+                    renderer.render({ scene: mesh });
+                })(0);
+
+            } catch (err) {
+                console.warn('WebGL Orb failed:', err);
+            }
+        }
+
+        // ── Init ──────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             checkAuthStatus();
+            bindOrbBehavior();
 
-            // Handle form submission
             const signupForm = document.getElementById('signupForm');
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -134,16 +766,13 @@
                 const btnText = document.querySelector('.btn-text');
                 const btnLoader = document.querySelector('.btn-loader');
 
-                // Clear previous errors
                 errorMessage.textContent = '';
 
-                // Validate password match
                 if (password !== confirmPassword) {
                     errorMessage.textContent = 'Passwords do not match';
                     return;
                 }
 
-                // Show loading state
                 btnText.classList.add('hidden');
                 btnLoader.classList.remove('hidden');
 
@@ -157,17 +786,11 @@
                 }
             });
 
-            // Handle Google auth
-            const googleBtn = document.getElementById('googleBtn');
-            googleBtn.addEventListener('click', () => {
+            document.getElementById('googleBtn').addEventListener('click', () => {
                 handleGoogleAuth();
             });
         });
     </script>
 </body>
+
 </html>
-
-
-
-
-
