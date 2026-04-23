@@ -1464,13 +1464,13 @@ const TRANSLATIONS = {
         greetingEvening: 'Good Evening',
         welcomeLine2: 'Will we',
         rotatingPhrases: [
-            'build something today?',
-            'build a website?',
-            'Design some products?',
-            'Create an Image?',
-            'Create a video?',
-            'Research some news today?',
-            'Analytic a Business?',
+            'Will we build something today?',
+            'Will we build a website?',
+            'Will we Design some products?',
+            'Will we Create an Image?',
+            'Will we Create a video?',
+            'Will we Research some news today?',
+            'Will we Analytic a Business?',
         ],
 
         // Composer
