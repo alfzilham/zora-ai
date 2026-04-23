@@ -625,7 +625,13 @@ textarea {
     animation: orbFloat 3s ease-in-out infinite;
     cursor: default;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    background: transparent;
+}
+
+.orb-canvas-container canvas {
+    border-radius: 50%;
+    background: transparent !important;
 }
 
 .orb-canvas-container {

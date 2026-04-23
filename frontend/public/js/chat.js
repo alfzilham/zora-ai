@@ -922,7 +922,7 @@ async function initWebGLOrb(container) {
                 hover: { value: 0 },
                 rot: { value: 0 },
                 hoverIntensity: { value: 0.2 },
-                backgroundColor: { value: new Vec3(0.96, 0.96, 0.96) },
+                backgroundColor:  { value: new Vec3(1.0, 1.0, 1.0) },
             }
         });
 
