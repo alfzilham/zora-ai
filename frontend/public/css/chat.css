@@ -356,12 +356,6 @@ textarea {
     margin-top: 4px;
 }
 
-/* Starred chat indicator */
-.chat-history-item.starred .chat-history-title::before {
-    content: "⭐ ";
-    font-size: 0.75rem;
-}
-
 /* chat-history-item needs position relative */
 .chat-history-item {
     position: relative;

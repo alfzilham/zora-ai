@@ -558,10 +558,10 @@ function renderConversationList(conversations) {
             <div class="chat-history-item ${conv.id === chatState.currentConversationId ? 'active' : ''}"
                  data-conv-id="${conv.id}">
                 <span class="chat-history-title">${truncateLine(conv.title || 'New Chat', 36)}</span>
+                <i class="fi fi-sr-star item-star-indicator"></i>
                 <button class="item-menu-btn" type="button" aria-label="More options">
                     <i class="fi fi-br-menu-dots-vertical"></i>
                 </button>
-                <i class="fi fi-sr-star item-star-indicator"></i>
                 <div class="chat-item-dropdown hidden">
                     <div class="chat-item-action" data-action="star">
                         <i class="fi fi-rr-star"></i> <span>Star</span>
