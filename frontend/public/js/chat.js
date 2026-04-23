@@ -72,13 +72,9 @@ async function apiCallOrWarn(endpoint, method = 'GET', body = null, requireAuth 
 
 function getGreetingLabel() {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour <= 11) {
-        return 'Good Morning';
-    }
-    if (hour >= 12 && hour <= 17) {
-        return 'Good Afternoon';
-    }
-    return 'Good Evening';
+    if (hour >= 5 && hour <= 11) return t('greetingMorning');
+    if (hour >= 12 && hour <= 17) return t('greetingAfternoon');
+    return t('greetingEvening');
 }
 
 function splitTextAnimate(el, text, startDelay = 0) {
@@ -156,6 +152,13 @@ function cycleRotatingText() {
 function startRotatingText() {
     const el = qs('rotatingText');
     if (!el) return;
+
+    // Gunakan phrases dari translasi
+    const phrases = t('rotatingPhrases');
+    if (Array.isArray(phrases)) {
+        rotatingPhrases.length = 0;
+        phrases.forEach((p) => rotatingPhrases.push(p));
+    }
 
     rotatingIndex = 0;
     renderRotatingText(el, rotatingPhrases[0], true);
@@ -559,6 +562,7 @@ async function bootstrapChat() {
     initializeSidebarState();
     bindEvents();
     autoResizeTextarea();
+    applyTranslations();
     updateGreeting();
     renderMessages();
     await loadHistory();
@@ -1282,6 +1286,7 @@ function bindSettingsFeatures() {
             const badge = qs('currentLangLabel');
             if (badge) badge.textContent = label;
 
+            applyTranslations();
             apiCallOrWarn('/settings/language', 'PUT', { language: lang });
         });
     });
@@ -1432,6 +1437,753 @@ function bindSearchPalette() {
             }
         }
     });
+}
+
+// ─── TRANSLATION SYSTEM ───────────────────────────────────────────────────────
+
+const TRANSLATIONS = {
+    en: {
+        // Sidebar nav
+        navHome: 'Home',
+        navSearch: 'Search',
+        navHistory: 'History',
+        navCode: 'Code',
+        navLabs: 'Labs',
+        navFeedback: 'FeedBack',
+        chatHistory: 'Chat History',
+
+        // Topbar
+        newChat: 'New Chat',
+
+        // Welcome
+        greetingMorning: 'Good Morning',
+        greetingAfternoon: 'Good Afternoon',
+        greetingEvening: 'Good Evening',
+        welcomeLine2: 'Will we',
+        rotatingPhrases: [
+            'build something today?',
+            'build a website?',
+            'Design some products?',
+            'Create an Image?',
+            'Create a video?',
+            'Research some news today?',
+            'Analytic a Business?',
+        ],
+
+        // Composer
+        messagePlaceholder: 'Message Zora...',
+        extended: 'Extended',
+
+        // History menu
+        rename: 'Rename',
+        archive: 'Archive',
+
+        // Lightboxes
+        archiveTitle: 'Archive this chat?',
+        archiveDesc: 'This chat will be removed from your history.',
+        cancel: 'Cancel',
+        renameTitle: 'Rename chat',
+        renameConfirm: 'Rename',
+        renamePlaceholder: 'Enter new name...',
+
+        // Settings
+        settingsTitle: 'Settings',
+        tabProfile: 'Profile',
+        tabLanguage: 'Language',
+        tabFaq: 'FAQ',
+        tabAbout: 'About ZORA',
+        logOut: 'Log out',
+        profileTitle: 'Profile',
+        profileDesc: 'Manage your personal information.',
+        changePhoto: 'Change Photo',
+        displayName: 'Display Name',
+        email: 'Email',
+        saveChanges: 'Save Changes',
+        saved: '✓ Saved!',
+        languageTitle: 'Language',
+        languageDesc: 'Choose your preferred language for ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Frequently asked questions about ZORA AI.',
+        aboutTitle: 'About ZORA',
+        aboutDesc: 'Learn more about ZORA AI.',
+
+        // Search palette
+        searchPlaceholder: 'Search chats...',
+        searchEmpty: 'Start typing to search chats...',
+        searchRecent: 'Recent Chats',
+        searchNoResult: 'No chats found for',
+
+        // User profile dropdown
+        profileSettings: 'Profile Settings',
+        faqShort: 'FAQ',
+        language: 'Language',
+    },
+
+    id: {
+        navHome: 'Beranda',
+        navSearch: 'Cari',
+        navHistory: 'Riwayat',
+        navCode: 'Kode',
+        navLabs: 'Labs',
+        navFeedback: 'Masukan',
+        chatHistory: 'Riwayat Chat',
+        newChat: 'Chat Baru',
+        greetingMorning: 'Selamat Pagi',
+        greetingAfternoon: 'Selamat Siang',
+        greetingEvening: 'Selamat Malam',
+        welcomeLine2: 'Apa yang akan kita',
+        rotatingPhrases: [
+            'buat hari ini?',
+            'bangun websitenya?',
+            'desain produknya?',
+            'buat gambarnya?',
+            'buat videonya?',
+            'riset beritanya?',
+            'analisa bisnisnya?',
+        ],
+        messagePlaceholder: 'Pesan Zora...',
+        extended: 'Diperluas',
+        rename: 'Ganti Nama',
+        archive: 'Arsip',
+        archiveTitle: 'Arsipkan chat ini?',
+        archiveDesc: 'Chat ini akan dihapus dari riwayat kamu.',
+        cancel: 'Batal',
+        renameTitle: 'Ganti nama chat',
+        renameConfirm: 'Simpan',
+        renamePlaceholder: 'Masukkan nama baru...',
+        settingsTitle: 'Pengaturan',
+        tabProfile: 'Profil',
+        tabLanguage: 'Bahasa',
+        tabFaq: 'FAQ',
+        tabAbout: 'Tentang ZORA',
+        logOut: 'Keluar',
+        profileTitle: 'Profil',
+        profileDesc: 'Kelola informasi pribadi kamu.',
+        changePhoto: 'Ganti Foto',
+        displayName: 'Nama Tampilan',
+        email: 'Email',
+        saveChanges: 'Simpan Perubahan',
+        saved: '✓ Tersimpan!',
+        languageTitle: 'Bahasa',
+        languageDesc: 'Pilih bahasa yang kamu inginkan untuk ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Pertanyaan yang sering ditanyakan tentang ZORA AI.',
+        aboutTitle: 'Tentang ZORA',
+        aboutDesc: 'Pelajari lebih lanjut tentang ZORA AI.',
+        searchPlaceholder: 'Cari chat...',
+        searchEmpty: 'Mulai ketik untuk mencari chat...',
+        searchRecent: 'Chat Terbaru',
+        searchNoResult: 'Tidak ada chat ditemukan untuk',
+        profileSettings: 'Pengaturan Profil',
+        faqShort: 'FAQ',
+        language: 'Bahasa',
+    },
+
+    ja: {
+        navHome: 'ホーム',
+        navSearch: '検索',
+        navHistory: '履歴',
+        navCode: 'コード',
+        navLabs: 'ラボ',
+        navFeedback: 'フィードバック',
+        chatHistory: 'チャット履歴',
+        newChat: '新しいチャット',
+        greetingMorning: 'おはようございます',
+        greetingAfternoon: 'こんにちは',
+        greetingEvening: 'こんばんは',
+        welcomeLine2: '今日は何を',
+        rotatingPhrases: [
+            '作りましょうか？',
+            'ウェブサイトを作る？',
+            'デザインする？',
+            '画像を作る？',
+            '動画を作る？',
+            'ニュースを調べる？',
+            'ビジネスを分析する？',
+        ],
+        messagePlaceholder: 'Zoraにメッセージ...',
+        extended: '拡張',
+        rename: '名前を変更',
+        archive: 'アーカイブ',
+        archiveTitle: 'このチャットをアーカイブ？',
+        archiveDesc: 'このチャットは履歴から削除されます。',
+        cancel: 'キャンセル',
+        renameTitle: 'チャット名を変更',
+        renameConfirm: '保存',
+        renamePlaceholder: '新しい名前を入力...',
+        settingsTitle: '設定',
+        tabProfile: 'プロフィール',
+        tabLanguage: '言語',
+        tabFaq: 'FAQ',
+        tabAbout: 'ZORAについて',
+        logOut: 'ログアウト',
+        profileTitle: 'プロフィール',
+        profileDesc: '個人情報を管理します。',
+        changePhoto: '写真を変更',
+        displayName: '表示名',
+        email: 'メール',
+        saveChanges: '変更を保存',
+        saved: '✓ 保存しました！',
+        languageTitle: '言語',
+        languageDesc: 'ZORA AIの言語を選択してください。',
+        faqTitle: 'FAQ',
+        faqDesc: 'ZORA AIについてよくある質問。',
+        aboutTitle: 'ZORAについて',
+        aboutDesc: 'ZORA AIについて詳しく。',
+        searchPlaceholder: 'チャットを検索...',
+        searchEmpty: '入力してチャットを検索...',
+        searchRecent: '最近のチャット',
+        searchNoResult: '検索結果なし:',
+        profileSettings: 'プロフィール設定',
+        faqShort: 'FAQ',
+        language: '言語',
+    },
+
+    ko: {
+        navHome: '홈',
+        navSearch: '검색',
+        navHistory: '기록',
+        navCode: '코드',
+        navLabs: '랩스',
+        navFeedback: '피드백',
+        chatHistory: '채팅 기록',
+        newChat: '새 채팅',
+        greetingMorning: '좋은 아침이에요',
+        greetingAfternoon: '안녕하세요',
+        greetingEvening: '좋은 저녁이에요',
+        welcomeLine2: '오늘은 무엇을',
+        rotatingPhrases: [
+            '만들까요?',
+            '웹사이트 만들기?',
+            '디자인하기?',
+            '이미지 만들기?',
+            '영상 만들기?',
+            '뉴스 검색하기?',
+            '비즈니스 분석하기?',
+        ],
+        messagePlaceholder: 'Zora에게 메시지...',
+        extended: '확장',
+        rename: '이름 바꾸기',
+        archive: '보관',
+        archiveTitle: '이 채팅을 보관하시겠어요?',
+        archiveDesc: '이 채팅은 기록에서 삭제됩니다.',
+        cancel: '취소',
+        renameTitle: '채팅 이름 바꾸기',
+        renameConfirm: '저장',
+        renamePlaceholder: '새 이름을 입력...',
+        settingsTitle: '설정',
+        tabProfile: '프로필',
+        tabLanguage: '언어',
+        tabFaq: 'FAQ',
+        tabAbout: 'ZORA 소개',
+        logOut: '로그아웃',
+        profileTitle: '프로필',
+        profileDesc: '개인 정보를 관리하세요.',
+        changePhoto: '사진 변경',
+        displayName: '표시 이름',
+        email: '이메일',
+        saveChanges: '변경사항 저장',
+        saved: '✓ 저장됨!',
+        languageTitle: '언어',
+        languageDesc: 'ZORA AI 언어를 선택하세요.',
+        faqTitle: 'FAQ',
+        faqDesc: 'ZORA AI에 대한 자주 묻는 질문.',
+        aboutTitle: 'ZORA 소개',
+        aboutDesc: 'ZORA AI에 대해 더 알아보세요.',
+        searchPlaceholder: '채팅 검색...',
+        searchEmpty: '입력하여 채팅 검색...',
+        searchRecent: '최근 채팅',
+        searchNoResult: '검색 결과 없음:',
+        profileSettings: '프로필 설정',
+        faqShort: 'FAQ',
+        language: '언어',
+    },
+
+    zh: {
+        navHome: '主页',
+        navSearch: '搜索',
+        navHistory: '历史',
+        navCode: '代码',
+        navLabs: '实验室',
+        navFeedback: '反馈',
+        chatHistory: '聊天记录',
+        newChat: '新对话',
+        greetingMorning: '早上好',
+        greetingAfternoon: '下午好',
+        greetingEvening: '晚上好',
+        welcomeLine2: '今天我们来',
+        rotatingPhrases: [
+            '做点什么？',
+            '建个网站？',
+            '设计产品？',
+            '生成图片？',
+            '制作视频？',
+            '搜索新闻？',
+            '分析业务？',
+        ],
+        messagePlaceholder: '给 Zora 发消息...',
+        extended: '扩展',
+        rename: '重命名',
+        archive: '归档',
+        archiveTitle: '归档此聊天？',
+        archiveDesc: '此聊天将从历史记录中删除。',
+        cancel: '取消',
+        renameTitle: '重命名聊天',
+        renameConfirm: '保存',
+        renamePlaceholder: '输入新名称...',
+        settingsTitle: '设置',
+        tabProfile: '个人资料',
+        tabLanguage: '语言',
+        tabFaq: '常见问题',
+        tabAbout: '关于 ZORA',
+        logOut: '退出登录',
+        profileTitle: '个人资料',
+        profileDesc: '管理您的个人信息。',
+        changePhoto: '更换照片',
+        displayName: '显示名称',
+        email: '邮箱',
+        saveChanges: '保存更改',
+        saved: '✓ 已保存！',
+        languageTitle: '语言',
+        languageDesc: '选择您的 ZORA AI 首选语言。',
+        faqTitle: '常见问题',
+        faqDesc: '关于 ZORA AI 的常见问题。',
+        aboutTitle: '关于 ZORA',
+        aboutDesc: '了解更多关于 ZORA AI 的信息。',
+        searchPlaceholder: '搜索聊天...',
+        searchEmpty: '开始输入以搜索聊天...',
+        searchRecent: '最近聊天',
+        searchNoResult: '未找到聊天:',
+        profileSettings: '个人资料设置',
+        faqShort: '常见问题',
+        language: '语言',
+    },
+
+    fr: {
+        navHome: 'Accueil',
+        navSearch: 'Rechercher',
+        navHistory: 'Historique',
+        navCode: 'Code',
+        navLabs: 'Labs',
+        navFeedback: 'Feedback',
+        chatHistory: 'Historique des chats',
+        newChat: 'Nouvelle conversation',
+        greetingMorning: 'Bonjour',
+        greetingAfternoon: 'Bon après-midi',
+        greetingEvening: 'Bonsoir',
+        welcomeLine2: 'Que voulons-nous',
+        rotatingPhrases: [
+            'créer aujourd\'hui?',
+            'créer un site web?',
+            'concevoir des produits?',
+            'créer une image?',
+            'créer une vidéo?',
+            'faire des recherches?',
+            'analyser un business?',
+        ],
+        messagePlaceholder: 'Message à Zora...',
+        extended: 'Étendu',
+        rename: 'Renommer',
+        archive: 'Archiver',
+        archiveTitle: 'Archiver ce chat?',
+        archiveDesc: 'Ce chat sera supprimé de votre historique.',
+        cancel: 'Annuler',
+        renameTitle: 'Renommer le chat',
+        renameConfirm: 'Enregistrer',
+        renamePlaceholder: 'Entrez un nouveau nom...',
+        settingsTitle: 'Paramètres',
+        tabProfile: 'Profil',
+        tabLanguage: 'Langue',
+        tabFaq: 'FAQ',
+        tabAbout: 'À propos de ZORA',
+        logOut: 'Déconnexion',
+        profileTitle: 'Profil',
+        profileDesc: 'Gérez vos informations personnelles.',
+        changePhoto: 'Changer la photo',
+        displayName: 'Nom affiché',
+        email: 'Email',
+        saveChanges: 'Enregistrer',
+        saved: '✓ Enregistré!',
+        languageTitle: 'Langue',
+        languageDesc: 'Choisissez votre langue préférée pour ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Questions fréquemment posées sur ZORA AI.',
+        aboutTitle: 'À propos de ZORA',
+        aboutDesc: 'En savoir plus sur ZORA AI.',
+        searchPlaceholder: 'Rechercher des chats...',
+        searchEmpty: 'Commencez à taper pour rechercher...',
+        searchRecent: 'Chats récents',
+        searchNoResult: 'Aucun chat trouvé pour',
+        profileSettings: 'Paramètres du profil',
+        faqShort: 'FAQ',
+        language: 'Langue',
+    },
+
+    de: {
+        navHome: 'Startseite',
+        navSearch: 'Suchen',
+        navHistory: 'Verlauf',
+        navCode: 'Code',
+        navLabs: 'Labs',
+        navFeedback: 'Feedback',
+        chatHistory: 'Chat-Verlauf',
+        newChat: 'Neuer Chat',
+        greetingMorning: 'Guten Morgen',
+        greetingAfternoon: 'Guten Tag',
+        greetingEvening: 'Guten Abend',
+        welcomeLine2: 'Was sollen wir',
+        rotatingPhrases: [
+            'heute erstellen?',
+            'eine Website bauen?',
+            'Produkte gestalten?',
+            'ein Bild erstellen?',
+            'ein Video erstellen?',
+            'Neuigkeiten recherchieren?',
+            'ein Unternehmen analysieren?',
+        ],
+        messagePlaceholder: 'Nachricht an Zora...',
+        extended: 'Erweitert',
+        rename: 'Umbenennen',
+        archive: 'Archivieren',
+        archiveTitle: 'Diesen Chat archivieren?',
+        archiveDesc: 'Dieser Chat wird aus dem Verlauf entfernt.',
+        cancel: 'Abbrechen',
+        renameTitle: 'Chat umbenennen',
+        renameConfirm: 'Speichern',
+        renamePlaceholder: 'Neuen Namen eingeben...',
+        settingsTitle: 'Einstellungen',
+        tabProfile: 'Profil',
+        tabLanguage: 'Sprache',
+        tabFaq: 'FAQ',
+        tabAbout: 'Über ZORA',
+        logOut: 'Abmelden',
+        profileTitle: 'Profil',
+        profileDesc: 'Verwalte deine persönlichen Daten.',
+        changePhoto: 'Foto ändern',
+        displayName: 'Anzeigename',
+        email: 'E-Mail',
+        saveChanges: 'Änderungen speichern',
+        saved: '✓ Gespeichert!',
+        languageTitle: 'Sprache',
+        languageDesc: 'Wähle deine bevorzugte Sprache für ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Häufig gestellte Fragen zu ZORA AI.',
+        aboutTitle: 'Über ZORA',
+        aboutDesc: 'Erfahre mehr über ZORA AI.',
+        searchPlaceholder: 'Chats suchen...',
+        searchEmpty: 'Tippe um Chats zu suchen...',
+        searchRecent: 'Letzte Chats',
+        searchNoResult: 'Keine Chats gefunden für',
+        profileSettings: 'Profileinstellungen',
+        faqShort: 'FAQ',
+        language: 'Sprache',
+    },
+
+    it: {
+        navHome: 'Home',
+        navSearch: 'Cerca',
+        navHistory: 'Cronologia',
+        navCode: 'Codice',
+        navLabs: 'Labs',
+        navFeedback: 'Feedback',
+        chatHistory: 'Cronologia chat',
+        newChat: 'Nuova chat',
+        greetingMorning: 'Buongiorno',
+        greetingAfternoon: 'Buon pomeriggio',
+        greetingEvening: 'Buonasera',
+        welcomeLine2: 'Cosa vogliamo',
+        rotatingPhrases: [
+            'creare oggi?',
+            'costruire un sito?',
+            'progettare prodotti?',
+            'creare un\'immagine?',
+            'creare un video?',
+            'fare ricerche?',
+            'analizzare un business?',
+        ],
+        messagePlaceholder: 'Messaggio a Zora...',
+        extended: 'Esteso',
+        rename: 'Rinomina',
+        archive: 'Archivia',
+        archiveTitle: 'Archiviare questa chat?',
+        archiveDesc: 'Questa chat verrà rimossa dalla cronologia.',
+        cancel: 'Annulla',
+        renameTitle: 'Rinomina chat',
+        renameConfirm: 'Salva',
+        renamePlaceholder: 'Inserisci nuovo nome...',
+        settingsTitle: 'Impostazioni',
+        tabProfile: 'Profilo',
+        tabLanguage: 'Lingua',
+        tabFaq: 'FAQ',
+        tabAbout: 'Info su ZORA',
+        logOut: 'Esci',
+        profileTitle: 'Profilo',
+        profileDesc: 'Gestisci le tue informazioni personali.',
+        changePhoto: 'Cambia foto',
+        displayName: 'Nome visualizzato',
+        email: 'Email',
+        saveChanges: 'Salva modifiche',
+        saved: '✓ Salvato!',
+        languageTitle: 'Lingua',
+        languageDesc: 'Scegli la lingua preferita per ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Domande frequenti su ZORA AI.',
+        aboutTitle: 'Info su ZORA',
+        aboutDesc: 'Scopri di più su ZORA AI.',
+        searchPlaceholder: 'Cerca chat...',
+        searchEmpty: 'Inizia a digitare per cercare...',
+        searchRecent: 'Chat recenti',
+        searchNoResult: 'Nessuna chat trovata per',
+        profileSettings: 'Impostazioni profilo',
+        faqShort: 'FAQ',
+        language: 'Lingua',
+    },
+
+    pt: {
+        navHome: 'Início',
+        navSearch: 'Buscar',
+        navHistory: 'Histórico',
+        navCode: 'Código',
+        navLabs: 'Labs',
+        navFeedback: 'Feedback',
+        chatHistory: 'Histórico de chats',
+        newChat: 'Novo chat',
+        greetingMorning: 'Bom dia',
+        greetingAfternoon: 'Boa tarde',
+        greetingEvening: 'Boa noite',
+        welcomeLine2: 'O que vamos',
+        rotatingPhrases: [
+            'criar hoje?',
+            'construir um site?',
+            'desenhar produtos?',
+            'criar uma imagem?',
+            'criar um vídeo?',
+            'pesquisar notícias?',
+            'analisar um negócio?',
+        ],
+        messagePlaceholder: 'Mensagem para Zora...',
+        extended: 'Estendido',
+        rename: 'Renomear',
+        archive: 'Arquivar',
+        archiveTitle: 'Arquivar este chat?',
+        archiveDesc: 'Este chat será removido do seu histórico.',
+        cancel: 'Cancelar',
+        renameTitle: 'Renomear chat',
+        renameConfirm: 'Salvar',
+        renamePlaceholder: 'Digite o novo nome...',
+        settingsTitle: 'Configurações',
+        tabProfile: 'Perfil',
+        tabLanguage: 'Idioma',
+        tabFaq: 'FAQ',
+        tabAbout: 'Sobre o ZORA',
+        logOut: 'Sair',
+        profileTitle: 'Perfil',
+        profileDesc: 'Gerencie suas informações pessoais.',
+        changePhoto: 'Alterar foto',
+        displayName: 'Nome de exibição',
+        email: 'E-mail',
+        saveChanges: 'Salvar alterações',
+        saved: '✓ Salvo!',
+        languageTitle: 'Idioma',
+        languageDesc: 'Escolha seu idioma preferido para o ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Perguntas frequentes sobre o ZORA AI.',
+        aboutTitle: 'Sobre o ZORA',
+        aboutDesc: 'Saiba mais sobre o ZORA AI.',
+        searchPlaceholder: 'Buscar chats...',
+        searchEmpty: 'Digite para buscar chats...',
+        searchRecent: 'Chats recentes',
+        searchNoResult: 'Nenhum chat encontrado para',
+        profileSettings: 'Configurações de perfil',
+        faqShort: 'FAQ',
+        language: 'Idioma',
+    },
+
+    es: {
+        navHome: 'Inicio',
+        navSearch: 'Buscar',
+        navHistory: 'Historial',
+        navCode: 'Código',
+        navLabs: 'Labs',
+        navFeedback: 'Feedback',
+        chatHistory: 'Historial de chats',
+        newChat: 'Nuevo chat',
+        greetingMorning: 'Buenos días',
+        greetingAfternoon: 'Buenas tardes',
+        greetingEvening: 'Buenas noches',
+        welcomeLine2: 'Qué vamos a',
+        rotatingPhrases: [
+            '¿crear hoy?',
+            '¿construir un sitio web?',
+            '¿diseñar productos?',
+            '¿crear una imagen?',
+            '¿crear un video?',
+            '¿investigar noticias?',
+            '¿analizar un negocio?',
+        ],
+        messagePlaceholder: 'Mensaje a Zora...',
+        extended: 'Extendido',
+        rename: 'Renombrar',
+        archive: 'Archivar',
+        archiveTitle: '¿Archivar este chat?',
+        archiveDesc: 'Este chat se eliminará de tu historial.',
+        cancel: 'Cancelar',
+        renameTitle: 'Renombrar chat',
+        renameConfirm: 'Guardar',
+        renamePlaceholder: 'Ingresa un nuevo nombre...',
+        settingsTitle: 'Configuración',
+        tabProfile: 'Perfil',
+        tabLanguage: 'Idioma',
+        tabFaq: 'FAQ',
+        tabAbout: 'Acerca de ZORA',
+        logOut: 'Cerrar sesión',
+        profileTitle: 'Perfil',
+        profileDesc: 'Administra tu información personal.',
+        changePhoto: 'Cambiar foto',
+        displayName: 'Nombre de pantalla',
+        email: 'Correo',
+        saveChanges: 'Guardar cambios',
+        saved: '✓ ¡Guardado!',
+        languageTitle: 'Idioma',
+        languageDesc: 'Elige tu idioma preferido para ZORA AI.',
+        faqTitle: 'FAQ',
+        faqDesc: 'Preguntas frecuentes sobre ZORA AI.',
+        aboutTitle: 'Acerca de ZORA',
+        aboutDesc: 'Aprende más sobre ZORA AI.',
+        searchPlaceholder: 'Buscar chats...',
+        searchEmpty: 'Escribe para buscar chats...',
+        searchRecent: 'Chats recientes',
+        searchNoResult: 'No se encontraron chats para',
+        profileSettings: 'Configuración de perfil',
+        faqShort: 'FAQ',
+        language: 'Idioma',
+    },
+};
+
+function t(key) {
+    const lang = localStorage.getItem('zora_language') || 'en';
+    return TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en'][key] || key;
+}
+
+function applyTranslations() {
+    // Nav labels
+    const navMap = {
+        navHome: '[title="Home"] .nav-label',
+        navSearch: '[title="Search"] .nav-label',
+        navHistory: '[title="History"] .nav-label',
+        navCode: '[title="Code"] .nav-label',
+        navLabs: '[title="Labs"] .nav-label',
+        navFeedback: '[title="FeedBack"] .nav-label',
+    };
+
+    Object.entries(navMap).forEach(([key, selector]) => {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = t(key);
+    });
+
+    // Chat History heading
+    const histHeading = document.querySelector('.sidebar-history h2');
+    if (histHeading) histHeading.textContent = t('chatHistory');
+
+    // Composer placeholder
+    const textarea = qs('chatInput');
+    if (textarea) textarea.placeholder = t('messagePlaceholder');
+
+    // Extended label
+    const extLabel = document.querySelector('.toggle-label');
+    if (extLabel) extLabel.textContent = t('extended');
+
+    // Archive lightbox
+    const archTitle = document.querySelector('#archiveLightbox .lightbox-title');
+    const archDesc = document.querySelector('#archiveLightbox .lightbox-desc');
+    const archCancel = qs('archiveCancelBtn');
+    const archConfirm = qs('archiveConfirmBtn');
+    if (archTitle) archTitle.textContent = t('archiveTitle');
+    if (archDesc) archDesc.textContent = t('archiveDesc');
+    if (archCancel) archCancel.textContent = t('cancel');
+    if (archConfirm) archConfirm.textContent = t('archive');
+
+    // Rename lightbox
+    const renTitle = document.querySelector('#renameLightbox .lightbox-title');
+    const renCancel = qs('renameCancelBtn');
+    const renConfirm = qs('renameConfirmBtn');
+    const renInput = qs('renameInput');
+    if (renTitle) renTitle.textContent = t('renameTitle');
+    if (renCancel) renCancel.textContent = t('cancel');
+    if (renConfirm) renConfirm.textContent = t('renameConfirm');
+    if (renInput) renInput.placeholder = t('renamePlaceholder');
+
+    // Settings center
+    const scTitle = document.querySelector('.settings-sidebar-title');
+    if (scTitle) scTitle.textContent = t('settingsTitle');
+
+    const tabLabels = {
+        profile: t('tabProfile'),
+        language: t('tabLanguage'),
+        faq: t('tabFaq'),
+        about: t('tabAbout'),
+    };
+    document.querySelectorAll('.settings-tab').forEach((btn) => {
+        const labelEl = btn.querySelector('span');
+        if (labelEl) labelEl.textContent = tabLabels[btn.dataset.tab] || '';
+    });
+
+    const scLogout = qs('settingsLogoutBtn')?.querySelector('span');
+    if (scLogout) scLogout.textContent = t('logOut');
+
+    // Settings panels
+    const panelTitles = {
+        'tab-profile': { title: t('profileTitle'), desc: t('profileDesc') },
+        'tab-language': { title: t('languageTitle'), desc: t('languageDesc') },
+        'tab-faq': { title: t('faqTitle'), desc: t('faqDesc') },
+        'tab-about': { title: t('aboutTitle'), desc: t('aboutDesc') },
+    };
+    Object.entries(panelTitles).forEach(([id, { title, desc }]) => {
+        const panel = qs(id);
+        if (!panel) return;
+        const h2 = panel.querySelector('.settings-panel-title');
+        const p = panel.querySelector('.settings-panel-desc');
+        if (h2) h2.textContent = title;
+        if (p) p.textContent = desc;
+    });
+
+    // Profile tab fields
+    const scDisplayLabel = document.querySelector('#tab-profile .sc-label:first-of-type');
+    const scEmailLabel = document.querySelector('#tab-profile .sc-label:last-of-type');
+    const scSaveBtn = qs('scProfileSave');
+    const scAvatarBtn = document.querySelector('.sc-avatar-btn');
+    if (scDisplayLabel) scDisplayLabel.textContent = t('displayName');
+    if (scEmailLabel) scEmailLabel.textContent = t('email');
+    if (scSaveBtn) scSaveBtn.textContent = t('saveChanges');
+    if (scAvatarBtn) {
+        scAvatarBtn.innerHTML = `<i class="fi fi-rr-camera"></i> ${t('changePhoto')}`;
+    }
+
+    // Dropdown settings
+    const profileSettingsSpan = document.querySelector('#profileSettingsBtn span');
+    const faqSpan = document.querySelector('#faqBtn span');
+    const languageSpan = document.querySelector('#languageBtn span');
+    if (profileSettingsSpan) profileSettingsSpan.textContent = t('profileSettings');
+    if (faqSpan) faqSpan.textContent = t('faqShort');
+    if (languageSpan) languageSpan.textContent = t('language');
+
+    // Logout in dropdown
+    const dropLogout = document.querySelector('#logout-button span');
+    if (dropLogout) dropLogout.textContent = t('logOut');
+
+    // Search placeholder
+    const searchInput = qs('searchPaletteInput');
+    if (searchInput) searchInput.placeholder = t('searchPlaceholder');
+
+    // Update rotating phrases
+    if (rotatingInterval) {
+        clearInterval(rotatingInterval);
+        rotatingInterval = null;
+    }
+    rotatingIndex = 0;
+
+    // Update greeting
+    updateGreeting();
 }
 
 document.addEventListener('DOMContentLoaded', bootstrapChat);
