@@ -1162,3 +1162,23 @@ textarea {
 .sidebar.collapsed .sidebar-toggle-btn i {
     transform: rotate(180deg);
 }
+
+/* ─── SPLIT TEXT ANIMATION ──────────────────────────── */
+.split-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: splitCharIn 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes splitCharIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Space char */
+.split-char.space {
+    width: 0.3em;
+}

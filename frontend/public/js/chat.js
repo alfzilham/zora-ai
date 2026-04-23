@@ -81,8 +81,30 @@ function getGreetingLabel() {
     return 'Good Evening';
 }
 
+function splitTextAnimate(el, text, startDelay = 0) {
+    if (!el) return;
+    el.innerHTML = '';
+
+    [...text].forEach((char, i) => {
+        const span = document.createElement('span');
+        span.classList.add('split-char');
+        if (char === ' ') span.classList.add('space');
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        span.style.animationDelay = `${startDelay + i * 50}ms`;
+        el.appendChild(span);
+    });
+}
+
 function updateGreeting() {
-    qs('welcomeLineOne').textContent = `${getGreetingLabel()}, ${getDisplayName()}!`;
+    const name = getDisplayName();
+    const greeting = getGreetingLabel();
+    const lineOne = `${greeting}, ${name}!`;
+    const lineTwo = `Will we build something today?`;
+
+    splitTextAnimate(qs('welcomeLineOne'), lineOne, 0);
+    // Line two starts after line one finishes
+    const lineOneDelay = lineOne.length * 50 + 200;
+    splitTextAnimate(qs('welcomeLineTwo'), lineTwo, lineOneDelay);
 }
 
 function autoResizeTextarea() {
@@ -743,7 +765,7 @@ function bindOrbBehavior() {
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
         const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-        const dist = Math.min(18, Math.hypot(e.clientX - cx, e.clientY - cy) / 8);
+        const dist = Math.min(22, Math.hypot(e.clientX - cx, e.clientY - cy) / 8);
         document.querySelectorAll('.orb-eye').forEach((eye) => {
             eye.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
         });
