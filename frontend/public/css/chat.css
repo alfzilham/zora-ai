@@ -444,16 +444,16 @@ textarea {
 
 .settings-dropdown {
     display: none;
-    position: absolute;
+    position: fixed;
     bottom: 70px;
-    left: 12px;
+    left: 72px;
     background: #FFFFFF;
     border: 1px solid #E5E5E5;
     border-radius: 12px;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     padding: 8px;
     min-width: 220px;
-    z-index: 1000;
+    z-index: 9999;
 }
 
 .settings-dropdown.visible {
@@ -485,6 +485,13 @@ textarea {
 .logout-btn:hover {
     background: #FFF0F0;
     color: #FF4B4B;
+}
+
+.sidebar:not(.collapsed) .settings-dropdown {
+    position: absolute;
+    bottom: 70px;
+    left: 12px;
+    right: auto;
 }
 
 .chat-main {
