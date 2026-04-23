@@ -743,7 +743,7 @@ function bindOrbBehavior() {
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
         const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-        const dist = Math.min(8, Math.hypot(e.clientX - cx, e.clientY - cy) / 20);
+        const dist = Math.min(18, Math.hypot(e.clientX - cx, e.clientY - cy) / 8);
         document.querySelectorAll('.orb-eye').forEach((eye) => {
             eye.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
         });

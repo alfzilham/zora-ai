@@ -650,15 +650,15 @@ textarea {
 
 .orb-eyes {
     display: flex;
-    gap: 20px;
+    gap: 25px;
     align-items: center;
 }
 
 .orb-eye {
     width: 10px;
     height: 35px;
-    background: #1a1a1a;
-    border-radius: 4px;
+    background: #252525;
+    border-radius: 5px;
     display: block;
     transition: transform 0.08s ease-out;
 }
