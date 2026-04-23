@@ -136,92 +136,6 @@
                         </div>
                     </div>
 
-                    <!-- Profile Settings Lightbox -->
-                    <div id="profileLightbox" class="lightbox-overlay hidden">
-                        <div class="lightbox-card profile-card">
-                            <div class="lightbox-icon" style="color:#0099CC">
-                                <i class="fi fi-rr-circle-user"></i>
-                            </div>
-                            <h3 class="lightbox-title">Profile Settings</h3>
-
-                            <div class="profile-avatar-upload">
-                                <div id="profileAvatarPreview" class="profile-avatar-preview">Z</div>
-                                <label for="avatarUploadInput" class="avatar-upload-btn">
-                                    <i class="fi fi-rr-camera"></i> Change Photo
-                                </label>
-                                <input type="file" id="avatarUploadInput" accept="image/*" style="display:none">
-                            </div>
-
-                            <div class="profile-form">
-                                <label class="profile-label">Display Name</label>
-                                <input id="profileNameInput" class="lightbox-input" type="text"
-                                    placeholder="Enter your name...">
-                            </div>
-
-                            <div class="lightbox-actions">
-                                <button id="profileCancelBtn" class="lightbox-btn lightbox-btn-cancel">Cancel</button>
-                                <button id="profileSaveBtn" class="lightbox-btn lightbox-btn-rename">Save</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ Lightbox -->
-                    <div id="faqLightbox" class="lightbox-overlay hidden">
-                        <div class="lightbox-card faq-card">
-                            <div class="lightbox-icon" style="color:#0099CC">
-                                <i class="fi fi-rs-comment-question"></i>
-                            </div>
-                            <h3 class="lightbox-title">FAQ</h3>
-                            <div class="faq-list">
-                                <div class="faq-item">
-                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                                        What is ZORA AI?
-                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
-                                    </div>
-                                    <div class="faq-answer">ZORA is a SuperIntelligence Autonomous AI that routes your
-                                        requests to the best AI model available.</div>
-                                </div>
-                                <div class="faq-item">
-                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                                        How does ZORA choose which model to use?
-                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
-                                    </div>
-                                    <div class="faq-answer">ZORA analyzes your message intent and automatically routes
-                                        it to the most suitable model — Qwen for coding, Gemini for research, and more.
-                                    </div>
-                                </div>
-                                <div class="faq-item">
-                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                                        What is Incognito Mode?
-                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
-                                    </div>
-                                    <div class="faq-answer">Incognito Mode lets you chat privately without saving
-                                        history, profile info, or email to the session.</div>
-                                </div>
-                                <div class="faq-item">
-                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                                        What is Extended Thinking?
-                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
-                                    </div>
-                                    <div class="faq-answer">Extended Thinking enables a deeper reasoning layer before
-                                        ZORA responds, producing more thorough and accurate answers for complex queries.
-                                    </div>
-                                </div>
-                                <div class="faq-item">
-                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                                        What are ZORA Labs?
-                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
-                                    </div>
-                                    <div class="faq-answer">ZORA Labs includes specialized tools: Code, Design, Image
-                                        generation, Video, and Research — each powered by the best model for that task.
-                                    </div>
-                                </div>
-                            </div>
-                            <button id="faqCloseBtn" class="lightbox-btn lightbox-btn-cancel"
-                                style="margin-top:16px">Close</button>
-                        </div>
-                    </div>
-
                     <div class="sidebar-user">
                         <div id="profileAvatar" class="sidebar-user-avatar">Z</div>
                         <div class="sidebar-user-info">
@@ -361,6 +275,219 @@
             <div class="search-palette-divider"></div>
             <div id="searchPaletteResults" class="search-palette-results">
                 <p class="search-palette-empty">Start typing to search chats...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ZORA Settings Center -->
+    <div id="settingsCenter" class="settings-center-overlay hidden">
+        <div class="settings-center-modal">
+
+            <!-- Sidebar -->
+            <aside class="settings-sidebar">
+                <div class="settings-sidebar-header">
+                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="settings-logo">
+                    <span class="settings-sidebar-title">Settings</span>
+                </div>
+                <nav class="settings-nav">
+                    <button class="settings-tab active" data-tab="profile">
+                        <i class="fi fi-rr-circle-user"></i>
+                        <span>Profile</span>
+                    </button>
+                    <button class="settings-tab" data-tab="language">
+                        <i class="fi fi-rr-language-exchange"></i>
+                        <span>Language</span>
+                    </button>
+                    <button class="settings-tab" data-tab="faq">
+                        <i class="fi fi-rs-comment-question"></i>
+                        <span>FAQ</span>
+                    </button>
+                    <button class="settings-tab" data-tab="about">
+                        <i class="fi fi-rr-info"></i>
+                        <span>About ZORA</span>
+                    </button>
+                </nav>
+                <div class="settings-sidebar-footer">
+                    <button class="settings-logout-btn" id="settingsLogoutBtn">
+                        <i class="fi fi-br-sign-out-alt"></i>
+                        <span>Log out</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Content -->
+            <div class="settings-content">
+
+                <!-- Close button -->
+                <button class="settings-close-btn" id="settingsCloseBtn" aria-label="Close settings">
+                    <i class="fi fi-rr-cross"></i>
+                </button>
+
+                <!-- Tab: Profile -->
+                <div class="settings-panel active" id="tab-profile">
+                    <h2 class="settings-panel-title">Profile</h2>
+                    <p class="settings-panel-desc">Manage your personal information.</p>
+
+                    <div class="profile-center-avatar">
+                        <div id="scAvatarPreview" class="sc-avatar-preview">Z</div>
+                        <label for="scAvatarInput" class="sc-avatar-btn">
+                            <i class="fi fi-rr-camera"></i> Change Photo
+                        </label>
+                        <input type="file" id="scAvatarInput" accept="image/*" style="display:none">
+                    </div>
+
+                    <div class="sc-form-group">
+                        <label class="sc-label">Display Name</label>
+                        <input id="scDisplayName" class="sc-input" type="text" placeholder="Your name...">
+                    </div>
+
+                    <div class="sc-form-group">
+                        <label class="sc-label">Email</label>
+                        <input id="scEmail" class="sc-input" type="email" disabled
+                            style="opacity:0.5;cursor:not-allowed;">
+                    </div>
+
+                    <div class="sc-actions">
+                        <button id="scProfileSave" class="sc-btn-primary">Save Changes</button>
+                        <span id="scProfileStatus" class="sc-status"></span>
+                    </div>
+                </div>
+
+                <!-- Tab: Language -->
+                <div class="settings-panel" id="tab-language">
+                    <h2 class="settings-panel-title">Language</h2>
+                    <p class="settings-panel-desc">Choose your preferred language for ZORA AI.</p>
+
+                    <div class="sc-lang-grid">
+                        <div class="sc-lang-item active" data-lang="en" data-label="EN">
+                            <span class="sc-lang-flag">🇺🇸</span>
+                            <span class="sc-lang-name">English</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="id" data-label="ID">
+                            <span class="sc-lang-flag">🇮🇩</span>
+                            <span class="sc-lang-name">Indonesian</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="ja" data-label="JA">
+                            <span class="sc-lang-flag">🇯🇵</span>
+                            <span class="sc-lang-name">Japanese</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="ko" data-label="KO">
+                            <span class="sc-lang-flag">🇰🇷</span>
+                            <span class="sc-lang-name">Korean</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="zh" data-label="ZH">
+                            <span class="sc-lang-flag">🇨🇳</span>
+                            <span class="sc-lang-name">Chinese</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="fr" data-label="FR">
+                            <span class="sc-lang-flag">🇫🇷</span>
+                            <span class="sc-lang-name">French</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="de" data-label="DE">
+                            <span class="sc-lang-flag">🇩🇪</span>
+                            <span class="sc-lang-name">German</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="it" data-label="IT">
+                            <span class="sc-lang-flag">🇮🇹</span>
+                            <span class="sc-lang-name">Italian</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="pt" data-label="PT">
+                            <span class="sc-lang-flag">🇧🇷</span>
+                            <span class="sc-lang-name">Portuguese</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                        <div class="sc-lang-item" data-lang="es" data-label="ES">
+                            <span class="sc-lang-flag">🇪🇸</span>
+                            <span class="sc-lang-name">Spanish</span>
+                            <i class="fi fi-rr-check sc-lang-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: FAQ -->
+                <div class="settings-panel" id="tab-faq">
+                    <h2 class="settings-panel-title">FAQ</h2>
+                    <p class="settings-panel-desc">Frequently asked questions about ZORA AI.</p>
+
+                    <div class="sc-faq-list">
+                        <div class="sc-faq-item">
+                            <div class="sc-faq-q">What is ZORA AI?<i class="fi fi-rr-angle-down"></i></div>
+                            <div class="sc-faq-a">ZORA is a SuperIntelligence Autonomous AI that routes your requests to
+                                the best AI model available — Qwen for coding, Gemini for research, and more.</div>
+                        </div>
+                        <div class="sc-faq-item">
+                            <div class="sc-faq-q">How does ZORA choose which model to use?<i
+                                    class="fi fi-rr-angle-down"></i></div>
+                            <div class="sc-faq-a">ZORA analyzes your message intent and automatically routes it to the
+                                most suitable model based on the task type.</div>
+                        </div>
+                        <div class="sc-faq-item">
+                            <div class="sc-faq-q">What is Incognito Mode?<i class="fi fi-rr-angle-down"></i></div>
+                            <div class="sc-faq-a">Incognito Mode lets you chat privately without saving history, profile
+                                info, or email to the session.</div>
+                        </div>
+                        <div class="sc-faq-item">
+                            <div class="sc-faq-q">What is Extended Thinking?<i class="fi fi-rr-angle-down"></i></div>
+                            <div class="sc-faq-a">Extended Thinking enables a deeper reasoning layer before ZORA
+                                responds, producing more accurate answers for complex queries.</div>
+                        </div>
+                        <div class="sc-faq-item">
+                            <div class="sc-faq-q">What are ZORA Labs?<i class="fi fi-rr-angle-down"></i></div>
+                            <div class="sc-faq-a">ZORA Labs includes specialized tools: Code, Design, Image generation,
+                                Video, and Research — each powered by the best model for that task.</div>
+                        </div>
+                        <div class="sc-faq-item">
+                            <div class="sc-faq-q">Is my data safe with ZORA?<i class="fi fi-rr-angle-down"></i></div>
+                            <div class="sc-faq-a">Yes. Your data is encrypted and stored securely. Incognito mode
+                                ensures no data is saved for that session.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: About -->
+                <div class="settings-panel" id="tab-about">
+                    <h2 class="settings-panel-title">About ZORA</h2>
+                    <p class="settings-panel-desc">Learn more about ZORA AI.</p>
+
+                    <div class="sc-about-card">
+                        <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="sc-about-logo">
+                        <h3 class="sc-about-name">ZORA AI</h3>
+                        <span class="sc-about-version">Version 1.0.0</span>
+                        <p class="sc-about-desc">ZORA is a SuperIntelligence Autonomous AI platform that orchestrates
+                            multiple AI models to deliver the best response for every task.</p>
+
+                        <div class="sc-about-models">
+                            <div class="sc-model-tag">Nemotron</div>
+                            <div class="sc-model-tag">Deepseek</div>
+                            <div class="sc-model-tag">Qwen</div>
+                            <div class="sc-model-tag">Kimi</div>
+                            <div class="sc-model-tag">Minimax</div>
+                            <div class="sc-model-tag">GLM</div>
+                            <div class="sc-model-tag">Gemini</div>
+                            <div class="sc-model-tag">Groq</div>
+                        </div>
+
+                        <div class="sc-about-links">
+                            <a href="/docs/ROADMAP.md" class="sc-about-link" target="_blank">
+                                <i class="fi fi-rr-road"></i> Roadmap
+                            </a>
+                            <a href="/docs/ARCHITECTURE.md" class="sc-about-link" target="_blank">
+                                <i class="fi fi-rr-blueprint"></i> Architecture
+                            </a>
+                        </div>
+
+                        <p class="sc-about-copy">© 2026 ZORA AI. All rights reserved.</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

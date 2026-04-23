@@ -1124,118 +1124,124 @@ function applyNavTooltips() {
 // ─── SETTINGS FEATURES ───────────────────────────────────────────────────────
 
 function bindSettingsFeatures() {
+    const overlay = qs('settingsCenter');
+    const closeBtn = qs('settingsCloseBtn');
+    const logoutBtn = qs('settingsLogoutBtn');
 
-    // ── Language ─────────────────────────────────────────
-    const langBtn = qs('languageBtn');
-    const langSubmenu = qs('languageSubmenu');
-    const currentLangLabel = qs('currentLangLabel');
-
-    const savedLang = localStorage.getItem('zora_language') || 'en';
-    const savedLabel = localStorage.getItem('zora_language_label') || 'EN';
-    if (currentLangLabel) currentLangLabel.textContent = savedLabel;
-
-    document.querySelectorAll('.lang-option').forEach((opt) => {
-        if (opt.dataset.lang === savedLang) opt.classList.add('active');
-    });
-
-    langBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        langSubmenu?.classList.toggle('hidden');
-    });
-
-    document.querySelectorAll('.lang-option').forEach((opt) => {
-        opt.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const lang = opt.dataset.lang;
-            const label = opt.dataset.label;
-
-            localStorage.setItem('zora_language', lang);
-            localStorage.setItem('zora_language_label', label);
-            if (currentLangLabel) currentLangLabel.textContent = label;
-
-            document.querySelectorAll('.lang-option').forEach((o) => o.classList.remove('active'));
-            opt.classList.add('active');
-
-            langSubmenu?.classList.add('hidden');
-            qs('settings-dropdown')?.classList.remove('visible');
-
-            apiCallOrWarn('/settings/language', 'PUT', { language: lang });
-        });
-    });
-
-    // ── Profile Settings ──────────────────────────────────
-    const profileBtn = qs('profileSettingsBtn');
-    const profileLB = qs('profileLightbox');
-    const profileCancel = qs('profileCancelBtn');
-    const profileSave = qs('profileSaveBtn');
-    const nameInput = qs('profileNameInput');
-    const avatarPreview = qs('profileAvatarPreview');
-    const avatarInput = qs('avatarUploadInput');
-
-    profileBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
+    // ── Open / Close ──────────────────────────────────────
+    function openSettings(tabId = 'profile') {
+        overlay?.classList.remove('hidden');
         qs('settings-dropdown')?.classList.remove('visible');
+        switchSettingsTab(tabId);
+        prefillProfile();
+        restoreLanguage();
+    }
 
-        // Pre-fill current name
-        if (nameInput) {
-            nameInput.value = chatState.user?.display_name
-                || chatState.user?.name || '';
+    function closeSettings() {
+        overlay?.classList.add('hidden');
+    }
+
+    closeBtn?.addEventListener('click', closeSettings);
+    overlay?.addEventListener('click', (e) => {
+        if (e.target === overlay) closeSettings();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !overlay?.classList.contains('hidden')) {
+            closeSettings();
         }
+    });
 
-        // Pre-fill avatar preview
-        if (avatarPreview) {
-            const avatarEl = qs('profileAvatar');
-            const img = avatarEl?.querySelector('img');
+    // ── Tab switching ─────────────────────────────────────
+    function switchSettingsTab(tabId) {
+        document.querySelectorAll('.settings-tab').forEach((btn) => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+        document.querySelectorAll('.settings-panel').forEach((panel) => {
+            panel.classList.toggle('active', panel.id === `tab-${tabId}`);
+        });
+    }
+
+    document.querySelectorAll('.settings-tab').forEach((btn) => {
+        btn.addEventListener('click', () => switchSettingsTab(btn.dataset.tab));
+    });
+
+    // ── Open triggers from dropdown ───────────────────────
+    qs('profileSettingsBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSettings('profile');
+    });
+    qs('faqBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSettings('faq');
+    });
+    qs('languageBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSettings('language');
+    });
+
+    // Gear icon
+    qs('settings-gear')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSettings('profile');
+    });
+
+    // ── Logout ────────────────────────────────────────────
+    logoutBtn?.addEventListener('click', () => {
+        localStorage.removeItem('zora_token');
+        window.location.href = '/auth/login.html';
+    });
+
+    // ── Profile Tab ───────────────────────────────────────
+    function prefillProfile() {
+        const nameInput = qs('scDisplayName');
+        const emailInput = qs('scEmail');
+        const preview = qs('scAvatarPreview');
+
+        if (nameInput) nameInput.value = chatState.user?.display_name || chatState.user?.name || '';
+        if (emailInput) emailInput.value = chatState.user?.email || '';
+
+        if (preview) {
+            const sidebarAvatar = qs('profileAvatar');
+            const img = sidebarAvatar?.querySelector('img');
             if (img) {
-                avatarPreview.innerHTML = `<img src="${img.src}" alt="avatar">`;
+                preview.innerHTML = `<img src="${img.src}" alt="avatar">`;
             } else {
-                avatarPreview.textContent = (chatState.user?.display_name
-                    || chatState.user?.name || 'Z')[0].toUpperCase();
+                preview.textContent = (chatState.user?.display_name || chatState.user?.name || 'Z')[0].toUpperCase();
             }
         }
+    }
 
-        profileLB?.classList.remove('hidden');
-    });
-
-    profileCancel?.addEventListener('click', () => {
-        profileLB?.classList.add('hidden');
-    });
-
-    profileLB?.addEventListener('click', (e) => {
-        if (e.target === profileLB) profileLB.classList.add('hidden');
-    });
-
-    // Avatar upload preview
-    avatarInput?.addEventListener('change', () => {
-        const file = avatarInput.files?.[0];
+    qs('scAvatarInput')?.addEventListener('change', () => {
+        const file = qs('scAvatarInput').files?.[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-            if (avatarPreview) {
-                avatarPreview.innerHTML = `<img src="${ev.target.result}" alt="avatar">`;
-            }
+            const preview = qs('scAvatarPreview');
+            if (preview) preview.innerHTML = `<img src="${ev.target.result}" alt="avatar">`;
         };
         reader.readAsDataURL(file);
     });
 
-    profileSave?.addEventListener('click', async () => {
-        const newName = nameInput?.value.trim();
+    qs('scProfileSave')?.addEventListener('click', async () => {
+        const newName = qs('scDisplayName')?.value.trim();
         if (!newName) return;
 
-        // Update local state
+        const status = qs('scProfileStatus');
+
         if (chatState.user) {
             chatState.user.display_name = newName;
             chatState.user.name = newName;
         }
 
-        // Update sidebar
-        const nameEl = qs('profileName');
-        if (nameEl) nameEl.textContent = newName;
         localStorage.setItem('zora_onboarding_name', newName);
 
-        // Update avatar initial if no photo
+        // Update sidebar name
+        const nameEl = qs('profileName');
+        if (nameEl) nameEl.textContent = newName;
+
+        // Update sidebar avatar
         const avatarEl = qs('profileAvatar');
-        const previewImg = avatarPreview?.querySelector('img');
+        const previewImg = qs('scAvatarPreview')?.querySelector('img');
         if (avatarEl) {
             if (previewImg) {
                 avatarEl.innerHTML = `<img src="${previewImg.src}" alt="avatar">`;
@@ -1245,28 +1251,46 @@ function bindSettingsFeatures() {
         }
 
         updateGreeting();
-        profileLB?.classList.add('hidden');
+
+        if (status) {
+            status.textContent = '✓ Saved!';
+            setTimeout(() => { status.textContent = ''; }, 2500);
+        }
 
         await apiCallOrWarn('/settings/profile', 'PUT', { display_name: newName });
     });
 
-    // ── FAQ ───────────────────────────────────────────────
-    const faqBtn = qs('faqBtn');
-    const faqLB = qs('faqLightbox');
-    const faqClose = qs('faqCloseBtn');
+    // ── Language Tab ──────────────────────────────────────
+    function restoreLanguage() {
+        const saved = localStorage.getItem('zora_language') || 'en';
+        document.querySelectorAll('.sc-lang-item').forEach((item) => {
+            item.classList.toggle('active', item.dataset.lang === saved);
+        });
+    }
 
-    faqBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        qs('settings-dropdown')?.classList.remove('visible');
-        faqLB?.classList.remove('hidden');
+    document.querySelectorAll('.sc-lang-item').forEach((item) => {
+        item.addEventListener('click', () => {
+            const lang = item.dataset.lang;
+            const label = item.dataset.label;
+
+            localStorage.setItem('zora_language', lang);
+            localStorage.setItem('zora_language_label', label);
+
+            document.querySelectorAll('.sc-lang-item').forEach((i) => i.classList.remove('active'));
+            item.classList.add('active');
+
+            const badge = qs('currentLangLabel');
+            if (badge) badge.textContent = label;
+
+            apiCallOrWarn('/settings/language', 'PUT', { language: lang });
+        });
     });
 
-    faqClose?.addEventListener('click', () => {
-        faqLB?.classList.add('hidden');
-    });
-
-    faqLB?.addEventListener('click', (e) => {
-        if (e.target === faqLB) faqLB.classList.add('hidden');
+    // ── FAQ Tab ───────────────────────────────────────────
+    document.querySelectorAll('.sc-faq-q').forEach((q) => {
+        q.addEventListener('click', () => {
+            q.parentElement.classList.toggle('open');
+        });
     });
 }
 
