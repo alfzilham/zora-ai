@@ -96,13 +96,13 @@ function splitTextAnimate(el, text, startDelay = 0) {
 }
 
 const rotatingPhrases = [
-    'build something today?',
-    'build a website?',
-    'Design some products?',
-    'Create an Image?',
-    'Create a video?',
-    'Research some news today?',
-    'Analytic a Business?',
+    'Will we Build something today?',
+    'Will we Build a website?',
+    'Will we Design some products?',
+    'Will we Create an Image?',
+    'Will we Create a video?',
+    'Will we Research some news today?',
+    'Will we Analytic a Business?',
 ];
 
 let rotatingIndex = 0;

@@ -753,7 +753,7 @@ textarea {
 }
 
 .toggle-switch.active {
-    background: #FF4B4B;
+    background: #0099CC;
 }
 
 .toggle-switch.active::after {
@@ -1188,7 +1188,7 @@ textarea {
     display: inline-flex;
     overflow: hidden;
     vertical-align: bottom;
-    background: #0099CC;
+    background: #aeaeaeba;
     color: #ffffff;
     border-radius: 8px;
     padding: 0 10px;
