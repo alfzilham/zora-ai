@@ -1038,7 +1038,7 @@ textarea {
 .chat-history-item .item-star-indicator {
     display: none;
     font-size: 0.72rem;
-    color: #f5c518;
+    color: #0099CC;
     flex-shrink: 0;
     line-height: 1;
 }
@@ -1046,4 +1046,30 @@ textarea {
 .chat-history-item.starred .item-star-indicator {
     display: flex;
     align-items: center;
+}
+
+/* Rename lightbox input */
+.lightbox-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #111111;
+    outline: none;
+    margin-bottom: 20px;
+    transition: border-color 0.15s;
+}
+
+.lightbox-input:focus {
+    border-color: #0099CC;
+}
+
+.lightbox-btn-rename {
+    background: #0099CC;
+    color: #ffffff;
+}
+
+.lightbox-btn-rename:hover {
+    background: #007aaa;
 }

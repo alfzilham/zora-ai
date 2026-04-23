@@ -264,6 +264,65 @@ function bindArchiveLightbox() {
     });
 }
 
+// ─── RENAME LIGHTBOX ─────────────────────────────────────────────────────────
+
+let renamePendingItem = null;
+
+function showRenameLightbox(item) {
+    renamePendingItem = item;
+    const titleEl = item.querySelector('.chat-history-title');
+    const input = qs('renameInput');
+    if (input) {
+        input.value = titleEl?.textContent || '';
+        input.select();
+    }
+    qs('renameLightbox').classList.remove('hidden');
+    setTimeout(() => qs('renameInput')?.focus(), 100);
+}
+
+function hideRenameLightbox() {
+    renamePendingItem = null;
+    qs('renameLightbox').classList.add('hidden');
+}
+
+function bindRenameLightbox() {
+    qs('renameCancelBtn')?.addEventListener('click', hideRenameLightbox);
+
+    qs('renameConfirmBtn')?.addEventListener('click', async () => {
+        const item = renamePendingItem;
+        const newTitle = qs('renameInput')?.value.trim();
+        if (!item || !newTitle) return;
+
+        const titleEl = item.querySelector('.chat-history-title');
+        const convId = item.dataset.convId;
+
+        if (titleEl) titleEl.textContent = newTitle;
+
+        if (convId === chatState.currentConversationId) {
+            chatState.currentConversationTitle = newTitle;
+            updateShellState();
+        }
+
+        // Update in state
+        const conv = chatState.conversations.find((c) => c.id === convId);
+        if (conv) conv.title = newTitle;
+
+        hideRenameLightbox();
+        await apiCallOrWarn(`/chat/${convId}/rename`, 'PUT', { title: newTitle });
+    });
+
+    // Close on overlay click
+    qs('renameLightbox')?.addEventListener('click', (e) => {
+        if (e.target === qs('renameLightbox')) hideRenameLightbox();
+    });
+
+    // Enter key = confirm
+    qs('renameInput')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') qs('renameConfirmBtn')?.click();
+        if (e.key === 'Escape') hideRenameLightbox();
+    });
+}
+
 function bindHistoryMenu() {
     const list = qs('conversationList');
     if (!list) return;
@@ -295,6 +354,7 @@ function bindHistoryMenu() {
             const dropIcon = starBtn.querySelector('i');
             const dropLabel = starBtn.querySelector('span');
             if (dropIcon) dropIcon.className = isStarred ? 'fi fi-sr-star' : 'fi fi-rr-star';
+            if (dropIcon) dropIcon.style.color = isStarred ? '#0099CC' : '';
             if (dropLabel) dropLabel.textContent = isStarred ? 'Unstar' : 'Star';
 
             // Update star indicator visibility (handled by CSS .starred class)
@@ -307,20 +367,9 @@ function bindHistoryMenu() {
         if (renameBtn) {
             e.stopPropagation();
             const item = renameBtn.closest('.chat-history-item');
-            const titleEl = item?.querySelector('.chat-history-title');
-            const convId = item?.dataset.convId;
-            if (!titleEl || !convId) return;
-
-            const newTitle = prompt('Rename chat:', titleEl.textContent);
-            if (newTitle && newTitle.trim()) {
-                titleEl.textContent = newTitle.trim();
-                apiCallOrWarn(`/chat/${convId}/rename`, 'PUT', { title: newTitle.trim() });
-                if (convId === chatState.currentConversationId) {
-                    chatState.currentConversationTitle = newTitle.trim();
-                    updateShellState();
-                }
-            }
+            if (!item) return;
             closeAllHistoryDropdowns();
+            showRenameLightbox(item);
             return;
         }
 
@@ -395,6 +444,7 @@ function bindEvents() {
     bindSuggestionCards();
     bindOrbBehavior();
     bindArchiveLightbox();
+    bindRenameLightbox();
 }
 
 async function bootstrapChat() {
