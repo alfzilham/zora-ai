@@ -403,7 +403,11 @@ function bindEvents() {
         toggleBtn.addEventListener('click', toggleSidebar);
     }
 
-    qs('historySearch')?.addEventListener('input', (event) => filterConversations(event.target.value));
+    qs('searchNavItem')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        const query = prompt('Search chats:');
+        if (query !== null) filterConversations(query);
+    });
     qs('chatTitleButton')?.addEventListener('click', renameCurrentChat);
     qs('newChatIconButton')?.addEventListener('click', startNewChat);
 
@@ -922,7 +926,7 @@ async function initWebGLOrb(container) {
                 hover: { value: 0 },
                 rot: { value: 0 },
                 hoverIntensity: { value: 0.2 },
-                backgroundColor:  { value: new Vec3(1.0, 1.0, 1.0) },
+                // backgroundColor:  { value: new Vec3(1.0, 1.0, 1.0) },
             }
         });
 
