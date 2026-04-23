@@ -1182,3 +1182,67 @@ textarea {
 .split-char.space {
     width: 0.3em;
 }
+
+/* ─── ROTATING TEXT ─────────────────────────────────── */
+.rotating-text-wrapper {
+    display: inline-flex;
+    overflow: hidden;
+    vertical-align: bottom;
+    background: #0099CC;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 0 10px;
+    margin-left: 6px;
+    line-height: 1.3;
+    position: relative;
+    min-width: 320px;
+    justify-content: center;
+}
+
+.rotating-text {
+    display: inline-flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.rotating-char {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.rotating-char span {
+    display: inline-block;
+    animation: rotateCharIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.rotating-char.exit span {
+    animation: rotateCharOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.rotating-space {
+    white-space: pre;
+    display: inline-block;
+    width: 0.3em;
+}
+
+@keyframes rotateCharIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes rotateCharOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-120%);
+        opacity: 0;
+    }
+}

@@ -95,16 +95,84 @@ function splitTextAnimate(el, text, startDelay = 0) {
     });
 }
 
+const rotatingPhrases = [
+    'build something today?',
+    'build a website?',
+    'Design some products?',
+    'Create an Image?',
+    'Create a video?',
+    'Research some news today?',
+    'Analytic a Business?',
+];
+
+let rotatingIndex = 0;
+let rotatingInterval = null;
+
+function renderRotatingText(el, text, animateIn = true) {
+    if (!el) return;
+
+    const words = text.split(' ');
+    let charIndex = 0;
+
+    el.innerHTML = words.map((word, wi) => {
+        const chars = [...word].map((char) => {
+            const delay = animateIn
+                ? `${(rotatingPhrases[rotatingIndex].length - 1 - charIndex++) * 25}ms`
+                : `${charIndex++ * 20}ms`;
+
+            return `<span class="rotating-char">
+                <span style="animation-delay:${delay}">${char}</span>
+            </span>`;
+        }).join('');
+
+        const space = wi < words.length - 1
+            ? '<span class="rotating-space"> </span>'
+            : '';
+
+        return chars + space;
+    }).join('');
+}
+
+function cycleRotatingText() {
+    const el = qs('rotatingText');
+    if (!el) return;
+
+    // Exit animation
+    el.querySelectorAll('.rotating-char').forEach((ch, i) => {
+        ch.classList.add('exit');
+        const inner = ch.querySelector('span');
+        if (inner) inner.style.animationDelay = `${i * 20}ms`;
+    });
+
+    const currentText = rotatingPhrases[rotatingIndex];
+    const exitDuration = currentText.length * 20 + 400;
+
+    setTimeout(() => {
+        rotatingIndex = (rotatingIndex + 1) % rotatingPhrases.length;
+        renderRotatingText(el, rotatingPhrases[rotatingIndex], true);
+    }, exitDuration);
+}
+
+function startRotatingText() {
+    const el = qs('rotatingText');
+    if (!el) return;
+
+    rotatingIndex = 0;
+    renderRotatingText(el, rotatingPhrases[0], true);
+
+    if (rotatingInterval) clearInterval(rotatingInterval);
+    rotatingInterval = setInterval(cycleRotatingText, 3000);
+}
+
 function updateGreeting() {
     const name = getDisplayName();
     const greeting = getGreetingLabel();
     const lineOne = `${greeting}, ${name}!`;
-    const lineTwo = `Will we build something today?`;
 
     splitTextAnimate(qs('welcomeLineOne'), lineOne, 0);
-    // Line two starts after line one finishes
-    const lineOneDelay = lineOne.length * 50 + 200;
-    splitTextAnimate(qs('welcomeLineTwo'), lineTwo, lineOneDelay);
+
+    const lineOneDelay = lineOne.length * 50 + 300;
+    setTimeout(startRotatingText, lineOneDelay);
 }
 
 function autoResizeTextarea() {
