@@ -11,8 +11,8 @@ body {
 
 body {
     overflow: hidden;
-    background: #0a0a0f;
-    color: #ffffff;
+    background: #f5f5f5;
+    color: #111111;
     font-family: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
@@ -46,8 +46,8 @@ textarea {
     flex: 0 0 260px;
     display: flex;
     flex-direction: column;
-    background: #111118;
-    border-right: 1px solid #1e1e2e;
+    background: #ffffff;
+    border-right: 1px solid #e5e5e5;
     transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
@@ -194,10 +194,9 @@ textarea {
     width: 100%;
     height: 42px;
     padding: 0 14px 0 38px;
-    border: 1px solid #1e1e2e;
+    border: 1px solid #e5e5e5;
     border-radius: 999px;
-    background: #1a1a2e;
-    color: #ffffff;
+    background: #f5f5f5;
     outline: none;
 }
 
@@ -213,7 +212,7 @@ textarea {
     gap: 12px;
     padding: 10px 16px;
     border-radius: 8px;
-    color: #a0a0b0;
+    color: #111111;
     transition: background 0.15s ease;
 }
 
@@ -232,7 +231,7 @@ textarea {
 
 .sidebar-divider {
     height: 1px;
-    background: #1e1e2e;
+    background: #e5e5e5;
 }
 
 .sidebar-history {
@@ -500,8 +499,8 @@ textarea {
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
-    border-bottom: 1px solid #1e1e2e;
-    background: #111118;
+    border-bottom: 1px solid #e5e5e5;
+    background: #ffffff;
 }
 
 .chat-stage {
@@ -519,8 +518,8 @@ textarea {
 }
 
 .composer-card {
-    background: #111118;
-    border: 1px solid #1e1e2e;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
     border-radius: 16px;
     padding: 12px 16px;
     margin-top: 12px;
@@ -617,9 +616,9 @@ textarea {
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #00D4FF, #0066FF 60%, #001a33);
-    filter: saturate(1.2);
-    box-shadow: 0 0 60px rgba(0, 212, 255, 0.35);
+    background: conic-gradient(from 0deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #c77dff, #ff6b6b);
+    filter: saturate(1.3);
+    box-shadow: 0 0 80px rgba(150, 180, 255, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -677,7 +676,7 @@ textarea {
     margin: 0;
     font-size: 2.2rem;
     font-weight: 700;
-    color: #ffffff;
+    color: #111111;
     line-height: 1.3;
 }
 
@@ -774,8 +773,8 @@ textarea {
 .suggestion-card {
     flex: 1;
     min-width: 180px;
-    background: #111118;
-    border: 1px solid #1e1e2e;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
     border-radius: 12px;
     padding: 16px;
     text-align: left;
@@ -792,13 +791,13 @@ textarea {
     margin: 0 0 6px;
     font-size: 1rem;
     font-weight: 700;
-    color: #ffffff;
+    color: #111111;
 }
 
 .suggestion-card p {
     margin: 0;
     font-size: 0.85rem;
-    color: #a0a0b0;
+    color: #555555;
 }
 
 /* ─── TOPBAR ────────────────────────────────────────── */
