@@ -202,7 +202,10 @@ function updateShellState() {
     sidebar.classList.toggle('collapsed', chatState.sidebarCollapsed);
     qs('incognitoButton').classList.toggle('active', chatState.incognito);
     qs('extendedToggle').classList.toggle('active', chatState.extended);
-    qs('chatTitle').textContent = chatState.currentConversationTitle || 'Chat Title';
+    const titleEl = qs('chatTitle');
+    if (titleEl && titleEl.contentEditable !== 'true') {
+        titleEl.textContent = chatState.currentConversationTitle || 'New Chat';
+    }
 }
 
 function saveSidebarState() {
@@ -475,7 +478,33 @@ function bindEvents() {
         const query = prompt('Search chats:');
         if (query !== null) filterConversations(query);
     });
-    qs('chatTitleButton')?.addEventListener('click', renameCurrentChat);
+    qs('chatTitleEditBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        renameCurrentChat();
+    });
+
+    const titleEl = qs('chatTitle');
+    if (titleEl) {
+        // Enter = save
+        titleEl.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                await renameCurrentChat();
+            }
+            if (e.key === 'Escape') {
+                titleEl.textContent = chatState.currentConversationTitle || 'New Chat';
+                titleEl.contentEditable = 'false';
+                qs('chatTitleEditBtn')?.classList.remove('editing');
+            }
+        });
+
+        // Click outside = save
+        document.addEventListener('click', async (e) => {
+            if (titleEl.contentEditable === 'true' && !e.target.closest('.chat-title-editable-wrap')) {
+                await renameCurrentChat();
+            }
+        });
+    }
     qs('newChatIconButton')?.addEventListener('click', startNewChat);
 
     qs('incognitoButton')?.addEventListener('click', () => {
@@ -688,17 +717,44 @@ function startNewChat() {
 }
 
 async function renameCurrentChat() {
-    if (!chatState.currentConversationId) return;
-    const newTitle = prompt('Rename chat:', chatState.currentConversationTitle);
-    if (!newTitle?.trim()) return;
-    chatState.currentConversationTitle = newTitle.trim();
-    updateShellState();
-    await apiCallOrWarn(
-        `/chat/${chatState.currentConversationId}/rename`,
-        'PUT',
-        { title: newTitle.trim() }
-    );
-    await loadHistory();
+    const titleEl = qs('chatTitle');
+    const editBtn = qs('chatTitleEditBtn');
+    if (!titleEl) return;
+
+    const isEditing = titleEl.contentEditable === 'true';
+
+    if (isEditing) {
+        // Save
+        const newTitle = titleEl.textContent.trim();
+        titleEl.contentEditable = 'false';
+        titleEl.style.cursor = 'default';
+        editBtn?.classList.remove('editing');
+
+        if (newTitle && newTitle !== chatState.currentConversationTitle) {
+            chatState.currentConversationTitle = newTitle;
+            if (chatState.currentConversationId) {
+                await apiCallOrWarn(
+                    `/chat/${chatState.currentConversationId}/rename`,
+                    'PUT',
+                    { title: newTitle }
+                );
+                await loadHistory();
+            }
+        }
+    } else {
+        // Start editing
+        titleEl.contentEditable = 'true';
+        titleEl.style.cursor = 'text';
+        editBtn?.classList.add('editing');
+        titleEl.focus();
+
+        // Select all text
+        const range = document.createRange();
+        range.selectNodeContents(titleEl);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
 }
 
 // ─── MESSAGES ────────────────────────────────────────────────────────────────

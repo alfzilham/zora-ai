@@ -618,8 +618,7 @@ textarea {
     border-radius: 50%;
     overflow: hidden;
     z-index: 0;
-    filter: drop-shadow(0 0 18px rgba(120, 100, 255, 0.18))
-            drop-shadow(0 0 40px rgba(100, 180, 255, 0.10));
+    filter: drop-shadow(0 0 18px rgba(120, 100, 255, 0.18)) drop-shadow(0 0 40px rgba(100, 180, 255, 0.10));
 }
 
 .orb-canvas-container canvas {
@@ -809,30 +808,93 @@ textarea {
     color: #555555;
 }
 
-/* ─── TOPBAR ────────────────────────────────────────── */
-.chat-title-button {
+/* ─── CHAT TITLE AREA ───────────────────────────────── */
+.chat-title-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-title-prefix {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #999999;
+    letter-spacing: 0.01em;
+}
+
+.chat-title-divider {
+    font-size: 0.9rem;
+    color: #d0d0d0;
+    font-weight: 300;
+}
+
+.chat-title-editable-wrap {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    color: #111111;
+    padding: 4px 8px;
+    border-radius: 8px;
     transition: background 0.15s;
+    cursor: default;
+    max-width: 320px;
 }
 
-.chat-title-button svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-}
-
-.chat-title-button:hover {
+.chat-title-editable-wrap:hover {
     background: #f0f0f0;
+}
+
+.chat-title-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111111;
+    outline: none;
+    border: none;
+    background: transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+    display: inline-block;
+    cursor: default;
+    caret-color: #0099CC;
+    transition: color 0.15s;
+}
+
+.chat-title-text[contenteditable="true"] {
+    cursor: text;
+    border-bottom: 2px solid #0099CC;
+    padding-bottom: 1px;
+    color: #0099CC;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.chat-title-edit-btn {
+    background: transparent;
+    border: none;
+    color: #bbbbbb;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+
+.chat-title-editable-wrap:hover .chat-title-edit-btn {
+    opacity: 1;
+}
+
+.chat-title-edit-btn:hover {
+    color: #0099CC;
+}
+
+.chat-title-edit-btn.editing {
+    opacity: 1;
+    color: #0099CC;
 }
 
 .topbar-actions {
@@ -1188,8 +1250,8 @@ textarea {
     display: inline-flex;
     overflow: hidden;
     vertical-align: bottom;
-    background: #aeaeaeba;
-    color: #ffffff;
+    background: #ffffff00;
+    color: #1d1d1d;
     border-radius: 8px;
     padding: 0 10px;
     margin-left: 6px;
@@ -1230,6 +1292,7 @@ textarea {
         transform: translateY(100%);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -1241,6 +1304,7 @@ textarea {
         transform: translateY(0);
         opacity: 1;
     }
+
     to {
         transform: translateY(-120%);
         opacity: 0;
