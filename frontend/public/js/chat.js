@@ -475,8 +475,7 @@ function bindEvents() {
 
     qs('searchNavItem')?.addEventListener('click', (e) => {
         e.preventDefault();
-        const query = prompt('Search chats:');
-        if (query !== null) filterConversations(query);
+        openSearchPalette();
     });
     qs('chatTitleEditBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -548,6 +547,7 @@ function bindEvents() {
     bindOrbBehavior();
     bindArchiveLightbox();
     bindSettingsFeatures();
+    bindSearchPalette();
     bindRenameLightbox();
 }
 
@@ -1267,6 +1267,146 @@ function bindSettingsFeatures() {
 
     faqLB?.addEventListener('click', (e) => {
         if (e.target === faqLB) faqLB.classList.add('hidden');
+    });
+}
+
+// ─── SEARCH COMMAND PALETTE ───────────────────────────────────────────────────
+
+let searchSelectedIndex = -1;
+
+function openSearchPalette() {
+    const palette = qs('searchPalette');
+    const input = qs('searchPaletteInput');
+    if (!palette) return;
+
+    palette.classList.remove('hidden');
+    searchSelectedIndex = -1;
+    renderSearchResults('');
+
+    setTimeout(() => input?.focus(), 50);
+}
+
+function closeSearchPalette() {
+    qs('searchPalette')?.classList.add('hidden');
+    searchSelectedIndex = -1;
+}
+
+function highlightMatch(text, query) {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+function renderSearchResults(query) {
+    const container = qs('searchPaletteResults');
+    if (!container) return;
+
+    const q = query.toLowerCase().trim();
+    const results = q
+        ? chatState.conversations.filter((c) =>
+            (c.title || '').toLowerCase().includes(q))
+        : chatState.conversations.slice(0, 8);
+
+    if (!results.length) {
+        container.innerHTML = `<p class="search-palette-empty">${q ? `No chats found for "${query}"` : 'No chats yet.'
+            }</p>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="search-palette-group-label">
+            ${q ? `Results for "${query}"` : 'Recent Chats'}
+        </div>
+        ${results.map((conv, i) => `
+            <div class="search-result-item ${i === searchSelectedIndex ? 'selected' : ''}"
+                 data-conv-id="${conv.id}">
+                <div class="search-result-icon">
+                    <i class="fi fi-rr-comment"></i>
+                </div>
+                <div class="search-result-text">
+                    <div class="search-result-title">
+                        ${highlightMatch(conv.title || 'New Chat', query)}
+                    </div>
+                    <div class="search-result-date">
+                        ${getHistoryGroupLabel(conv.created_at || conv.updated_at)}
+                    </div>
+                </div>
+                <span class="search-result-enter">↵</span>
+            </div>
+        `).join('')}
+    `;
+
+    // Bind click
+    container.querySelectorAll('.search-result-item').forEach((item) => {
+        item.addEventListener('click', () => {
+            const convId = item.dataset.convId;
+            if (convId) {
+                selectConversation(convId);
+                closeSearchPalette();
+            }
+        });
+    });
+}
+
+function bindSearchPalette() {
+    const palette = qs('searchPalette');
+    const input = qs('searchPaletteInput');
+
+    // Close on overlay click
+    palette?.addEventListener('click', (e) => {
+        if (e.target === palette) closeSearchPalette();
+    });
+
+    // Input
+    input?.addEventListener('input', () => {
+        searchSelectedIndex = -1;
+        renderSearchResults(input.value);
+    });
+
+    // Keyboard navigation
+    input?.addEventListener('keydown', (e) => {
+        const items = qs('searchPaletteResults')
+            ?.querySelectorAll('.search-result-item') || [];
+
+        if (e.key === 'Escape') {
+            closeSearchPalette();
+        }
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            searchSelectedIndex = Math.min(searchSelectedIndex + 1, items.length - 1);
+            items.forEach((item, i) =>
+                item.classList.toggle('selected', i === searchSelectedIndex));
+        }
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            searchSelectedIndex = Math.max(searchSelectedIndex - 1, 0);
+            items.forEach((item, i) =>
+                item.classList.toggle('selected', i === searchSelectedIndex));
+        }
+
+        if (e.key === 'Enter') {
+            const selected = items[searchSelectedIndex] || items[0];
+            const convId = selected?.dataset.convId;
+            if (convId) {
+                selectConversation(convId);
+                closeSearchPalette();
+            }
+        }
+    });
+
+    // Global shortcut: Cmd+K / Ctrl+K
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            const palette = qs('searchPalette');
+            if (palette?.classList.contains('hidden')) {
+                openSearchPalette();
+            } else {
+                closeSearchPalette();
+            }
+        }
     });
 }
 
