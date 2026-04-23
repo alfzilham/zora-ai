@@ -48,7 +48,8 @@ textarea {
     flex-direction: column;
     background: #ffffff;
     border-right: 1px solid #e5e5e5;
-    transition: width 0.25s ease;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     flex-shrink: 0;
     height: 100vh;
@@ -961,8 +962,13 @@ textarea {
 }
 
 @keyframes fadeInOverlay {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .lightbox-card {
@@ -971,13 +977,20 @@ textarea {
     padding: 32px 28px;
     width: 320px;
     text-align: center;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
     animation: slideUpCard 0.2s ease;
 }
 
 @keyframes slideUpCard {
-    from { transform: translateY(12px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+    from {
+        transform: translateY(12px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .lightbox-icon {
@@ -1072,4 +1085,83 @@ textarea {
 
 .lightbox-btn-rename:hover {
     background: #007aaa;
+}
+
+/* ─── SMOOTH SIDEBAR TRANSITION ────────────────────── */
+
+/* Elemen yang fade out saat collapse */
+.sidebar .sidebar-logo-text,
+.sidebar .sidebar-search,
+.sidebar .sidebar-history,
+.sidebar .nav-label,
+.sidebar .sidebar-user-info,
+.sidebar #settings-gear,
+.sidebar .sidebar-divider {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0s linear 0s;
+    visibility: visible;
+    white-space: nowrap;
+}
+
+/* Saat collapsed — fade out lebih dulu sebelum width mengecil */
+.sidebar.collapsed .sidebar-logo-text,
+.sidebar.collapsed .sidebar-search,
+.sidebar.collapsed .sidebar-history,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .sidebar-user-info,
+.sidebar.collapsed #settings-gear,
+.sidebar.collapsed .sidebar-divider {
+    opacity: 0;
+    transform: translateX(-8px);
+    visibility: hidden;
+    transition: opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0s linear 0.15s;
+    pointer-events: none;
+}
+
+/* Nav item — center saat collapsed */
+.sidebar .nav-item {
+    transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        justify-content 0.35s ease,
+        background 0.15s ease;
+}
+
+/* Nav icon — scale subtle saat collapsed */
+.sidebar .nav-icon {
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+}
+
+.sidebar.collapsed .nav-icon {
+    transform: scale(1.1);
+}
+
+/* Sidebar content padding smooth */
+.sidebar .sidebar-content {
+    transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        gap 0.35s ease;
+}
+
+/* Avatar — scale up sedikit saat collapsed */
+.sidebar .sidebar-user-avatar {
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+}
+
+.sidebar.collapsed .sidebar-user-avatar {
+    transform: scale(1.08);
+}
+
+/* Toggle button rotate saat collapsed */
+.sidebar-toggle-btn i {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn i {
+    transform: rotate(180deg);
 }
