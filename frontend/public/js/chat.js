@@ -248,6 +248,11 @@ function bindHistoryMenu() {
             e.stopPropagation();
             const item = starBtn.closest('.chat-history-item');
             item.classList.toggle('starred');
+            const starIcon = starBtn.querySelector('i');
+            if (starIcon) {
+                const isStarred = item.classList.contains('starred');
+                starIcon.className = isStarred ? 'fi fi-sr-star' : 'fi fi-rr-star';
+            }
             closeAllHistoryDropdowns();
             return;
         }
@@ -283,8 +288,20 @@ function bindHistoryMenu() {
             if (!convId) return;
 
             if (confirm('Archive this chat?')) {
-                item.remove();
-                apiCallOrWarn(`/chat/${convId}/archive`, 'PUT');
+                // Remove from local state
+                chatState.conversations = chatState.conversations.filter(
+                    (c) => c.id !== convId
+                );
+                chatState.filteredConversations = chatState.filteredConversations.filter(
+                    (c) => c.id !== convId
+                );
+
+                // Re-render list from updated state
+                renderConversationList(chatState.filteredConversations);
+
+                // Call backend
+                apiCallOrWarn(`/chat/${convId}`, 'DELETE');
+
                 if (convId === chatState.currentConversationId) {
                     startNewChat();
                 }
@@ -463,13 +480,13 @@ function renderConversationList(conversations) {
                 <button class="item-menu-btn" type="button" aria-label="More options">•••</button>
                 <div class="chat-item-dropdown hidden">
                     <div class="chat-item-action" data-action="star">
-                        ⭐ <span>Star</span>
+                        <i class="fi fi-rr-star"></i> <span>Star</span>
                     </div>
                     <div class="chat-item-action" data-action="rename">
-                        ✏️ <span>Rename</span>
+                        <i class="fi fi-ss-pencil"></i> <span>Rename</span>
                     </div>
                     <div class="chat-item-action delete-action" data-action="archive">
-                        📁 <span>Archive</span>
+                        <i class="fi fi-rr-trash"></i> <span>Archive</span>
                     </div>
                 </div>
             </div>
