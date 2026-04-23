@@ -518,6 +518,9 @@ function bindEvents() {
 
     qs('extendedToggle')?.addEventListener('click', () => {
         chatState.extended = !chatState.extended;
+        // Sync chip label active state
+        const label = qs('extendedToggle')?.nextElementSibling;
+        if (label) label.classList.toggle('active', chatState.extended);
         updateShellState();
     });
 

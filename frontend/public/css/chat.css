@@ -499,10 +499,17 @@ textarea {
 
 .composer-card {
     background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 16px;
-    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 14px 16px 12px;
     margin-top: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.composer-card:focus-within {
+    border-color: #c0c0c0;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .chat-textarea {
@@ -510,10 +517,17 @@ textarea {
     border: none;
     outline: none;
     resize: none;
-    padding: 8px 0;
-    font-size: 1rem;
+    padding: 4px 4px 12px;
+    font-size: 0.975rem;
     background: transparent;
-    color: #ffffff;
+    color: #111111;
+    line-height: 1.6;
+    min-height: 28px;
+}
+
+.chat-textarea::placeholder {
+    color: #bbbbbb;
+    font-weight: 400;
 }
 
 .hidden {
@@ -694,7 +708,9 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 8px;
+    margin-top: 0;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
 }
 
 .composer-row-left,
@@ -705,17 +721,24 @@ textarea {
 }
 
 .icon-button {
-    width: 36px;
-    height: 36px;
-    border: 1px solid #e5e5e5;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #e8e8e8;
     border-radius: 50%;
     background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #555555;
-    transition: color 0.15s, background 0.15s;
+    color: #888888;
+    transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.icon-button:hover {
+    background: #f5f5f5;
+    color: #333333;
+    border-color: #d0d0d0;
+    transform: scale(1.05);
 }
 
 .icon-button svg {
@@ -729,46 +752,55 @@ textarea {
     color: #111111;
 }
 
-.toggle-switch {
-    width: 36px;
-    height: 20px;
-    border-radius: 999px;
-    background: #e5e5e5;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.2s;
-}
-
-.toggle-switch::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: white;
-    transition: transform 0.2s;
-}
-
-.toggle-switch.active {
-    background: #0099CC;
-}
-
-.toggle-switch.active::after {
-    transform: translateX(16px);
-}
-
-.toggle-label {
-    font-size: 0.9rem;
-    color: #555555;
-}
-
+/* Chip-style Extended toggle — lebih modern */
 .toggle-group {
     display: flex;
     align-items: center;
+    gap: 0;
+}
+
+.toggle-switch {
+    display: none;
+    /* hidden, chip handle state */
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
     gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #888888;
+    background: #f4f4f4;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    padding: 5px 12px 5px 10px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    user-select: none;
+}
+
+.toggle-label::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #cccccc;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+/* Active state via JS — tambahkan .active ke .toggle-label juga */
+.toggle-switch.active+.toggle-label,
+.toggle-label.active {
+    background: #e8f4fa;
+    color: #0099CC;
+    border-color: #b3dff0;
+}
+
+.toggle-switch.active+.toggle-label::before,
+.toggle-label.active::before {
+    background: #0099CC;
 }
 
 /* ─── SUGGESTION CARDS ──────────────────────────────── */
@@ -978,15 +1010,21 @@ textarea {
 
 /* Send button */
 .send-btn {
-    background: #0099CC;
-    border-color: #0099CC;
+    width: 36px;
+    height: 36px;
+    background: #111111;
+    border-color: #111111;
     color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    transform: none;
 }
 
 .send-btn:hover {
-    background: #007aaa;
-    border-color: #007aaa;
+    background: #333333;
+    border-color: #333333;
     color: #ffffff;
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
 }
 
 /* Flaticon icon sizing normalization */
@@ -2034,7 +2072,7 @@ textarea {
 .sc-faq-q i {
     font-size: 0.75rem;
     color: #999999;
-    transition: transform 0.2s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
 }
 
@@ -2043,16 +2081,22 @@ textarea {
 }
 
 .sc-faq-a {
-    display: none;
-    padding: 0 16px 14px;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 16px;
     font-size: 0.875rem;
     color: #555555;
     line-height: 1.7;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid transparent;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        padding-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease;
 }
 
 .sc-faq-item.open .sc-faq-a {
-    display: block;
+    max-height: 240px;
+    padding-bottom: 14px;
+    border-top-color: #f0f0f0;
 }
 
 /* ── About Tab ── */
