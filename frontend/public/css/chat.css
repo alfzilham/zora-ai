@@ -1004,16 +1004,14 @@ textarea {
 .send-btn {
     width: 36px;
     height: 36px;
-    background: #111111;
-    border-color: #111111;
+    background: #0099CC;
     color: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     transform: none;
 }
 
 .send-btn:hover {
-    background: #0099CC;
-    border-color: #0091c1;
+    background: #63d8ff;
     color: #ffffff;
     transform: scale(1.08);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
@@ -2175,4 +2173,102 @@ textarea {
     font-size: 0.75rem;
     color: #cccccc;
     margin: 4px 0 0;
+}
+
+/* ─── ATTACHMENT PREVIEW ────────────────────────────── */
+.attachment-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 4px 4px;
+}
+
+.attachment-preview.hidden {
+    display: none;
+}
+
+.attachment-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f4f4f4;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 6px 10px 6px 8px;
+    max-width: 220px;
+    transition: border-color 0.15s;
+}
+
+.attachment-chip:hover {
+    border-color: #0099CC;
+}
+
+.attachment-chip-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.attachment-chip-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.attachment-chip-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #111111;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attachment-chip-size {
+    font-size: 0.7rem;
+    color: #999999;
+}
+
+.attachment-chip-remove {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #bbbbbb;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-left: 2px;
+    transition: color 0.15s;
+}
+
+.attachment-chip-remove:hover {
+    color: #FF4B4B;
+}
+
+/* ─── VOICE RECORDING STATE ─────────────────────────── */
+@keyframes pulse-ring {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(255, 75, 75, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 75, 75, 0);
+    }
+}
+
+#voiceButton.recording {
+    background: #fff0f0;
+    border-color: #FF4B4B;
+    color: #FF4B4B;
+    animation: pulse-ring 1.2s ease-out infinite;
+}
+
+#voiceButton.recording:hover {
+    background: #ffe5e5;
+    transform: scale(1.05);
 }

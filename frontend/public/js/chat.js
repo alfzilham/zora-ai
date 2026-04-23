@@ -6,6 +6,7 @@
 const chatState = {
     user: null,
     conversations: [],
+    attachedFiles: [],
     filteredConversations: [],
     messages: [],
     currentConversationId: null,
@@ -524,9 +525,9 @@ function bindEvents() {
         updateShellState();
     });
 
-    qs('voiceButton')?.addEventListener('click', () => console.info('Voice input is not connected yet.'));
+    bindVoiceButton();
     qs('sendButton')?.addEventListener('click', async () => await sendMessage());
-    qs('attachButton')?.addEventListener('click', () => console.info('Attachment UI is not connected yet.'));
+    bindAttachButton();
 
     const chatInput = qs('chatInput');
     if (chatInput) {
@@ -720,6 +721,7 @@ function startNewChat() {
     if (input) {
         input.value = '';
         autoResizeTextarea();
+        clearAttachments();
         input.focus();
     }
 }
@@ -2187,6 +2189,158 @@ function applyTranslations() {
 
     // Update greeting
     updateGreeting();
+}
+
+// ─── ATTACH FILE ──────────────────────────────────────────────────────────────
+
+function bindAttachButton() {
+    const btn = qs('attachButton');
+    const input = qs('fileInput');
+    if (!btn || !input) return;
+
+    btn.addEventListener('click', () => input.click());
+
+    input.addEventListener('change', () => {
+        Array.from(input.files || []).forEach((file) => {
+            const duplicate = chatState.attachedFiles.some(
+                (f) => f.name === file.name && f.size === file.size
+            );
+            if (!duplicate) chatState.attachedFiles.push(file);
+        });
+        input.value = '';
+        renderAttachmentPreview();
+    });
+}
+
+function renderAttachmentPreview() {
+    const preview = qs('attachmentPreview');
+    if (!preview) return;
+
+    if (!chatState.attachedFiles.length) {
+        preview.classList.add('hidden');
+        preview.innerHTML = '';
+        return;
+    }
+
+    const iconMap = {
+        image: '🖼️', pdf: '📄', doc: '📝', docx: '📝',
+        txt: '📃', csv: '📊', xlsx: '📊', pptx: '📑',
+    };
+
+    preview.classList.remove('hidden');
+    preview.innerHTML = chatState.attachedFiles.map((file, i) => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const icon = file.type.startsWith('image/') ? '🖼️' : (iconMap[ext] || '📎');
+        const size = file.size < 1024 * 1024
+            ? `${(file.size / 1024).toFixed(0)} KB`
+            : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+        const name = file.name.length > 22
+            ? `${file.name.slice(0, 20)}…`
+            : file.name;
+
+        return `
+            <div class="attachment-chip">
+                <span class="attachment-chip-icon">${icon}</span>
+                <div class="attachment-chip-info">
+                    <span class="attachment-chip-name">${name}</span>
+                    <span class="attachment-chip-size">${size}</span>
+                </div>
+                <button class="attachment-chip-remove" data-index="${i}"
+                    type="button" aria-label="Remove file">
+                    <i class="fi fi-rr-cross-small"></i>
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    preview.querySelectorAll('.attachment-chip-remove').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            chatState.attachedFiles.splice(parseInt(btn.dataset.index), 1);
+            renderAttachmentPreview();
+        });
+    });
+}
+
+function clearAttachments() {
+    chatState.attachedFiles = [];
+    renderAttachmentPreview();
+}
+
+// ─── VOICE INPUT ──────────────────────────────────────────────────────────────
+
+const langCodeMap = {
+    en: 'en-US', id: 'id-ID', ja: 'ja-JP', ko: 'ko-KR',
+    zh: 'zh-CN', fr: 'fr-FR', de: 'de-DE', it: 'it-IT',
+    pt: 'pt-BR', es: 'es-ES',
+};
+
+let recognitionInstance = null;
+let isRecognizing = false;
+
+function bindVoiceButton() {
+    const btn = qs('voiceButton');
+    if (!btn) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        btn.title = 'Voice input not supported in this browser';
+        btn.style.opacity = '0.4';
+        btn.style.cursor = 'not-allowed';
+        return;
+    }
+
+    btn.addEventListener('click', () => {
+        isRecognizing ? stopVoiceRecognition() : startVoiceRecognition();
+    });
+}
+
+function startVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const btn = qs('voiceButton');
+    const input = qs('chatInput');
+
+    const lang = localStorage.getItem('zora_language') || 'en';
+    const savedText = (input?.value || '').trim();
+
+    recognitionInstance = new SpeechRecognition();
+    recognitionInstance.lang = langCodeMap[lang] || 'en-US';
+    recognitionInstance.continuous = false;
+    recognitionInstance.interimResults = true;
+    recognitionInstance.maxAlternatives = 1;
+
+    recognitionInstance.onstart = () => {
+        isRecognizing = true;
+        btn?.classList.add('recording');
+    };
+
+    recognitionInstance.onresult = (event) => {
+        const transcript = Array.from(event.results)
+            .map((r) => r[0].transcript)
+            .join('');
+
+        if (input) {
+            input.value = savedText
+                ? `${savedText} ${transcript}`
+                : transcript;
+            autoResizeTextarea();
+        }
+    };
+
+    recognitionInstance.onend = () => stopVoiceRecognition();
+    recognitionInstance.onerror = (e) => {
+        console.warn('Speech recognition error:', e.error);
+        stopVoiceRecognition();
+    };
+
+    recognitionInstance.start();
+}
+
+function stopVoiceRecognition() {
+    isRecognizing = false;
+    qs('voiceButton')?.classList.remove('recording');
+    recognitionInstance?.stop();
+    recognitionInstance = null;
 }
 
 document.addEventListener('DOMContentLoaded', bootstrapChat);
