@@ -91,9 +91,134 @@
                     <div id="settings-dropdown" class="settings-dropdown">
                         <div id="settingsDropdownEmail" class="settings-dropdown-email"></div>
                         <div class="settings-divider"></div>
+
+                        <!-- Profile Settings -->
+                        <div class="settings-action-btn" id="profileSettingsBtn">
+                            <i class="fi fi-rr-circle-user"></i>
+                            <span>Profile Settings</span>
+                            <i class="fi fi-rr-angle-right settings-arrow"></i>
+                        </div>
+
+                        <!-- FAQ -->
+                        <div class="settings-action-btn" id="faqBtn">
+                            <i class="fi fi-rs-comment-question"></i>
+                            <span>FAQ</span>
+                            <i class="fi fi-rr-angle-right settings-arrow"></i>
+                        </div>
+
+                        <!-- Language -->
+                        <div class="settings-action-btn" id="languageBtn">
+                            <i class="fi fi-rr-language-exchange"></i>
+                            <span>Language</span>
+                            <span id="currentLangLabel" class="settings-badge">EN</span>
+                        </div>
+
+                        <!-- Language submenu -->
+                        <div id="languageSubmenu" class="language-submenu hidden">
+                            <div class="lang-option" data-lang="en" data-label="EN">🇺🇸 English</div>
+                            <div class="lang-option" data-lang="id" data-label="ID">🇮🇩 Indonesian</div>
+                            <div class="lang-option" data-lang="ja" data-label="JA">🇯🇵 Japanese</div>
+                            <div class="lang-option" data-lang="ko" data-label="KO">🇰🇷 Korean</div>
+                            <div class="lang-option" data-lang="zh" data-label="ZH">🇨🇳 Chinese</div>
+                            <div class="lang-option" data-lang="fr" data-label="FR">🇫🇷 French</div>
+                            <div class="lang-option" data-lang="de" data-label="DE">🇩🇪 German</div>
+                            <div class="lang-option" data-lang="it" data-label="IT">🇮🇹 Italian</div>
+                            <div class="lang-option" data-lang="pt" data-label="PT">🇧🇷 Portuguese</div>
+                            <div class="lang-option" data-lang="es" data-label="ES">🇪🇸 Spanish</div>
+                        </div>
+
+                        <div class="settings-divider"></div>
+
+                        <!-- Logout -->
                         <div class="settings-action-btn logout-btn" id="logout-button">
                             <i class="fi fi-br-sign-out-alt"></i>
                             <span>Log out</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Settings Lightbox -->
+                    <div id="profileLightbox" class="lightbox-overlay hidden">
+                        <div class="lightbox-card profile-card">
+                            <div class="lightbox-icon" style="color:#0099CC">
+                                <i class="fi fi-rr-circle-user"></i>
+                            </div>
+                            <h3 class="lightbox-title">Profile Settings</h3>
+
+                            <div class="profile-avatar-upload">
+                                <div id="profileAvatarPreview" class="profile-avatar-preview">Z</div>
+                                <label for="avatarUploadInput" class="avatar-upload-btn">
+                                    <i class="fi fi-rr-camera"></i> Change Photo
+                                </label>
+                                <input type="file" id="avatarUploadInput" accept="image/*" style="display:none">
+                            </div>
+
+                            <div class="profile-form">
+                                <label class="profile-label">Display Name</label>
+                                <input id="profileNameInput" class="lightbox-input" type="text"
+                                    placeholder="Enter your name...">
+                            </div>
+
+                            <div class="lightbox-actions">
+                                <button id="profileCancelBtn" class="lightbox-btn lightbox-btn-cancel">Cancel</button>
+                                <button id="profileSaveBtn" class="lightbox-btn lightbox-btn-rename">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Lightbox -->
+                    <div id="faqLightbox" class="lightbox-overlay hidden">
+                        <div class="lightbox-card faq-card">
+                            <div class="lightbox-icon" style="color:#0099CC">
+                                <i class="fi fi-rs-comment-question"></i>
+                            </div>
+                            <h3 class="lightbox-title">FAQ</h3>
+                            <div class="faq-list">
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                                        What is ZORA AI?
+                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
+                                    </div>
+                                    <div class="faq-answer">ZORA is a SuperIntelligence Autonomous AI that routes your
+                                        requests to the best AI model available.</div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                                        How does ZORA choose which model to use?
+                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
+                                    </div>
+                                    <div class="faq-answer">ZORA analyzes your message intent and automatically routes
+                                        it to the most suitable model — Qwen for coding, Gemini for research, and more.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                                        What is Incognito Mode?
+                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
+                                    </div>
+                                    <div class="faq-answer">Incognito Mode lets you chat privately without saving
+                                        history, profile info, or email to the session.</div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                                        What is Extended Thinking?
+                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
+                                    </div>
+                                    <div class="faq-answer">Extended Thinking enables a deeper reasoning layer before
+                                        ZORA responds, producing more thorough and accurate answers for complex queries.
+                                    </div>
+                                </div>
+                                <div class="faq-item">
+                                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                                        What are ZORA Labs?
+                                        <i class="fi fi-rr-angle-down faq-arrow"></i>
+                                    </div>
+                                    <div class="faq-answer">ZORA Labs includes specialized tools: Code, Design, Image
+                                        generation, Video, and Research — each powered by the best model for that task.
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="faqCloseBtn" class="lightbox-btn lightbox-btn-cancel"
+                                style="margin-top:16px">Close</button>
                         </div>
                     </div>
 
