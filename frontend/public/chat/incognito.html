@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZORA AI - Incognito Mode">
+    <meta name="theme-color" content="#1a1a1a">
+    <link rel="icon" href="/favicon.ico">
+    <title>ZORA Incognito</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/incognito.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/incognito.js"></script>
+</head>
+<body>
+    <!-- Ripple overlay -->
+    <div id="rippleOverlay" class="ripple-overlay hidden"></div>
+
+    <div class="incognito-shell" id="incognitoShell">
+
+        <!-- Topbar -->
+        <header class="incognito-topbar">
+            <div class="incognito-topbar-left">
+                <img src="/assets/images/logo/logo.png" alt="ZORA" class="incognito-logo">
+                <span class="incognito-badge">
+                    <i class="fi fi-rr-incognito"></i>
+                    Incognito
+                </span>
+            </div>
+            <div class="incognito-topbar-right">
+                <button id="newChatBtn" class="incognito-icon-btn" type="button" aria-label="New chat" title="New Chat">
+                    <i class="fi fi-rs-comment-medical"></i>
+                </button>
+                <button id="exitIncognitoBtn" class="incognito-icon-btn incognito-exit-btn" type="button" aria-label="Exit incognito" title="Back to Chat">
+                    <i class="fi fi-rr-user-robot"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat Stage -->
+        <main class="incognito-stage">
+
+            <!-- Welcome Screen -->
+            <section id="welcomeScreen" class="incognito-welcome">
+                <div class="incognito-orb">
+                    <i class="fi fi-rr-incognito incognito-orb-icon"></i>
+                </div>
+                <h1 class="incognito-welcome-title">You're in Incognito</h1>
+                <p class="incognito-welcome-desc">ZORA won't save this conversation.<br>Your messages stay private.</p>
+            </section>
+
+            <!-- Message Screen -->
+            <section class="incognito-message-screen hidden" id="messageScreen">
+                <div class="incognito-message-inner" id="messageScroller">
+                    <div id="messageList" class="incognito-message-list"></div>
+                    <div id="typingIndicator" class="incognito-typing hidden">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Composer -->
+        <div class="incognito-composer-wrap">
+            <div class="incognito-composer">
+                <textarea id="chatInput" class="incognito-textarea" rows="1" placeholder="Message Zora incognito..."></textarea>
+                <div class="incognito-composer-row">
+                    <div class="incognito-composer-left">
+                        <div class="incognito-toggle-group">
+                            <button id="extendedToggle" class="incognito-toggle-switch" type="button" aria-label="Extended mode"></button>
+                            <span class="incognito-toggle-label">Extended</span>
+                        </div>
+                    </div>
+                    <div class="incognito-composer-right">
+                        <button id="voiceButton" class="incognito-icon-btn" type="button" aria-label="Voice input">
+                            <i class="fi fi-rr-microphone"></i>
+                        </button>
+                        <button id="sendButton" class="incognito-icon-btn incognito-send-btn" type="button" aria-label="Send">
+                            <i class="fi fi-rs-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <p class="incognito-disclaimer">Messages are not saved. ZORA AI is still active.</p>
+        </div>
+
+    </div>
+</body>
+</html>
