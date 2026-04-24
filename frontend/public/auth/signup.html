@@ -482,6 +482,118 @@
             color: var(--accent-hover);
         }
 
+        /* ── Phone Section ── */
+        .phone-section {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+        }
+
+        .phone-section.open {
+            max-height: 200px;
+            opacity: 1;
+            margin-bottom: 4px;
+        }
+
+        .phone-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .phone-input-row .form-input {
+            flex: 1;
+        }
+
+        .btn-send {
+            padding: 12px 16px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.18s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-send:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ── OTP Section ── */
+        .otp-section {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+        }
+
+        .otp-section.open {
+            max-height: 160px;
+            opacity: 1;
+        }
+
+        .otp-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .otp-digit {
+            width: 44px;
+            height: 48px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            font-family: var(--font);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.18s, box-shadow 0.18s;
+        }
+
+        .otp-digit:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 153, 204, 0.10);
+            background: var(--white);
+        }
+
+        /* ── SSO Buttons ── */
+        .sso-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-sso {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-sso:hover {
+            background: var(--hover);
+            border-color: #ccc;
+        }
+
         /* ── Locked state ── */
         .sso-stack.locked .btn,
         .sso-stack.locked .btn-sso,
@@ -872,38 +984,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkAuthStatus();
             bindOrbBehavior();
-
-            const signupForm = document.getElementById('signupForm');
-            signupForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                const errorMessage = document.getElementById('errorMessage');
-                const btnText = document.querySelector('.btn-text');
-                const btnLoader = document.querySelector('.btn-loader');
-
-                errorMessage.textContent = '';
-
-                if (password !== confirmPassword) {
-                    errorMessage.textContent = 'Passwords do not match';
-                    return;
-                }
-
-                btnText.classList.add('hidden');
-                btnLoader.classList.remove('hidden');
-
-                try {
-                    await handleSignup(name, email, password);
-                } catch (error) {
-                    errorMessage.textContent = error.message || 'Signup failed. Please try again.';
-                } finally {
-                    btnText.classList.remove('hidden');
-                    btnLoader.classList.add('hidden');
-                }
-            });
 
             // Terms checkbox — unlock semua
             const termsCheckbox = document.getElementById('termsCheckbox');
