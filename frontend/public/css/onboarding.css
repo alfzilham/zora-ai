@@ -333,13 +333,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 25px;
     z-index: 1;
 }
 
 .ob-orb-eye {
-    width: 9px;
-    height: 22px;
+    width: 10px;
+    height: 35px;
     background: #1a1a1a;
     border-radius: 5px;
     display: block;
