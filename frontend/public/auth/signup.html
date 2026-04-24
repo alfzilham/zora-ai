@@ -464,11 +464,35 @@
         }
 
         .terms-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
             width: 18px;
             height: 18px;
-            accent-color: var(--accent);
+            border: 1.5px solid #CCCCCC;
+            border-radius: 5px;
+            background: var(--white);
             cursor: pointer;
             flex-shrink: 0;
+            position: relative;
+            transition: border-color 0.18s, background 0.18s;
+        }
+
+        .terms-checkbox:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .terms-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 5px;
+            height: 9px;
+            border: 2px solid #FFFFFF;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg);
         }
 
         .terms-label {
