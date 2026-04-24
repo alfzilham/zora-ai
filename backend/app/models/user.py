@@ -30,6 +30,8 @@ class User(Base):
     email = Column(String(255), nullable=False, unique=True)
     password_hash = Column(String(255), nullable=True)
     google_id = Column(String(255), nullable=True, unique=True, index=True)
+    github_id = Column(String(255), nullable=True, unique=True, index=True)
+    phone = Column(String(20), nullable=True, unique=True, index=True)
     avatar_url = Column(String(500), nullable=True)
     country = Column(String(100), nullable=True, default="Unknown")
     is_active = Column(Boolean, default=True, nullable=False)
@@ -39,6 +41,8 @@ class User(Base):
     __table_args__ = (
         Index("idx_user_email", "email"),
         Index("idx_user_google_id", "google_id"),
+        Index("idx_user_github_id", "github_id"),
+        Index("idx_user_phone", "phone"),
     )
 
     def __repr__(self) -> str:

@@ -6,6 +6,11 @@ Endpoints for user registration, login, logout, and Google OAuth.
 
 from datetime import datetime
 from typing import Optional
+import secrets
+import smtplib
+import time
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials
@@ -28,6 +33,82 @@ from app.utils.rate_limit import ip_key, limiter
 
 router = APIRouter()
 
+# ── In-memory Email OTP store (use Redis in production) ──────────────
+# Structure: { email: { "code": str, "expires": float } }
+_email_otp_store: dict = {}
+_EMAIL_OTP_TTL = 600  # 10 minutes
+
+
+def _generate_otp() -> str:
+    return str(secrets.randbelow(900000) + 100000)  # 6-digit
+
+
+def _store_email_otp(email: str, code: str) -> None:
+    _email_otp_store[email] = {"code": code, "expires": time.time() + _EMAIL_OTP_TTL}
+
+
+def _verify_email_otp(email: str, code: str) -> bool:
+    entry = _email_otp_store.get(email)
+    if not entry:
+        return False
+    if time.time() > entry["expires"]:
+        _email_otp_store.pop(email, None)
+        return False
+    if entry["code"] != code:
+        return False
+    _email_otp_store.pop(email, None)
+    return True
+
+
+def _send_email_otp(to_email: str, code: str) -> None:
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"{code} — Your ZORA AI Login Code"
+    msg["From"] = settings.SMTP_USER
+    msg["To"] = to_email
+
+    html = f"""
+    <div style="font-family:'Sora',sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#F5F5F5;border-radius:16px;">
+      <h2 style="color:#111111;font-size:20px;margin-bottom:8px;">ZORA AI</h2>
+      <p style="color:#555555;font-size:14px;margin-bottom:24px;">Your one-time login code:</p>
+      <div style="background:#FFFFFF;border:1.5px solid #E5E5E5;border-radius:12px;padding:24px;text-align:center;letter-spacing:12px;font-size:32px;font-weight:700;color:#0099CC;">{code}</div>
+      <p style="color:#999999;font-size:12px;margin-top:20px;">Expires in 10 minutes. Do not share this code.</p>
+    </div>
+    """
+    msg.attach(MIMEText(html, "html"))
+
+    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+        server.ehlo()
+        server.starttls()
+        server.login(settings.SMTP_USER, settings.SMTP_PASS)
+        server.sendmail(settings.SMTP_USER, to_email, msg.as_string())
+
+
+async def _twilio_send_otp(phone: str) -> None:
+    url = f"https://verify.twilio.com/v2/Services/{settings.TWILIO_VERIFY_SERVICE_SID}/Verifications"
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            url,
+            data={"To": phone, "Channel": "sms"},
+            auth=(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN),
+            timeout=15.0
+        )
+        if resp.status_code not in (200, 201):
+            raise HTTPException(status_code=502, detail="Failed to send SMS OTP")
+
+
+async def _twilio_verify_otp(phone: str, code: str) -> bool:
+    url = f"https://verify.twilio.com/v2/Services/{settings.TWILIO_VERIFY_SERVICE_SID}/VerificationChecks"
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            url,
+            data={"To": phone, "Code": code},
+            auth=(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN),
+            timeout=15.0
+        )
+        if resp.status_code not in (200, 201):
+            return False
+        return resp.json().get("status") == "approved"
+
 
 # Pydantic models for request/response
 class RegisterRequest(BaseModel):
@@ -47,6 +128,23 @@ class GoogleAuthRequest(BaseModel):
     """Request model for Google OAuth."""
     google_token: str
 
+
+class EmailOtpSendRequest(BaseModel):
+    email: EmailStr
+
+class EmailOtpVerifyRequest(BaseModel):
+    email: EmailStr
+    code: str = Field(..., min_length=6, max_length=6)
+
+class PhoneOtpSendRequest(BaseModel):
+    phone: str = Field(..., min_length=8, max_length=20)
+
+class PhoneOtpVerifyRequest(BaseModel):
+    phone: str = Field(..., min_length=8, max_length=20)
+    code: str = Field(..., min_length=6, max_length=6)
+
+class GithubAuthRequest(BaseModel):
+    code: str
 
 class AuthResponse(BaseModel):
     """Response model for successful authentication."""
@@ -317,6 +415,167 @@ async def google_auth(
                 avatar_url=avatar_url,
                 country=await detect_country_from_ip(get_request_ip(http_request)),
                 is_active=True
+            )
+            db.add(user)
+            await db.flush()
+            is_new_user = True
+
+# ── Email OTP ─────────────────────────────────────────────────────────
+
+@router.post("/email-otp/send")
+@limiter.limit("5/minute", key_func=ip_key)
+async def email_otp_send(request: Request, payload: EmailOtpSendRequest):
+    """Send 6-digit OTP to email via SMTP."""
+    code = _generate_otp()
+    try:
+        _send_email_otp(payload.email, code)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to send email: {str(e)}")
+    _store_email_otp(payload.email, code)
+    return {"success": True, "message": f"OTP sent to {payload.email}"}
+
+
+@router.post("/email-otp/verify", response_model=AuthResponse)
+async def email_otp_verify(
+    payload: EmailOtpVerifyRequest,
+    http_request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    """Verify email OTP and return JWT. Creates user if not exists."""
+    if not _verify_email_otp(payload.email, payload.code):
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+
+    result = await db.execute(select(User).where(User.email == payload.email))
+    user = result.scalar_one_or_none()
+    is_new_user = False
+
+    if not user:
+        user = User(
+            name=payload.email.split("@")[0],
+            email=payload.email,
+            country=await detect_country_from_ip(get_request_ip(http_request)),
+            is_active=True,
+        )
+        db.add(user)
+        await db.flush()
+        is_new_user = True
+
+    return create_auth_response(user, is_new_user=is_new_user)
+
+
+# ── Phone OTP ─────────────────────────────────────────────────────────
+
+@router.post("/phone-otp/send")
+@limiter.limit("5/minute", key_func=ip_key)
+async def phone_otp_send(request: Request, payload: PhoneOtpSendRequest):
+    """Send OTP SMS via Twilio Verify."""
+    await _twilio_send_otp(payload.phone)
+    return {"success": True, "message": f"OTP sent to {payload.phone}"}
+
+
+@router.post("/phone-otp/verify", response_model=AuthResponse)
+async def phone_otp_verify(
+    payload: PhoneOtpVerifyRequest,
+    http_request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    """Verify phone OTP via Twilio and return JWT. Creates user if not exists."""
+    approved = await _twilio_verify_otp(payload.phone, payload.code)
+    if not approved:
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+
+    result = await db.execute(select(User).where(User.phone == payload.phone))
+    user = result.scalar_one_or_none()
+    is_new_user = False
+
+    if not user:
+        user = User(
+            name=f"user_{payload.phone[-4:]}",
+            email=f"phone_{payload.phone.lstrip('+')}@zora.local",  # placeholder
+            phone=payload.phone,
+            country=await detect_country_from_ip(get_request_ip(http_request)),
+            is_active=True,
+        )
+        db.add(user)
+        await db.flush()
+        is_new_user = True
+
+    return create_auth_response(user, is_new_user=is_new_user)
+
+
+# ── GitHub OAuth ──────────────────────────────────────────────────────
+
+@router.post("/github", response_model=AuthResponse)
+async def github_auth(
+    payload: GithubAuthRequest,
+    http_request: Request,
+    db: AsyncSession = Depends(get_db),
+):
+    """Exchange GitHub OAuth code for JWT. Creates/links user as needed."""
+    async with httpx.AsyncClient() as client:
+        # 1. Exchange code → access token
+        token_resp = await client.post(
+            "https://github.com/login/oauth/access_token",
+            json={
+                "client_id": settings.GITHUB_CLIENT_ID,
+                "client_secret": settings.GITHUB_CLIENT_SECRET,
+                "code": payload.code,
+            },
+            headers={"Accept": "application/json"},
+            timeout=15.0,
+        )
+        token_data = token_resp.json()
+        access_token = token_data.get("access_token")
+        if not access_token:
+            raise HTTPException(status_code=400, detail="GitHub OAuth failed: invalid code")
+
+        # 2. Get user profile
+        gh_headers = {"Authorization": f"Bearer {access_token}", "Accept": "application/json"}
+        user_resp = await client.get("https://api.github.com/user", headers=gh_headers, timeout=10.0)
+        if user_resp.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to fetch GitHub user")
+        gh_user = user_resp.json()
+
+        # 3. Get primary verified email (profile email may be null)
+        email = gh_user.get("email")
+        if not email:
+            emails_resp = await client.get("https://api.github.com/user/emails", headers=gh_headers, timeout=10.0)
+            if emails_resp.status_code == 200:
+                emails = emails_resp.json()
+                primary = next((e for e in emails if e.get("primary") and e.get("verified")), None)
+                email = primary["email"] if primary else None
+
+        github_id = str(gh_user["id"])
+        name = gh_user.get("name") or gh_user.get("login") or "GitHub User"
+        avatar_url = gh_user.get("avatar_url")
+
+    # 4. Upsert user
+    result = await db.execute(select(User).where(User.github_id == github_id))
+    user = result.scalar_one_or_none()
+    is_new_user = False
+
+    if user:
+        user.name = name
+        user.avatar_url = avatar_url
+        await db.flush()
+    else:
+        # Try linking by email
+        if email:
+            result = await db.execute(select(User).where(User.email == email))
+            user = result.scalar_one_or_none()
+
+        if user:
+            user.github_id = github_id
+            user.avatar_url = avatar_url
+            await db.flush()
+        else:
+            user = User(
+                name=name,
+                email=email or f"github_{github_id}@zora.local",
+                github_id=github_id,
+                avatar_url=avatar_url,
+                country=await detect_country_from_ip(get_request_ip(http_request)),
+                is_active=True,
             )
             db.add(user)
             await db.flush()

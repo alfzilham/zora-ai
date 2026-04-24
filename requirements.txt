@@ -18,3 +18,4 @@ email-validator
 google-auth
 google-auth-oauthlib
 psycopg2-binary
+twilio>=8.0.0

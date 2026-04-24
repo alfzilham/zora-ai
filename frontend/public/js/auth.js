@@ -227,12 +227,151 @@ async function redirectAfterLogin() {
     window.location.href = '../onboarding/name.html';
 }
 
+/**
+ * Handle Email OTP — send OTP/magic link to email
+ * @param {string} email
+ */
+async function handleEmailOtp(email) {
+    try {
+        const response = await apiCall('/auth/email-otp/send', 'POST', { email });
+        if (!response.success) throw new Error(response.message || 'Failed to send OTP');
+        return response.data;
+    } catch (error) {
+        console.error('Email OTP send error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Handle Email OTP — verify code
+ * @param {string} email
+ * @param {string} code - 6-digit OTP
+ */
+async function handleVerifyEmailOtp(email, code) {
+    try {
+        const response = await apiCall('/auth/email-otp/verify', 'POST', { email, code });
+        if (response.success && response.data.access_token) {
+            localStorage.setItem('zora_token', response.data.access_token);
+            if (response.data.is_new_user) {
+                window.location.href = '../onboarding/name.html';
+            } else {
+                await redirectAfterLogin();
+            }
+        } else {
+            throw new Error(response.message || 'OTP verification failed');
+        }
+    } catch (error) {
+        console.error('Email OTP verify error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Handle Phone OTP — send OTP via Twilio SMS
+ * @param {string} phone - format +628xxxxxxxxxx
+ */
+async function handlePhoneOtp(phone) {
+    try {
+        const response = await apiCall('/auth/phone-otp/send', 'POST', { phone });
+        if (!response.success) throw new Error(response.message || 'Failed to send OTP');
+        return response.data;
+    } catch (error) {
+        console.error('Phone OTP send error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Handle Phone OTP — verify code via Twilio Verify
+ * @param {string} phone
+ * @param {string} code - 6-digit OTP
+ */
+async function handleVerifyPhoneOtp(phone, code) {
+    try {
+        const response = await apiCall('/auth/phone-otp/verify', 'POST', { phone, code });
+        if (response.success && response.data.access_token) {
+            localStorage.setItem('zora_token', response.data.access_token);
+            if (response.data.is_new_user) {
+                window.location.href = '../onboarding/name.html';
+            } else {
+                await redirectAfterLogin();
+            }
+        } else {
+            throw new Error(response.message || 'OTP verification failed');
+        }
+    } catch (error) {
+        console.error('Phone OTP verify error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Handle GitHub OAuth authentication
+ */
+function handleGithubAuth() {
+    const GITHUB_CLIENT_ID = window.ZORA_CONFIG?.GITHUB_CLIENT_ID || '';
+    if (!GITHUB_CLIENT_ID) {
+        showError('GitHub Sign-In is not configured.');
+        return;
+    }
+
+    const REDIRECT_URI = window.location.origin + '/auth/github-callback.html';
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?` +
+        `client_id=${GITHUB_CLIENT_ID}&` +
+        `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+        `scope=user:email`;
+
+    const width = 500;
+    const height = 600;
+    const left = (screen.width / 2) - (width / 2);
+    const top = (screen.height / 2) - (height / 2);
+
+    const popup = window.open(
+        githubAuthUrl,
+        'githubAuth',
+        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`
+    );
+
+    window.addEventListener('message', async (event) => {
+        if (event.origin !== window.location.origin) return;
+
+        if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
+            try {
+                const response = await apiCall('/auth/github', 'POST', {
+                    code: event.data.code
+                });
+                if (response.success && response.data.access_token) {
+                    localStorage.setItem('zora_token', response.data.access_token);
+                    if (response.data.is_new_user) {
+                        window.location.href = '../onboarding/name.html';
+                    } else {
+                        await redirectAfterLogin();
+                    }
+                }
+            } catch (error) {
+                console.error('GitHub auth error:', error);
+                showError('GitHub authentication failed. Please try again.');
+            }
+        }
+
+        if (event.data.type === 'GITHUB_AUTH_ERROR') {
+            console.error('GitHub auth error:', event.data.error);
+            showError('GitHub authentication failed. Please try again.');
+        }
+    });
+}
+
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         handleLogin,
         handleSignup,
         handleGoogleAuth,
+        handleEmailOtp,
+        handleVerifyEmailOtp,
+        handlePhoneOtp,
+        handleVerifyPhoneOtp,
+        handleGithubAuth,
         checkAuthStatus,
         requireAuth,
         logout,

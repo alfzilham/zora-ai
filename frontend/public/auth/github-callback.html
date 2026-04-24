@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Authenticating...</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #F5F5F5;
+            font-family: 'Sora', sans-serif;
+            color: #111111;
+        }
+
+        .msg {
+            font-size: 14px;
+            color: #555555;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+    <p class="msg">Completing sign-in...</p>
+
+    <script>
+        (function () {
+            const params = Object.fromEntries(
+                new URLSearchParams(window.location.search).entries()
+            );
+
+            if (params.code) {
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(
+                        { type: 'GITHUB_AUTH_SUCCESS', code: params.code },
+                        window.location.origin
+                    );
+                }
+            } else if (params.error) {
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(
+                        { type: 'GITHUB_AUTH_ERROR', error: params.error_description || params.error },
+                        window.location.origin
+                    );
+                }
+            }
+
+            setTimeout(() => window.close(), 300);
+        })();
+    </script>
+</body>
+
+</html>
