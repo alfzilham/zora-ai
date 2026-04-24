@@ -15,6 +15,34 @@ body {
     box-sizing: border-box;
 }
 
+/* ── Global Scrollbar ── */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #DDDDDD transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #DDDDDD;
+    border-radius: 99px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #BBBBBB;
+}
+
+*::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 img {
     max-width: 100%;
     display: block;
@@ -85,6 +113,7 @@ select {
         opacity: 0;
         transform: translateY(24px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -96,6 +125,7 @@ select {
         opacity: 1;
         transform: translateY(0);
     }
+
     to {
         opacity: 0;
         transform: translateY(12px);

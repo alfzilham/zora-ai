@@ -246,6 +246,34 @@
             scrollbar-color: var(--border) transparent;
         }
 
+        /* ── Global Scrollbar ── */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #DDDDDD transparent;
+        }
+
+        *::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: #DDDDDD;
+            border-radius: 99px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: #BBBBBB;
+        }
+
+        *::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
         .form-panel::-webkit-scrollbar {
             width: 4px;
         }
