@@ -511,10 +511,7 @@ function bindEvents() {
     qs('newChatIconButton')?.addEventListener('click', startNewChat);
 
     qs('incognitoButton')?.addEventListener('click', () => {
-        chatState.incognito = !chatState.incognito;
-        clearConversationState();
-        updateShellState();
-        filterConversations(qs('historySearch').value);
+        window.location.href = '/chat/incognito.html';
     });
 
     qs('extendedToggle')?.addEventListener('click', () => {
