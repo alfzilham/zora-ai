@@ -250,8 +250,8 @@ async function handleEmailOtp(email) {
 async function handleVerifyEmailOtp(email, code) {
     try {
         const response = await apiCall('/auth/email-otp/verify', 'POST', { email, code });
-        if (response.success && response.data.access_token) {
-            localStorage.setItem('zora_token', response.data.access_token);
+        if (response.success && response.data.token) {
+            localStorage.setItem('zora_token', response.data.token);
             if (response.data.is_new_user) {
                 window.location.href = '../onboarding/name.html';
             } else {
@@ -289,8 +289,8 @@ async function handlePhoneOtp(phone) {
 async function handleVerifyPhoneOtp(phone, code) {
     try {
         const response = await apiCall('/auth/phone-otp/verify', 'POST', { phone, code });
-        if (response.success && response.data.access_token) {
-            localStorage.setItem('zora_token', response.data.access_token);
+        if (response.success && response.data.token) {
+            localStorage.setItem('zora_token', response.data.token);
             if (response.data.is_new_user) {
                 window.location.href = '../onboarding/name.html';
             } else {
@@ -340,8 +340,8 @@ function handleGithubAuth() {
                 const response = await apiCall('/auth/github', 'POST', {
                     code: event.data.code
                 });
-                if (response.success && response.data.access_token) {
-                    localStorage.setItem('zora_token', response.data.access_token);
+                if (response.success && response.data.token) {
+                    localStorage.setItem('zora_token', response.data.token);
                     if (response.data.is_new_user) {
                         window.location.href = '../onboarding/name.html';
                     } else {

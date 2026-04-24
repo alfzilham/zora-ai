@@ -420,6 +420,8 @@ async def google_auth(
             await db.flush()
             is_new_user = True
 
+    return create_auth_response(user, is_new_user=is_new_user)  # ← BARIS BARU
+
 # ── Email OTP ─────────────────────────────────────────────────────────
 
 @router.post("/email-otp/send")
