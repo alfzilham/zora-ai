@@ -45,11 +45,12 @@
 
         html,
         body {
-            height: 100%;
+            height: 100vh;
             font-family: var(--font);
             background: var(--bg);
             color: var(--text-primary);
             -webkit-font-smoothing: antialiased;
+            overflow-y: hidden !important;
         }
 
         /* ── Layout ── */
@@ -69,6 +70,10 @@
             background: var(--white);
             position: relative;
             z-index: 1;
+        }
+
+        .form-panel::-webkit-scrollbar {
+            display: none;
         }
 
         .form-inner {
@@ -708,7 +713,7 @@
                 const cx = rect.left + rect.width / 2;
                 const cy = rect.top + rect.height / 2;
                 const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-                const dist = Math.min(28, Math.hypot(e.clientX - cx, e.clientY - cy) / 8);
+                const dist = Math.min(34, Math.hypot(e.clientX - cx, e.clientY - cy) / 8);
                 document.querySelectorAll('.orb-eye').forEach((eye) => {
                     eye.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`;
                 });
