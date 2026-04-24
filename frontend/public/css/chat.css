@@ -2272,3 +2272,119 @@ textarea {
     background: #ffe5e5;
     transform: scale(1.05);
 }
+/* ─── INCOGNITO MODE ────────────────────────────────── */
+.incognito-ripple {
+    position: fixed;
+    border-radius: 50%;
+    background: #1a1a1a;
+    transform: scale(0);
+    animation: rippleExpand 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+    z-index: 9998;
+}
+
+@keyframes rippleExpand {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.chat-shell.incognito-active {
+    --incognito-bg: #1a1a1a;
+    --incognito-surface: #242424;
+    --incognito-border: #333333;
+    --incognito-text: #cccccc;
+    transition: all 0.4s ease;
+}
+
+.chat-shell.incognito-active .chat-sidebar,
+.chat-shell.incognito-active .sidebar {
+    background: var(--incognito-surface);
+    border-right-color: var(--incognito-border);
+}
+
+.chat-shell.incognito-active .chat-topbar {
+    background: var(--incognito-surface);
+    border-bottom-color: var(--incognito-border);
+}
+
+.chat-shell.incognito-active .chat-stage {
+    background: var(--incognito-bg);
+}
+
+.chat-shell.incognito-active .composer-card {
+    background: var(--incognito-surface);
+    border-color: var(--incognito-border);
+}
+
+.chat-shell.incognito-active .nav-item {
+    color: var(--incognito-text);
+}
+
+.chat-shell.incognito-active .sidebar-history,
+.chat-shell.incognito-active .sidebar-divider,
+.chat-shell.incognito-active .user-profile-section {
+    display: none !important;
+}
+
+.chat-shell.incognito-active .welcome-title {
+    color: #cccccc;
+}
+
+.chat-shell.incognito-active .sidebar-brand span {
+    color: #aaaaaa;
+}
+
+/* Incognito badge */
+.incognito-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: #333333;
+    border: 1px solid #444444;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #aaaaaa;
+    margin-left: 12px;
+}
+
+.chat-shell.incognito-active .incognito-badge {
+    display: flex;
+}
+
+/* Incognito orb */
+.incognito-orb-icon {
+    display: none;
+    font-size: 6rem;
+    color: #555555;
+    animation: orbFloat 3s ease-in-out infinite;
+}
+
+.chat-shell.incognito-active .incognito-orb-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-shell.incognito-active #zoraOrb {
+    background: transparent;
+    box-shadow: none;
+    animation: none;
+}
+
+.chat-shell.incognito-active .orb-canvas-container,
+.chat-shell.incognito-active .orb-eyes {
+    display: none !important;
+}
+
+/* Toggle icon switch */
+.chat-shell.incognito-active #incognitoButton i {
+    font-family: "uicons-regular-rounded" !important;
+}
+
+.chat-shell.incognito-active #incognitoButton i::before {
+    content: "\f1e8";
+}
