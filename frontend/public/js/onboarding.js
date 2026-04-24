@@ -246,7 +246,7 @@ async function initOnboardingOrb(containerId) {
                 hover: { value: 0 },
                 rot: { value: 0 },
                 hoverIntensity: { value: 0.2 },
-                backgroundColor: { value: new Vec3(5.0, 5.0, 5.0) },
+                // backgroundColor: { value: new Vec3(1.0, 1.0, 1.0) },
             }
         });
 
