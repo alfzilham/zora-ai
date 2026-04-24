@@ -13,7 +13,7 @@
     <link rel="icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
     <meta name="google-client-id" content="1095758885377-qlpco50qic72as6hrcqlkghesop9b3dm.apps.googleusercontent.com">
-    <meta name="github-client-id" content="YOUR_GITHUB_CLIENT_ID">
+    <meta name="github-client-id" content="Ov23liTLfk6zL22fA5N3">
     <title>Sign Up - ZORA AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +50,6 @@
             background: var(--bg);
             color: var(--text-primary);
             -webkit-font-smoothing: antialiased;
-            overflow-y: hidden !important;
         }
 
         /* ── Layout ── */
@@ -243,11 +242,25 @@
             position: relative;
             z-index: 1;
             overflow-y: auto;
-            scrollbar-width: none;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
         }
 
         .form-panel::-webkit-scrollbar {
-            display: none;
+            width: 4px;
+        }
+
+        .form-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .form-panel::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 99px;
+        }
+
+        .form-panel::-webkit-scrollbar-thumb:hover {
+            background: #CCCCCC;
         }
 
         .form-inner {
@@ -521,7 +534,7 @@
         }
 
         .phone-section.open {
-            max-height: 200px;
+            max-height: 400px;
             opacity: 1;
             margin-bottom: 4px;
         }
