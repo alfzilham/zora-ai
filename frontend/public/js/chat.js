@@ -510,12 +510,11 @@ function bindEvents() {
     }
     qs('newChatIconButton')?.addEventListener('click', startNewChat);
 
-    qs('incognitoButton')?.addEventListener('click', (e) => {
+    qs('incognitoButton')?.addEventListener('click', () => {
         chatState.incognito = !chatState.incognito;
-        triggerIncognitoRipple(e.currentTarget, chatState.incognito);
         clearConversationState();
         updateShellState();
-        if (!chatState.incognito) filterConversations(qs('historySearch').value);
+        filterConversations(qs('historySearch').value);
     });
 
     qs('extendedToggle')?.addEventListener('click', () => {
@@ -2345,28 +2344,4 @@ function stopVoiceRecognition() {
 }
 
 
-// ─── INCOGNITO RIPPLE TRANSITION ─────────────────────────────────────────────
-function triggerIncognitoRipple(btnEl, activating) {
-    const rect = btnEl.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const maxDim = Math.max(window.innerWidth, window.innerHeight) * 2;
-
-    const ripple = document.createElement('div');
-    ripple.className = 'incognito-ripple';
-    ripple.style.cssText = 
-        width: \px;
-        height: \px;
-        left: \px;
-        top: \px;
-        background: \;
-    ;
-    document.body.appendChild(ripple);
-
-    setTimeout(() => {
-        const shell = document.getElementById('chatShell');
-        shell.classList.toggle('incognito-active', activating);
-        ripple.remove();
-    }, 350);
-}
 document.addEventListener('DOMContentLoaded', bootstrapChat);
