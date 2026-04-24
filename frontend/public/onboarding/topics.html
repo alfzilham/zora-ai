@@ -1,68 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="ZORA AI SuperIntelligence Autonomous AI">
-    <meta name="theme-color" content="#00D4FF">
-    <meta property="og:title" content="ZORA AI">
-    <meta property="og:description" content="SuperIntelligence Autonomous AI">
-    <meta property="og:image" content="/assets/images/logo/logo.png">
-    <meta property="og:type" content="website">
+    <title>Your Topics - ZORA AI</title>
     <link rel="icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">`r`n    <title>Your Topics - ZORA AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/global.css">`r`n    <link rel="stylesheet" href="/css/onboarding.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/onboarding.css">
 </head>
+
 <body data-page="topics">
     <main class="onboarding-shell">
-        <section class="onboarding-panel onboarding-panel--topics">
-            <div class="brand-mark">ZORA</div>
-            <p class="eyebrow">STEP 2 OF 3</p>
-            <h1 class="headline">Pick the things you want more of.</h1>
-            <p class="subcopy">
-                Choose at least 2 topics so I can tune chat suggestions and lab recommendations.
-            </p>
 
-            <div class="topic-toolbar">
-                <span id="topicCount" class="topic-count">0 selected</span>
-                <span class="topic-hint">Minimum 2 required</span>
+        <!-- LEFT -->
+        <div class="ob-left">
+            <div class="ob-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI">
+                <span class="ob-brand-name">ZORA AI</span>
             </div>
 
-            <div class="topic-grid" id="topicGrid">
-                <button class="topic-chip" type="button" data-topic="Technology">Technology</button>
-                <button class="topic-chip" type="button" data-topic="Science">Science</button>
-                <button class="topic-chip" type="button" data-topic="Business">Business</button>
-                <button class="topic-chip" type="button" data-topic="Arts &amp; Design">Arts &amp; Design</button>
-                <button class="topic-chip" type="button" data-topic="Health">Health</button>
-                <button class="topic-chip" type="button" data-topic="Education">Education</button>
-                <button class="topic-chip" type="button" data-topic="Entertainment">Entertainment</button>
-                <button class="topic-chip" type="button" data-topic="Sports">Sports</button>
-                <button class="topic-chip" type="button" data-topic="Travel">Travel</button>
-                <button class="topic-chip" type="button" data-topic="Food">Food</button>
-                <button class="topic-chip" type="button" data-topic="Finance">Finance</button>
-                <button class="topic-chip" type="button" data-topic="Gaming">Gaming</button>
+            <div class="ob-progress">
+                <div class="ob-progress-dot active"></div>
+                <div class="ob-progress-dot active"></div>
+                <div class="ob-progress-dot"></div>
             </div>
 
-            <p id="topicsError" class="status-message" role="alert"></p>
+            <p class="ob-step">Step 2 of 3</p>
+            <h1 class="ob-title">What are you into?</h1>
+            <p class="ob-desc">Pick at least 2 topics so ZORA can personalize suggestions and lab recommendations for
+                you.</p>
 
-            <button id="topicsContinue" class="cta-button" type="button" disabled>
-                <span class="button-label">Continue</span>
-                <span class="button-arrow">→</span>
+            <div class="ob-topic-meta">
+                <span id="topicCount" class="ob-topic-count">0 selected</span>
+                <span>Minimum 2 required</span>
+            </div>
+
+            <div class="ob-topic-grid" id="topicGrid">
+                <button class="ob-topic-chip" type="button" data-topic="Technology">
+                    <span class="topic-check">✓</span> 💻 Technology
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Science">
+                    <span class="topic-check">✓</span> 🔬 Science
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Business">
+                    <span class="topic-check">✓</span> 💼 Business
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Arts & Design">
+                    <span class="topic-check">✓</span> 🎨 Arts & Design
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Health">
+                    <span class="topic-check">✓</span> 🏥 Health
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Education">
+                    <span class="topic-check">✓</span> 📚 Education
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Entertainment">
+                    <span class="topic-check">✓</span> 🎬 Entertainment
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Sports">
+                    <span class="topic-check">✓</span> ⚽ Sports
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Travel">
+                    <span class="topic-check">✓</span> ✈️ Travel
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Food">
+                    <span class="topic-check">✓</span> 🍜 Food
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Finance">
+                    <span class="topic-check">✓</span> 📈 Finance
+                </button>
+                <button class="ob-topic-chip" type="button" data-topic="Gaming">
+                    <span class="topic-check">✓</span> 🎮 Gaming
+                </button>
+            </div>
+
+            <p id="topicsError" class="ob-error"></p>
+            <button id="topicsContinue" class="ob-btn" type="button" disabled>
+                Continue <span>→</span>
             </button>
-        </section>
-    </main>
+        </div>
 
-        <script defer src="/js/utils/helpers.js"></script>
+        <!-- RIGHT -->
+        <div class="ob-right">
+            <div class="ob-orb-wrap ob-orb-float">
+                <div class="ob-orb-canvas" id="topicsOrbCanvas"></div>
+                <div class="ob-orb-eyes">
+                    <span class="ob-orb-eye"></span>
+                    <span class="ob-orb-eye"></span>
+                </div>
+            </div>
+            <span class="ob-right-badge">Personalizing</span>
+            <h2 class="ob-right-title" id="topicsRightTitle">Tell me what you love</h2>
+            <p class="ob-right-desc" id="topicsRightDesc">The more you pick, the smarter ZORA gets about your
+                preferences.</p>
+        </div>
+
+    </main>
+    <script defer src="/js/utils/helpers.js"></script>
     <script defer src="/js/utils/api.js"></script>
-    <script defer src="/js/auth.js"></script>
     <script defer src="/js/onboarding.js"></script>
 </body>
+
 </html>
-
-
-
-
-

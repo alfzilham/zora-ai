@@ -1,60 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="ZORA AI SuperIntelligence Autonomous AI">
-    <meta name="theme-color" content="#00D4FF">
-    <meta property="og:title" content="ZORA AI">
-    <meta property="og:description" content="SuperIntelligence Autonomous AI">
-    <meta property="og:image" content="/assets/images/logo/logo.png">
-    <meta property="og:type" content="website">
+    <title>Your Name - ZORA AI</title>
     <link rel="icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">`r`n    <title>Your Name - ZORA AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/global.css">`r`n    <link rel="stylesheet" href="/css/onboarding.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/onboarding.css">
 </head>
+
 <body data-page="name">
     <main class="onboarding-shell">
-        <section class="onboarding-panel onboarding-panel--name">
-            <div class="brand-mark">ZORA</div>
-            <p class="eyebrow">PHASE 2 · ONBOARDING</p>
-            <h1 class="headline">Hey! What's your name?</h1>
-            <p class="subcopy">
-                I’ll use it to personalize your chat, labs, and research flow.
-            </p>
 
-            <form id="nameForm" class="stack-lg">
-                <label class="field-label" for="displayName">Display name</label>
-                <input
-                    id="displayName"
-                    name="displayName"
-                    class="text-input"
-                    type="text"
-                    maxlength="255"
-                    placeholder="Type your name here"
-                    autocomplete="name"
-                    required
-                >
-                <p id="nameError" class="status-message" role="alert"></p>
-                <button id="nameContinue" class="cta-button" type="submit">
-                    <span class="button-label">Continue</span>
-                    <span class="button-arrow">→</span>
+        <!-- LEFT -->
+        <div class="ob-left">
+            <div class="ob-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI">
+                <span class="ob-brand-name">ZORA AI</span>
+            </div>
+
+            <div class="ob-progress">
+                <div class="ob-progress-dot active"></div>
+                <div class="ob-progress-dot"></div>
+                <div class="ob-progress-dot"></div>
+            </div>
+
+            <p class="ob-step">Step 1 of 3</p>
+            <h1 class="ob-title">What should I call you?</h1>
+            <p class="ob-desc">I'll use your name to personalize your chat experience and make our conversations feel
+                more natural.</p>
+
+            <form id="nameForm">
+                <label class="ob-label" for="displayName">Display name</label>
+                <input id="displayName" class="ob-input" type="text" placeholder="Type your name here..."
+                    maxlength="255" autocomplete="name" autofocus required>
+                <p id="nameError" class="ob-error"></p>
+                <button id="nameContinue" class="ob-btn" type="submit">
+                    Continue <span>→</span>
                 </button>
             </form>
-        </section>
-    </main>
+        </div>
 
-        <script defer src="/js/utils/helpers.js"></script>
+        <!-- RIGHT -->
+        <div class="ob-right">
+            <div class="ob-orb-wrap ob-orb-float">
+                <div class="ob-orb-canvas" id="nameOrbCanvas"></div>
+                <div class="ob-orb-eyes">
+                    <span class="ob-orb-eye"></span>
+                    <span class="ob-orb-eye"></span>
+                </div>
+            </div>
+            <span class="ob-right-badge">SuperIntelligence</span>
+            <h2 class="ob-right-title">Hi, I'm ZORA</h2>
+            <p class="ob-right-desc">Your autonomous AI that thinks, routes, and responds with precision.</p>
+        </div>
+
+    </main>
+    <script defer src="/js/utils/helpers.js"></script>
     <script defer src="/js/utils/api.js"></script>
-    <script defer src="/js/auth.js"></script>
     <script defer src="/js/onboarding.js"></script>
 </body>
+
 </html>
-
-
-
-
-
