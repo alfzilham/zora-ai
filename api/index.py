@@ -1,36 +1,12 @@
-from fastapi import FastAPI
+"""
+Vercel serverless entry point.
+Re-exports the fully configured FastAPI application from the backend package.
+"""
 
-app = FastAPI()
+import os
+import sys
 
-@app.on_event("startup")
-async def startup():
-    import os
-    import sys
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
+# Ensure the backend package is importable
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
-    try:
-        from app.routers import auth, onboarding, chat, labs, dashboard
-        from app.routers import settings as settings_router
-        from app.database import engine, Base
-
-        # Tambahkan prefix /api agar cocok dengan panggilan frontend
-        app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
-        app.include_router(onboarding.router, prefix="/api/onboarding", tags=["Onboarding"])
-        app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
-        app.include_router(labs.router, prefix="/api/labs", tags=["Labs"])
-        app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
-        app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
-
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-
-    except Exception as e:
-        app.state.boot_error = str(e)
-
-@app.get("/api/health")
-@app.get("/health")
-async def health():
-    error = getattr(app.state, "boot_error", None)
-    if error:
-        return {"status": "degraded", "error": error}
-    return {"status": "ok", "version": "1.0.0", "message": "ZORA AI is running"}
+from app.main import app  # noqa: E402, F401 — re-export for Vercel

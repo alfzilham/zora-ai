@@ -1047,7 +1047,7 @@
             });
         }
 
-        function showError(msg) {
+        function showInlineError(msg) {
             document.getElementById('errorMessage').textContent = msg;
         }
 
@@ -1076,14 +1076,14 @@
 
             document.getElementById('emailContinueBtn').addEventListener('click', async () => {
                 const email = emailInput.value.trim();
-                if (!email) { showError('Please enter your email.'); return; }
-                showError('');
+                if (!email) { showInlineError('Please enter your email.'); return; }
+                showInlineError('');
                 try {
                     await handleEmailOtp(email);
                     emailOtpHint.textContent = `OTP sent to ${email}`;
                     emailOtpSection.classList.add('open');
                     emailOtpSection.querySelector('.otp-digit').focus();
-                } catch (e) { showError(e.message || 'Failed to send OTP.'); }
+                } catch (e) { showInlineError(e.message || 'Failed to send OTP.'); }
             });
 
             bindOtpInputs(document.getElementById('emailOtpInputs'), (code) => {
@@ -1093,10 +1093,10 @@
             document.getElementById('emailVerifyBtn').addEventListener('click', async (e) => {
                 const code = e.currentTarget.dataset.code || '';
                 const email = emailInput.value.trim();
-                if (code.length < 6) { showError('Enter the 6-digit code.'); return; }
+                if (code.length < 6) { showInlineError('Enter the 6-digit code.'); return; }
                 try {
                     await handleVerifyEmailOtp(email, code);
-                } catch (err) { showError(err.message || 'Invalid OTP.'); }
+                } catch (err) { showInlineError(err.message || 'Invalid OTP.'); }
             });
 
             // Phone OTP
@@ -1111,14 +1111,14 @@
 
             document.getElementById('phoneSendBtn').addEventListener('click', async () => {
                 const phone = phoneInput.value.trim();
-                if (!phone) { showError('Please enter your phone number.'); return; }
-                showError('');
+                if (!phone) { showInlineError('Please enter your phone number.'); return; }
+                showInlineError('');
                 try {
                     await handlePhoneOtp(phone);
                     phoneOtpHint.textContent = `OTP sent to ${phone}`;
                     phoneOtpSection.classList.add('open');
                     phoneOtpSection.querySelector('.otp-digit').focus();
-                } catch (e) { showError(e.message || 'Failed to send OTP.'); }
+                } catch (e) { showInlineError(e.message || 'Failed to send OTP.'); }
             });
 
             bindOtpInputs(document.getElementById('phoneOtpInputs'), (code) => {
@@ -1128,10 +1128,10 @@
             document.getElementById('phoneVerifyBtn').addEventListener('click', async (e) => {
                 const code = e.currentTarget.dataset.code || '';
                 const phone = phoneInput.value.trim();
-                if (code.length < 6) { showError('Enter the 6-digit code.'); return; }
+                if (code.length < 6) { showInlineError('Enter the 6-digit code.'); return; }
                 try {
                     await handleVerifyPhoneOtp(phone, code);
-                } catch (err) { showError(err.message || 'Invalid OTP.'); }
+                } catch (err) { showInlineError(err.message || 'Invalid OTP.'); }
             });
 
             // SSO

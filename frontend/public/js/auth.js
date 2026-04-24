@@ -87,11 +87,17 @@ function handleGoogleAuth() {
         `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`
     );
 
+    // Remove any previous listener to avoid accumulation
+    if (window._googleAuthListener) {
+        window.removeEventListener('message', window._googleAuthListener);
+    }
+
     // Listen for message from popup
-    window.addEventListener('message', async (event) => {
+    window._googleAuthListener = async (event) => {
         if (event.origin !== window.location.origin) return;
 
         if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+            window.removeEventListener('message', window._googleAuthListener);
             const googleToken = event.data.token;
 
             try {
@@ -116,10 +122,12 @@ function handleGoogleAuth() {
         }
 
         if (event.data.type === 'GOOGLE_AUTH_ERROR') {
+            window.removeEventListener('message', window._googleAuthListener);
             console.error('Google auth error:', event.data.error);
             showError('Google authentication failed. Please try again.');
         }
-    });
+    };
+    window.addEventListener('message', window._googleAuthListener);
 }
 
 /**
@@ -216,8 +224,13 @@ async function getCurrentUser() {
  * Redirect authenticated users based on onboarding status.
  */
 async function redirectAfterLogin() {
-    const onboardingResponse = await apiCall('/onboarding/status', 'GET', null, true);
-    const onboardingDone = onboardingResponse?.data?.onboarding_done === true;
+    let onboardingDone = false;
+    try {
+        const onboardingResponse = await apiCall('/onboarding/status', 'GET', null, true);
+        onboardingDone = onboardingResponse?.data?.onboarding_done === true;
+    } catch (err) {
+        console.warn('Failed to check onboarding status:', err);
+    }
 
     if (onboardingDone) {
         window.location.href = '../chat/index.html';
@@ -332,10 +345,16 @@ function handleGithubAuth() {
         `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`
     );
 
-    window.addEventListener('message', async (event) => {
+    // Remove any previous listener to avoid accumulation
+    if (window._githubAuthListener) {
+        window.removeEventListener('message', window._githubAuthListener);
+    }
+
+    window._githubAuthListener = async (event) => {
         if (event.origin !== window.location.origin) return;
 
         if (event.data.type === 'GITHUB_AUTH_SUCCESS') {
+            window.removeEventListener('message', window._githubAuthListener);
             try {
                 const response = await apiCall('/auth/github', 'POST', {
                     code: event.data.code
@@ -355,10 +374,12 @@ function handleGithubAuth() {
         }
 
         if (event.data.type === 'GITHUB_AUTH_ERROR') {
+            window.removeEventListener('message', window._githubAuthListener);
             console.error('GitHub auth error:', event.data.error);
             showError('GitHub authentication failed. Please try again.');
         }
-    });
+    };
+    window.addEventListener('message', window._githubAuthListener);
 }
 
 // Export for module usage

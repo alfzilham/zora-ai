@@ -32,9 +32,9 @@
       // Parse the URL hash that Google appends after redirect
       // e.g. #access_token=ya29.xxx&token_type=Bearer&...
       const hash = window.location.hash.substring(1);
-      const params = Object.fromEntries(
-        hash.split('&').map((pair) => pair.split('=').map(decodeURIComponent))
-      );
+      const params = hash
+        ? Object.fromEntries(new URLSearchParams(hash).entries())
+        : {};
 
       if (params.access_token) {
         // Send token to parent window (login.html or signup.html)

@@ -24,7 +24,7 @@ except ModuleNotFoundError:
 from app.config import settings
 from app.database import engine, Base
 from app.middleware.cors import SecurityHeadersMiddleware
-from app.routers import auth, onboarding, chat, settings, labs, dashboard
+from app.routers import auth, onboarding, chat, settings as settings_router, labs, dashboard
 from app.utils.rate_limit import limiter
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
@@ -96,7 +96,7 @@ async def normalize_vercel_api_prefix(request: Request, call_next):
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(onboarding.router, prefix="/onboarding", tags=["Onboarding"])
 app.include_router(chat.router, prefix="/chat", tags=["Chat"])
-app.include_router(settings.router, tags=["Settings"])
+app.include_router(settings_router.router, prefix="/settings", tags=["Settings"])
 app.include_router(labs.router, prefix="/labs", tags=["Labs"])
 app.include_router(dashboard.router, tags=["Dashboard"])
 
