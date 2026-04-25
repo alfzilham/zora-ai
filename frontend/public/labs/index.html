@@ -503,6 +503,21 @@
                     return { tex, width: canvas.width, height: canvas.height };
                 }
 
+                // ── Rounded rect polyfill ─────────────────────────────
+                function canvasRoundRect(ctx, x, y, w, h, r) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + r, y);
+                    ctx.lineTo(x + w - r, y);
+                    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                    ctx.lineTo(x + w, y + h - r);
+                    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                    ctx.lineTo(x + r, y + h);
+                    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                    ctx.lineTo(x, y + r);
+                    ctx.quadraticCurveTo(x, y, x + r, y);
+                    ctx.closePath();
+                }
+
                 // ── Card Content Canvas ───────────────────────────────
                 function createCardContent(item) {
                     const W = 700, H = 900;
@@ -513,8 +528,7 @@
 
                     // Top accent bar
                     ctx.fillStyle = 'rgba(0, 153, 204, 0.12)';
-                    ctx.beginPath();
-                    ctx.roundRect(40, 36, 620, 6, 3);
+                    canvasRoundRect(ctx, 40, 36, 620, 6, 3);
                     ctx.fill();
 
                     // Icon background circle
@@ -582,8 +596,7 @@
                     ctx.fillStyle = tc.bg;
                     ctx.strokeStyle = tc.border;
                     ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.roundRect(tagX, tagY, tagW, tagH, 26);
+                    canvasRoundRect(ctx, tagX, tagY, tagW, tagH, 26);
                     ctx.fill(); ctx.stroke();
 
                     // Dot in badge
