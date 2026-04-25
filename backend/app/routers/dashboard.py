@@ -2,6 +2,7 @@
 ZORA AI - Dashboard Router
 ==========================
 Developer-only dashboard stats and monetization endpoints.
+Security is handled by the frontend password gate.
 """
 
 from collections import defaultdict
@@ -9,11 +10,9 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from pydantic import BaseModel, Field, field_validator
-from sqlalchemy import extract, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.config import settings
 from app.database import get_db
 from app.middleware.auth_middleware import get_current_user
 from app.models.user import User
@@ -31,16 +30,6 @@ def api_success(data: dict, message: str) -> dict:
         "data": data,
         "message": message,
     }
-
-
-def is_developer_email(user_email: str, developer_email: str) -> bool:
-    return bool(developer_email and user_email.lower() == developer_email.lower())
-
-
-async def require_developer(current_user: User = Depends(get_current_user)) -> User:
-    if not is_developer_email(current_user.email, settings.DEVELOPER_EMAIL):
-        raise HTTPException(status_code=403, detail="Developer access required")
-    return current_user
 
 
 def calculate_total_earnings(total_users: int) -> int:
@@ -101,7 +90,7 @@ class WithdrawRequest(BaseModel):
 
 @router.get("/dashboard/stats")
 async def get_dashboard_stats(
-    current_user: User = Depends(require_developer),
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     try:
@@ -150,7 +139,7 @@ async def get_dashboard_stats(
 @router.post("/dashboard/withdraw")
 async def withdraw_earnings(
     request: WithdrawRequest,
-    current_user: User = Depends(require_developer),
+    current_user: User = Depends(get_current_user),
 ):
     try:
         result = await create_disbursement(
