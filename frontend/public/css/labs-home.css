@@ -18,6 +18,7 @@ body {
     font-family: "Inter", system-ui, sans-serif;
     color: #111111;
     background: #ffffff;
+    overflow-x: hidden !important;
 }
 
 a {
@@ -377,7 +378,7 @@ img {
 .lh-features-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(245, 248, 252, 0.94);
+    background: rgba(245, 248, 252, 0.02);
 }
 
 .lh-features-content {
