@@ -1,0 +1,717 @@
+/*
+ * ZORA Labs — Home Page Styles
+ * Light mode, professional landing page
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", system-ui, sans-serif;
+    color: #111111;
+    background: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    display: block;
+}
+
+/* ── NAVBAR ───────────────────────────────────────────── */
+.lh-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 999;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    background: transparent;
+}
+
+.lh-nav.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 24px rgba(0, 0, 0, 0.08);
+}
+
+.lh-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    transition: color 0.3s;
+}
+
+.lh-nav.scrolled .lh-nav-brand {
+    color: #0099CC;
+}
+
+.lh-nav-logo {
+    width: 30px;
+    height: 30px;
+}
+
+.lh-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lh-nav-link {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.2s, background 0.2s;
+}
+
+.lh-nav.scrolled .lh-nav-link {
+    color: #333333;
+}
+
+.lh-nav-link:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.lh-nav.scrolled .lh-nav-link:hover {
+    background: #f0f0f0;
+    color: #0099CC;
+}
+
+.lh-nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.lh-nav.scrolled .lh-nav-cta {
+    background: #0099CC;
+    border-color: #0099CC;
+    color: #ffffff;
+}
+
+.lh-nav-cta:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.lh-nav.scrolled .lh-nav-cta:hover {
+    background: #007aaa;
+}
+
+.lh-nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.lh-nav-hamburger span {
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 2px;
+    display: block;
+    transition: background 0.3s;
+}
+
+.lh-nav.scrolled .lh-nav-hamburger span {
+    background: #111111;
+}
+
+.lh-mobile-menu {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px;
+    gap: 4px;
+    z-index: 998;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.lh-mobile-menu.hidden {
+    display: none;
+}
+
+.lh-mobile-menu a {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333333;
+    transition: background 0.15s, color 0.15s;
+}
+
+.lh-mobile-menu a:hover {
+    background: #f0f9fd;
+    color: #0099CC;
+}
+
+/* ── BUTTONS ──────────────────────────────────────────── */
+.lh-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: #0099CC;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.lh-btn-primary:hover {
+    background: #007aaa;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 153, 204, 0.3);
+}
+
+.lh-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.15s;
+    backdrop-filter: blur(8px);
+}
+
+.lh-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* ── BADGE ────────────────────────────────────────────── */
+.lh-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(0, 153, 204, 0.15);
+    border: 1px solid rgba(0, 153, 204, 0.3);
+    color: #0099CC;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.lh-badge--dark {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+.lh-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+/* ── HERO ─────────────────────────────────────────────── */
+.lh-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.lh-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.lh-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+}
+
+.lh-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg,
+            rgba(5, 15, 30, 0.88) 0%,
+            rgba(5, 15, 30, 0.75) 45%,
+            rgba(5, 15, 30, 0.3) 100%);
+}
+
+.lh-hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 120px 80px 80px;
+    max-width: 680px;
+}
+
+.lh-hero-title {
+    font-size: clamp(2.8rem, 5.5vw, 5rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin: 0 0 20px;
+}
+
+.lh-hero-title-accent {
+    color: #0099CC;
+    position: relative;
+}
+
+.lh-hero-desc {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+    margin: 0 0 36px;
+    max-width: 480px;
+}
+
+.lh-hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+}
+
+.lh-hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.lh-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lh-stat-num {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.lh-stat-label {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+.lh-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── FEATURES ─────────────────────────────────────────── */
+.lh-features {
+    position: relative;
+    padding: 100px 0;
+    overflow: hidden;
+}
+
+.lh-features-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.lh-features-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center left;
+}
+
+.lh-features-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(245, 248, 252, 0.94);
+}
+
+.lh-features-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.lh-features-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.lh-features-header .lh-badge {
+    background: rgba(0, 153, 204, 0.1);
+    border-color: rgba(0, 153, 204, 0.25);
+    color: #0099CC;
+}
+
+.lh-features-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    color: #111111;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px;
+}
+
+.lh-features-desc {
+    font-size: 1rem;
+    color: #777777;
+    margin: 0;
+}
+
+/* ── FLIP CARDS ───────────────────────────────────────── */
+.lh-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.lh-flip-card {
+    height: 360px;
+    perspective: 1200px;
+    cursor: pointer;
+}
+
+.lh-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lh-flip-card:hover .lh-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.lh-flip-front,
+.lh-flip-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    padding: 28px;
+}
+
+.lh-flip-front {
+    background: #ffffff;
+    border: 1.5px solid #e5e5e5;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.lh-flip-card:hover .lh-flip-front {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.lh-flip-back {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+    color: #ffffff;
+}
+
+.lh-flip-back-icon {
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+.lh-flip-back h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.lh-flip-back p {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 220px;
+}
+
+.lh-flip-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 11px 22px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: background 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.lh-flip-cta:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.lh-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.lh-card-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #111111;
+    margin: 0 0 2px;
+    letter-spacing: -0.02em;
+}
+
+.lh-card-powered {
+    font-size: 0.75rem;
+    color: #999999;
+    font-weight: 500;
+    margin: 0 0 14px;
+}
+
+.lh-card-features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+}
+
+.lh-card-features li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.855rem;
+    color: #444444;
+}
+
+.lh-card-features i {
+    font-size: 0.7rem;
+    color: #0099CC;
+    flex-shrink: 0;
+}
+
+/* ── FOOTER ───────────────────────────────────────────── */
+.lh-footer {
+    background: #ffffff;
+    border-top: 1px solid #e5e5e5;
+    padding: 60px 80px 0;
+}
+
+.lh-footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 60px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.lh-footer-left {
+    max-width: 400px;
+}
+
+.lh-footer-tagline {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111111;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.lh-footer-right {
+    display: flex;
+    gap: 60px;
+    flex-shrink: 0;
+}
+
+.lh-footer-nav-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lh-footer-nav-col h4 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #111111;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 4px;
+}
+
+.lh-footer-nav-col a {
+    font-size: 0.9rem;
+    color: #777777;
+    transition: color 0.15s;
+}
+
+.lh-footer-nav-col a:hover {
+    color: #0099CC;
+}
+
+/* Wordmark */
+.lh-footer-wordmark {
+    font-size: clamp(4rem, 12vw, 9rem);
+    font-weight: 900;
+    color: #111111;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    padding: 32px 0 24px;
+    user-select: none;
+}
+
+.lh-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-top: 1px solid #e5e5e5;
+    font-size: 0.82rem;
+    color: #999999;
+}
+
+.lh-footer-bottom-links {
+    display: flex;
+    gap: 20px;
+}
+
+.lh-footer-bottom-links a {
+    color: #999999;
+    transition: color 0.15s;
+}
+
+.lh-footer-bottom-links a:hover {
+    color: #0099CC;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .lh-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lh-hero-content {
+        padding: 120px 48px 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lh-nav {
+        padding: 0 20px;
+    }
+
+    .lh-nav-links,
+    .lh-nav-cta {
+        display: none;
+    }
+
+    .lh-nav-hamburger {
+        display: flex;
+    }
+
+    .lh-hero-content {
+        padding: 100px 24px 60px;
+    }
+
+    .lh-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lh-features-content {
+        padding: 0 20px;
+    }
+
+    .lh-footer {
+        padding: 48px 24px 0;
+    }
+
+    .lh-footer-top {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .lh-footer-right {
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .lh-footer-bottom {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}

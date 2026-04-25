@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZORA Labs — SuperIntelligence Tools for Every Task">
+    <title>ZORA Labs</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/labs-home.css">
+</head>
+
+<body>
+
+    <!-- ── NAVBAR ─────────────────────────────────────────── -->
+    <nav class="lh-nav">
+        <a href="/chat/index.html" class="lh-nav-brand">
+            <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="lh-nav-logo">
+            <span>ZORA AI</span>
+        </a>
+        <div class="lh-nav-links">
+            <a href="/labs/code.html" class="lh-nav-link">Code</a>
+            <a href="/labs/design.html" class="lh-nav-link">Design</a>
+            <a href="/labs/image.html" class="lh-nav-link">Image</a>
+            <a href="/labs/vid.html" class="lh-nav-link">Video</a>
+            <a href="/labs/research.html" class="lh-nav-link">Research</a>
+            <a href="/labs/analytics.html" class="lh-nav-link">Analytics</a>
+        </div>
+        <a href="/chat/index.html" class="lh-nav-cta">
+            <i class="fi fi-rr-arrow-left"></i> Back to Chat
+        </a>
+        <button class="lh-nav-hamburger" id="navHamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="lh-mobile-menu hidden" id="mobileMenu">
+        <a href="/labs/code.html">Code</a>
+        <a href="/labs/design.html">Design</a>
+        <a href="/labs/image.html">Image</a>
+        <a href="/labs/vid.html">Video</a>
+        <a href="/labs/research.html">Research</a>
+        <a href="/labs/analytics.html">Analytics</a>
+        <a href="/chat/index.html">← Back to Chat</a>
+    </div>
+
+    <!-- ── HERO SECTION ───────────────────────────────────── -->
+    <section class="lh-hero" id="hero">
+        <div class="lh-hero-bg">
+            <img src="/assets/images/labs/hero.png" alt="ZORA Labs Hero" class="lh-hero-img">
+            <div class="lh-hero-overlay"></div>
+        </div>
+
+        <div class="lh-hero-content" data-aos="fade-up" data-aos-duration="800">
+            <span class="lh-badge">
+                <span class="lh-badge-dot"></span>
+                ZORA LABS
+            </span>
+
+            <h1 class="lh-hero-title">
+                SuperIntelligence<br>
+                <span class="lh-hero-title-accent">Tools</span> for<br>
+                Every Task
+            </h1>
+
+            <p class="lh-hero-desc">
+                Six powerful AI labs — each powered by the best model for the job.
+                Code, design, create, research, and analyze like never before.
+            </p>
+
+            <div class="lh-hero-actions">
+                <a href="#features" class="lh-btn-primary">
+                    Explore Now
+                    <i class="fi fi-rr-arrow-down"></i>
+                </a>
+                <a href="#footer" class="lh-btn-secondary">
+                    View Roadmap
+                    <i class="fi fi-rr-map"></i>
+                </a>
+            </div>
+
+            <div class="lh-hero-stats" data-aos="fade-up" data-aos-delay="200">
+                <div class="lh-stat">
+                    <span class="lh-stat-num">6</span>
+                    <span class="lh-stat-label">AI Labs</span>
+                </div>
+                <div class="lh-stat-divider"></div>
+                <div class="lh-stat">
+                    <span class="lh-stat-num">8+</span>
+                    <span class="lh-stat-label">AI Models</span>
+                </div>
+                <div class="lh-stat-divider"></div>
+                <div class="lh-stat">
+                    <span class="lh-stat-num">∞</span>
+                    <span class="lh-stat-label">Possibilities</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FEATURES SECTION ───────────────────────────────── -->
+    <section class="lh-features" id="features">
+        <div class="lh-features-bg">
+            <img src="/assets/images/labs/feature.png" alt="ZORA Labs Features" class="lh-features-img">
+            <div class="lh-features-overlay"></div>
+        </div>
+
+        <div class="lh-features-content">
+            <div class="lh-features-header" data-aos="fade-up">
+                <span class="lh-badge lh-badge--dark">
+                    <span class="lh-badge-dot"></span>
+                    FEATURED TOOLS
+                </span>
+                <h2 class="lh-features-title">Our Lab Features</h2>
+                <p class="lh-features-desc">Advanced AI technology for every creative and analytical need.</p>
+            </div>
+
+            <div class="lh-cards-grid">
+
+                <!-- Card 1: Code -->
+                <div class="lh-flip-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="lh-flip-inner">
+                        <div class="lh-flip-front">
+                            <div class="lh-card-icon"
+                                style="background: linear-gradient(135deg, #0099CC22, #0099CC44);">
+                                <i class="fi fi-rr-terminal" style="color:#0099CC"></i>
+                            </div>
+                            <h3 class="lh-card-title">Zora Code</h3>
+                            <p class="lh-card-powered">Powered by Qwen</p>
+                            <ul class="lh-card-features">
+                                <li><i class="fi fi-ss-check"></i> Generate production-ready code</li>
+                                <li><i class="fi fi-ss-check"></i> Debug & fix errors instantly</li>
+                                <li><i class="fi fi-ss-check"></i> Explain complex logic</li>
+                                <li><i class="fi fi-ss-check"></i> 10+ programming languages</li>
+                                <li><i class="fi fi-ss-check"></i> Inline code comments</li>
+                            </ul>
+                        </div>
+                        <div class="lh-flip-back" style="background: linear-gradient(135deg, #0099CC, #006699);">
+                            <i class="fi fi-rr-terminal lh-flip-back-icon"></i>
+                            <h3>Zora Code</h3>
+                            <p>Your AI coding partner — generate, debug, and ship faster.</p>
+                            <a href="/labs/code.html" class="lh-flip-cta">
+                                Go to Zora Code <i class="fi fi-rr-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Design -->
+                <div class="lh-flip-card" data-aos="fade-up" data-aos-delay="80">
+                    <div class="lh-flip-inner">
+                        <div class="lh-flip-front">
+                            <div class="lh-card-icon"
+                                style="background: linear-gradient(135deg, #9B59B622, #9B59B644);">
+                                <i class="fi fi-rr-paint-brush" style="color:#9B59B6"></i>
+                            </div>
+                            <h3 class="lh-card-title">Zora Design</h3>
+                            <p class="lh-card-powered">Powered by Minimax</p>
+                            <ul class="lh-card-features">
+                                <li><i class="fi fi-ss-check"></i> Creative brief generator</li>
+                                <li><i class="fi fi-ss-check"></i> Brand concept & identity</li>
+                                <li><i class="fi fi-ss-check"></i> Color palette suggestions</li>
+                                <li><i class="fi fi-ss-check"></i> Typography guidance</li>
+                                <li><i class="fi fi-ss-check"></i> Copywriting & ad copy</li>
+                            </ul>
+                        </div>
+                        <div class="lh-flip-back" style="background: linear-gradient(135deg, #9B59B6, #6C3483);">
+                            <i class="fi fi-rr-paint-brush lh-flip-back-icon"></i>
+                            <h3>Zora Design</h3>
+                            <p>Shape concepts, briefs, and visual directions with AI creativity.</p>
+                            <a href="/labs/design.html" class="lh-flip-cta">
+                                Go to Zora Design <i class="fi fi-rr-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Image -->
+                <div class="lh-flip-card" data-aos="fade-up" data-aos-delay="160">
+                    <div class="lh-flip-inner">
+                        <div class="lh-flip-front">
+                            <div class="lh-card-icon"
+                                style="background: linear-gradient(135deg, #E74C3C22, #E74C3C44);">
+                                <i class="fi fi-rr-picture" style="color:#E74C3C"></i>
+                            </div>
+                            <h3 class="lh-card-title">Zora Image</h3>
+                            <p class="lh-card-powered">Powered by Nano Banana</p>
+                            <ul class="lh-card-features">
+                                <li><i class="fi fi-ss-check"></i> Text-to-image generation</li>
+                                <li><i class="fi fi-ss-check"></i> 9 artistic styles</li>
+                                <li><i class="fi fi-ss-check"></i> Prompt optimization</li>
+                                <li><i class="fi fi-ss-check"></i> High resolution output</li>
+                                <li><i class="fi fi-ss-check"></i> One-click download</li>
+                            </ul>
+                        </div>
+                        <div class="lh-flip-back" style="background: linear-gradient(135deg, #E74C3C, #A93226);">
+                            <i class="fi fi-rr-picture lh-flip-back-icon"></i>
+                            <h3>Zora Image</h3>
+                            <p>Create stunning visuals from simple text descriptions.</p>
+                            <a href="/labs/image.html" class="lh-flip-cta">
+                                Go to Zora Image <i class="fi fi-rr-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Video -->
+                <div class="lh-flip-card" data-aos="fade-up" data-aos-delay="240">
+                    <div class="lh-flip-inner">
+                        <div class="lh-flip-front">
+                            <div class="lh-card-icon"
+                                style="background: linear-gradient(135deg, #E67E2222, #E67E2244);">
+                                <i class="fi fi-rr-film" style="color:#E67E22"></i>
+                            </div>
+                            <h3 class="lh-card-title">Zora Video</h3>
+                            <p class="lh-card-powered">Powered by Nano Banana</p>
+                            <ul class="lh-card-features">
+                                <li><i class="fi fi-ss-check"></i> AI video generation</li>
+                                <li><i class="fi fi-ss-check"></i> Scene composition</li>
+                                <li><i class="fi fi-ss-check"></i> Camera direction control</li>
+                                <li><i class="fi fi-ss-check"></i> Script-to-video pipeline</li>
+                                <li><i class="fi fi-ss-check"></i> Cinematic styling</li>
+                            </ul>
+                        </div>
+                        <div class="lh-flip-back" style="background: linear-gradient(135deg, #E67E22, #A04000);">
+                            <i class="fi fi-rr-film lh-flip-back-icon"></i>
+                            <h3>Zora Video</h3>
+                            <p>Generate motion concepts and video-ready creative flows.</p>
+                            <a href="/labs/vid.html" class="lh-flip-cta">
+                                Go to Zora Video <i class="fi fi-rr-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Research -->
+                <div class="lh-flip-card" data-aos="fade-up" data-aos-delay="320">
+                    <div class="lh-flip-inner">
+                        <div class="lh-flip-front">
+                            <div class="lh-card-icon"
+                                style="background: linear-gradient(135deg, #27AE6022, #27AE6044);">
+                                <i class="fi fi-rr-search-alt" style="color:#27AE60"></i>
+                            </div>
+                            <h3 class="lh-card-title">Zora Research</h3>
+                            <p class="lh-card-powered">Powered by Gemini</p>
+                            <ul class="lh-card-features">
+                                <li><i class="fi fi-ss-check"></i> Deep research mode</li>
+                                <li><i class="fi fi-ss-check"></i> Multi-source synthesis</li>
+                                <li><i class="fi fi-ss-check"></i> Auto citation & sources</li>
+                                <li><i class="fi fi-ss-check"></i> Structured summaries</li>
+                                <li><i class="fi fi-ss-check"></i> Further reading suggestions</li>
+                            </ul>
+                        </div>
+                        <div class="lh-flip-back" style="background: linear-gradient(135deg, #27AE60, #1A6E3C);">
+                            <i class="fi fi-rr-search-alt lh-flip-back-icon"></i>
+                            <h3>Zora Research</h3>
+                            <p>Summarize, investigate, and structure deep answers quickly.</p>
+                            <a href="/labs/research.html" class="lh-flip-cta">
+                                Go to Zora Research <i class="fi fi-rr-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Analytics -->
+                <div class="lh-flip-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="lh-flip-inner">
+                        <div class="lh-flip-front">
+                            <div class="lh-card-icon"
+                                style="background: linear-gradient(135deg, #F39C1222, #F39C1244);">
+                                <i class="fi fi-rr-chart-histogram" style="color:#F39C12"></i>
+                            </div>
+                            <h3 class="lh-card-title">Zora Analytics</h3>
+                            <p class="lh-card-powered">Powered by Deepseek</p>
+                            <ul class="lh-card-features">
+                                <li><i class="fi fi-ss-check"></i> Business data analysis</li>
+                                <li><i class="fi fi-ss-check"></i> Trend identification</li>
+                                <li><i class="fi fi-ss-check"></i> Key metrics extraction</li>
+                                <li><i class="fi fi-ss-check"></i> Actionable insights</li>
+                                <li><i class="fi fi-ss-check"></i> Report generation</li>
+                            </ul>
+                        </div>
+                        <div class="lh-flip-back" style="background: linear-gradient(135deg, #F39C12, #9A6000);">
+                            <i class="fi fi-rr-chart-histogram lh-flip-back-icon"></i>
+                            <h3>Zora Analytics</h3>
+                            <p>Transform raw data into powerful business insights instantly.</p>
+                            <a href="/labs/analytics.html" class="lh-flip-cta">
+                                Go to Zora Analytics <i class="fi fi-rr-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────────────── -->
+    <footer class="lh-footer" id="footer">
+        <div class="lh-footer-top">
+            <div class="lh-footer-left" data-aos="fade-right">
+                <h2 class="lh-footer-tagline">
+                    Stay connected for early access to our newest tools and updates.
+                </h2>
+                <a href="/chat/index.html" class="lh-btn-primary" style="margin-top:24px; display:inline-flex;">
+                    Start with ZORA <i class="fi fi-rr-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="lh-footer-right" data-aos="fade-left">
+                <div class="lh-footer-nav-col">
+                    <h4>Navigation</h4>
+                    <a href="/chat/index.html">Chat</a>
+                    <a href="#hero">About Labs</a>
+                    <a href="#features">Features</a>
+                    <a href="/onboarding/hello.html">Onboarding</a>
+                </div>
+                <div class="lh-footer-nav-col">
+                    <h4>ZORA Tools</h4>
+                    <a href="/labs/code.html">Zora Code</a>
+                    <a href="/labs/design.html">Zora Design</a>
+                    <a href="/labs/image.html">Zora Image</a>
+                    <a href="/labs/research.html">Zora Research</a>
+                    <a href="/labs/analytics.html">Zora Analytics</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="lh-footer-wordmark">ZORA Labs</div>
+
+        <div class="lh-footer-bottom">
+            <span>© 2026 ZORA AI — ZORA Production. All rights reserved.</span>
+            <div class="lh-footer-bottom-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Help</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: true, offset: 60 });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Mobile menu
+        const hamburger = document.getElementById('navHamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        hamburger?.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.lh-nav');
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
+    </script>
+</body>
+
+</html>
