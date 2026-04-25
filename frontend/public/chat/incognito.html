@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="ZORA AI - Incognito Mode">
-    <meta name="theme-color" content="#0a0d15">
+    <meta name="theme-color" content="#080b13">
     <link rel="icon" href="/favicon.ico">
     <title>ZORA Incognito</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,14 +34,15 @@
             <div class="incognito-topbar-left">
                 <img src="/assets/images/logo/logo.png" alt="ZORA" class="incognito-logo">
                 <span class="incognito-badge">
-                    <i class="fi fi-rr-incognito"></i>
+                    <!-- Animated pulse dot -->
+                    <span class="incognito-badge-dot"></span>
                     Incognito
                 </span>
             </div>
             <div class="incognito-topbar-sep"></div>
             <div class="incognito-topbar-right">
                 <button id="newChatBtn" class="incognito-icon-btn" type="button" aria-label="New chat" title="New Chat">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19" />
                         <line x1="5" y1="12" x2="19" y2="12" />
@@ -49,7 +50,7 @@
                 </button>
                 <button id="exitIncognitoBtn" class="incognito-icon-btn" type="button" aria-label="Exit incognito"
                     title="Back to Chat">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12" />
                         <polyline points="12 19 5 12 12 5" />
@@ -63,13 +64,21 @@
 
             <!-- Welcome Screen -->
             <section id="welcomeScreen" class="incognito-welcome">
+
+                <!-- Orb with sonar rings + arc spinner + inner core -->
                 <div class="incognito-orb">
-                    <i class="fi fi-rr-incognito incognito-orb-icon"></i>
+                    <div class="incognito-orb-ring"></div>
+                    <div class="incognito-orb-ring"></div>
+                    <div class="incognito-orb-inner">
+                        <i class="fi fi-rr-incognito incognito-orb-icon"></i>
+                    </div>
                 </div>
+
                 <h1 class="incognito-welcome-title">You're in Incognito</h1>
+
                 <div class="incognito-welcome-features">
                     <span class="incognito-feature">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path
                                 d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
@@ -79,7 +88,7 @@
                     </span>
                     <span class="incognito-feature-sep"></span>
                     <span class="incognito-feature">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <ellipse cx="12" cy="5" rx="9" ry="3" />
                             <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
@@ -90,7 +99,7 @@
                     </span>
                     <span class="incognito-feature-sep"></span>
                     <span class="incognito-feature">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                             <polyline points="9 12 11 14 15 10" />
@@ -122,7 +131,7 @@
                     <div class="incognito-composer-left">
                         <button id="attachBtn" class="incognito-icon-btn" type="button" aria-label="Attach file"
                             title="Attach file">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path
                                     d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
@@ -137,7 +146,7 @@
                     </div>
                     <div class="incognito-composer-right">
                         <button id="voiceButton" class="incognito-icon-btn" type="button" aria-label="Voice input">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                                 <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
@@ -147,7 +156,7 @@
                         </button>
                         <button id="sendButton" class="incognito-icon-btn incognito-send-btn" type="button"
                             aria-label="Send">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                             </svg>
                         </button>
@@ -155,7 +164,7 @@
                 </div>
             </div>
             <p class="incognito-disclaimer">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -166,7 +175,7 @@
 
     </div>
 
-    <!-- Attach file logic (standalone, no conflict with incognito.js) -->
+    <!-- Attach file logic -->
     <script>
         (function () {
             document.addEventListener("DOMContentLoaded", function () {
@@ -182,7 +191,7 @@
                         var name = this.files[0].name;
                         var size = (this.files[0].size / 1024).toFixed(1);
                         preview.innerHTML =
-                            '<svg class="incog-att-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+                            '<svg class="incog-att-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
                             '<span class="incog-att-name">' + name + '</span>' +
                             '<span class="incog-att-size">' + size + ' KB</span>' +
                             '<button class="incog-att-remove" type="button" aria-label="Remove file">&times;</button>';
