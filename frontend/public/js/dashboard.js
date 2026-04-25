@@ -43,9 +43,30 @@ function renderStats(data) {
 }
 
 function renderUsersByMonthChart(items) {
-    const labels = items.map((item) => `${String(item.month).padStart(2, '0')}/${item.year}`);
-    const values = items.map((item) => item.count);
     const context = dashboardElement('usersByMonthChart');
+    if (!context) return;
+
+    // Build a map of existing data: "YYYY-MM" -> count
+    const dataMap = {};
+    items.forEach(item => {
+        const key = `${item.year}-${String(item.month).padStart(2, '0')}`;
+        dataMap[key] = item.count;
+    });
+
+    // Generate last 6 months including current month
+    const labels = [];
+    const values = [];
+    const now = new Date();
+
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const year = d.getFullYear();
+        const month = d.getMonth() + 1;
+        const key = `${year}-${String(month).padStart(2, '0')}`;
+        const label = `${String(month).padStart(2, '0')}/${year}`;
+        labels.push(label);
+        values.push(dataMap[key] || 0);
+    }
 
     if (usersByMonthChart) {
         usersByMonthChart.destroy();
@@ -55,37 +76,31 @@ function renderUsersByMonthChart(items) {
         type: 'line',
         data: {
             labels,
-            datasets: [
-                {
-                    label: 'Users',
-                    data: values,
-                    backgroundColor: 'rgba(0,212,255,0.08)',
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#00D4FF',
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    borderColor: '#00D4FF',
-                    borderWidth: 1,
-                    
-                }
-            ]
+            datasets: [{
+                label: 'Users',
+                data: values,
+                backgroundColor: 'rgba(0,212,255,0.08)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#00D4FF',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderColor: '#00D4FF',
+                borderWidth: 2,
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
+            plugins: { legend: { display: false } },
             scales: {
                 x: {
-                    ticks: { color: '#A0A0B0' },
+                    ticks: { color: '#A0A0B0', font: { size: 11 } },
                     grid: { color: 'rgba(255,255,255,0.04)' }
                 },
                 y: {
-                    ticks: { color: '#A0A0B0', precision: 0 },
+                    beginAtZero: true,
+                    ticks: { color: '#A0A0B0', precision: 0, stepSize: 1 },
                     grid: { color: 'rgba(255,255,255,0.04)' }
                 }
             }
