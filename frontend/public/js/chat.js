@@ -1200,7 +1200,7 @@ function bindSettingsFeatures() {
     function updateSaveBtnVisibility(tabId) {
         const saveBtn = document.getElementById('scProfileSave');
         if (!saveBtn) return;
-        const hiddenTabs = ['faq', 'language'];
+        const hiddenTabs = ['faq', 'language', 'interface', 'chat'];
         saveBtn.style.display = hiddenTabs.includes(tabId) ? 'none' : 'block';
     }
 
@@ -1337,17 +1337,93 @@ function bindSettingsFeatures() {
         const btn = document.getElementById(id);
         if (!btn) return;
 
-        // Restore saved state
         const saved = localStorage.getItem(key);
         const isActive = saved !== null ? saved === 'true' : def;
         btn.classList.toggle('active', isActive);
 
         btn.addEventListener('click', () => {
             btn.classList.toggle('active');
-            localStorage.setItem(key, btn.classList.contains('active'));
+            const val = btn.classList.contains('active');
+            localStorage.setItem(key, val);
+            applyInterfaceSetting(key, val);
         });
     });
+
+    // Bind dialogue action buttons
+    document.getElementById('archiveAllChatsBtn')?.addEventListener('click', () => {
+        if (!confirm('Archive all chats? This cannot be undone.')) return;
+        chatState.conversations = [];
+        chatState.filteredConversations = [];
+        renderConversationList([]);
+        apiCallOrWarn('/chat/archive-all', 'POST');
+    });
+
+    document.getElementById('deleteAllChatsBtn')?.addEventListener('click', () => {
+        if (!confirm('Delete ALL chats permanently? This cannot be undone.')) return;
+        chatState.conversations = [];
+        chatState.filteredConversations = [];
+        renderConversationList([]);
+        startNewChat();
+        apiCallOrWarn('/chat/delete-all', 'DELETE');
+    });
+
+    document.querySelector('[data-action-import]')?.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    await apiCallOrWarn('/chat/import', 'POST', data);
+                    await loadHistory();
+                } catch { alert('Invalid file format.'); }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    });
+
+    document.querySelector('[data-action-export]')?.addEventListener('click', async () => {
+        const res = await apiCallOrWarn('/chat/export', 'GET');
+        if (!res) return;
+        const blob = new Blob([JSON.stringify(res, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'zora-chats.json'; a.click();
+        URL.revokeObjectURL(url);
+    });
 }
+
+// ─── APPLY INTERFACE SETTINGS ─────────────────────────────────────────────────
+function applyInterfaceSetting(key, value) {
+    if (key === 'zora_ui_widescreen') {
+        document.querySelector('.chat-stage')?.classList.toggle('widescreen', value);
+    }
+    if (key === 'zora_ui_autocopy') {
+        window._zoraCopyEnabled = value;
+    }
+    if (key === 'zora_ui_scroll_branch') {
+        window._zoraScrollBranch = value;
+    }
+}
+
+// Apply saved interface settings on load
+(function initInterfaceSettings() {
+    const map = {
+        'zora_ui_widescreen': false,
+        'zora_ui_autocopy': false,
+        'zora_ui_scroll_branch': true,
+    };
+    Object.entries(map).forEach(([key, def]) => {
+        const saved = localStorage.getItem(key);
+        const val = saved !== null ? saved === 'true' : def;
+        applyInterfaceSetting(key, val);
+    });
+})();
 
 // ─── SEARCH COMMAND PALETTE ───────────────────────────────────────────────────
 
@@ -1541,6 +1617,8 @@ const TRANSLATIONS = {
         tabProfile: 'Profile',
         tabLanguage: 'Language',
         tabFaq: 'FAQ',
+        tabInterface: 'Interface',
+        tabChat: 'Chat',
         tabAbout: 'About ZORA',
         logOut: 'Log out',
         profileTitle: 'Profile',
@@ -1606,6 +1684,8 @@ const TRANSLATIONS = {
         tabProfile: 'Profil',
         tabLanguage: 'Bahasa',
         tabFaq: 'FAQ',
+        tabInterface: 'Antarmuka',
+        tabChat: 'Chat',
         tabAbout: 'Tentang ZORA',
         logOut: 'Keluar',
         profileTitle: 'Profil',
@@ -1667,6 +1747,8 @@ const TRANSLATIONS = {
         tabProfile: 'プロフィール',
         tabLanguage: '言語',
         tabFaq: 'FAQ',
+        tabInterface: 'インターフェース',
+        tabChat: 'チャット',
         tabAbout: 'ZORAについて',
         logOut: 'ログアウト',
         profileTitle: 'プロフィール',
@@ -1728,6 +1810,8 @@ const TRANSLATIONS = {
         tabProfile: '프로필',
         tabLanguage: '언어',
         tabFaq: 'FAQ',
+        tabInterface: '인터페이스',
+        tabChat: '채팅',
         tabAbout: 'ZORA 소개',
         logOut: '로그아웃',
         profileTitle: '프로필',
@@ -1789,6 +1873,8 @@ const TRANSLATIONS = {
         tabProfile: '个人资料',
         tabLanguage: '语言',
         tabFaq: '常见问题',
+        tabInterface: '界面',
+        tabChat: '聊天',
         tabAbout: '关于 ZORA',
         logOut: '退出登录',
         profileTitle: '个人资料',
@@ -1850,6 +1936,8 @@ const TRANSLATIONS = {
         tabProfile: 'Profil',
         tabLanguage: 'Langue',
         tabFaq: 'FAQ',
+        tabInterface: 'Interface',
+        tabChat: 'Chat',
         tabAbout: 'À propos de ZORA',
         logOut: 'Déconnexion',
         profileTitle: 'Profil',
@@ -1911,6 +1999,8 @@ const TRANSLATIONS = {
         tabProfile: 'Profil',
         tabLanguage: 'Sprache',
         tabFaq: 'FAQ',
+        tabInterface: 'Benutzeroberfläche',
+        tabChat: 'Chat',
         tabAbout: 'Über ZORA',
         logOut: 'Abmelden',
         profileTitle: 'Profil',
@@ -1972,6 +2062,8 @@ const TRANSLATIONS = {
         tabProfile: 'Profilo',
         tabLanguage: 'Lingua',
         tabFaq: 'FAQ',
+        tabInterface: 'Interfaccia',
+        tabChat: 'Chat',
         tabAbout: 'Info su ZORA',
         logOut: 'Esci',
         profileTitle: 'Profilo',
@@ -2033,6 +2125,8 @@ const TRANSLATIONS = {
         tabProfile: 'Perfil',
         tabLanguage: 'Idioma',
         tabFaq: 'FAQ',
+        tabInterface: 'Interface',
+        tabChat: 'Chat',
         tabAbout: 'Sobre o ZORA',
         logOut: 'Sair',
         profileTitle: 'Perfil',
@@ -2094,6 +2188,8 @@ const TRANSLATIONS = {
         tabProfile: 'Perfil',
         tabLanguage: 'Idioma',
         tabFaq: 'FAQ',
+        tabInterface: 'Interfaz',
+        tabChat: 'Chat',
         tabAbout: 'Acerca de ZORA',
         logOut: 'Cerrar sesión',
         profileTitle: 'Perfil',
@@ -2180,6 +2276,8 @@ function applyTranslations() {
     const tabLabels = {
         profile: t('tabProfile'),
         language: t('tabLanguage'),
+        interface: t('tabInterface'),
+        chat: t('tabChat'),
         faq: t('tabFaq'),
         about: t('tabAbout'),
     };

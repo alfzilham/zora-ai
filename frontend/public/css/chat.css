@@ -489,6 +489,11 @@ textarea {
     padding: 86px;
     padding-bottom: 42px;
     overflow: hidden;
+    transition: padding 0.3s ease;
+}
+
+.chat-stage.widescreen {
+    padding: 24px 32px 42px;
 }
 
 .chat-content {
