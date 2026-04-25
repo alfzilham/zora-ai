@@ -32,14 +32,7 @@ async function ensureDeveloperAccess() {
     if (!user) {
         return null;
     }
-
-    const settingsResponse = await apiCall('/settings', 'GET', null, true);
-    if (!settingsResponse.data?.is_developer) {
-        window.location.href = '../chat/index.html';
-        return null;
-    }
-
-    return settingsResponse.data;
+    return user;
 }
 
 function renderStats(data) {
