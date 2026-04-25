@@ -378,7 +378,7 @@ img {
 .lh-features-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(245, 248, 252, 0.2);
+    background: linear-gradient(180deg, rgba(245, 248, 252, 0.65), rgba(245, 248, 252, 0.35), rgba(245, 248, 252, 0.9));
 }
 
 .lh-features-content {
