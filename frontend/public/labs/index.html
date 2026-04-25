@@ -377,12 +377,12 @@
                     await import('https://cdn.jsdelivr.net/npm/ogl@1.0.9/src/index.js');
 
                 const items = [
-                    { image: '/assets/images/labs/card-code.png', text: 'Zora Code', color: '#0099CC', fallback: '#0099CC' },
-                    { image: '/assets/images/labs/card-design.png', text: 'Zora Design', color: '#0099CC', fallback: '#0099CC' },
-                    { image: '/assets/images/labs/card-image.png', text: 'Zora Image', color: '#0099CC', fallback: '#0099CC' },
-                    { image: '/assets/images/labs/card-video.png', text: 'Zora Video', color: '#0099CC', fallback: '#0099CC' },
-                    { image: '/assets/images/labs/card-research.png', text: 'Zora Research', color: '#0099CC', fallback: '#0099CC' },
-                    { image: '/assets/images/labs/card-analytics.png', text: 'Zora Analytics', color: '#0099CC', fallback: '#0099CC' },
+                        { text: 'Zora Code', icon: 'fi fi-rr-square-code', subtitle: 'AI Code Assistant', desc: 'Write, debug & explain\ncode instantly', tag: 'Available' },
+                        { text: 'Zora Design', icon: 'fi fi-rr-vector-alt', subtitle: 'AI Design Studio', desc: 'Create stunning UI\n& visual concepts', tag: 'Available' },
+                        { text: 'Zora Image', icon: 'fi fi-rr-graphic-style', subtitle: 'AI Image Generator', desc: 'Generate & edit images\nfrom text prompts', tag: 'Beta' },
+                        { text: 'Zora Video', icon: 'fi fi-rr-play-alt', subtitle: 'AI Video Creator', desc: 'Create & edit videos\nwith AI precision', tag: 'Soon' },
+                        { text: 'Zora Research', icon: 'fi fi-rr-search-alt', subtitle: 'AI Research Engine', desc: 'Deep research &\nreal-time analysis', tag: 'Available' },
+                        { text: 'Zora Analytics', icon: 'fi fi-rr-stats', subtitle: 'AI Data Analyst', desc: 'Data insights &\nbusiness intelligence', tag: 'Soon' },
                 ];
 
                 // Double for infinite loop
@@ -436,49 +436,53 @@
 
                 // Fragment shader
                 const frag = `
-    precision highp float;
-    uniform vec2 uPlaneSizes;
-    uniform sampler2D tMap;
-    uniform float uBorderRadius;
-    uniform vec3 uAccentColor;
-    uniform float uHasImage;
-    uniform float uTime;
-    varying vec2 vUv;
+                    precision highp float;
+                    uniform vec2 uPlaneSizes;
+                    uniform sampler2D tMap;
+                    uniform float uBorderRadius;
+                    uniform vec3 uAccentColor;
+                    uniform float uHasImage;
+                    uniform float uTime;
+                    varying vec2 vUv;
 
-    float roundedBoxSDF(vec2 p, vec2 b, float r) {
-        vec2 d = abs(p) - b;
-        return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
-    }
+                    float roundedBoxSDF(vec2 p, vec2 b, float r) {
+                        vec2 d = abs(p) - b;
+                        return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+                    }
 
-    void main() {
-        float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-        float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
+                    void main() {
+                        float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
+                        float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
 
-        // Glassmorphism base
-        vec3 glassBase = vec3(0.97, 0.97, 1.0);
+                        // Glassmorphism base
+                        vec3 glassBase = vec3(0.97, 0.97, 1.0);
 
-        // Subtle gradient overlay
-        float grad = vUv.y;
-        vec3 accentTint = mix(uAccentColor * 0.12, uAccentColor * 0.04, grad);
-        vec3 glass = glassBase + accentTint;
+                        // Clean white glass — no accent tint
+                        vec3 glass = glassBase;
 
-        // Subtle noise shimmer
-        float shimmer = sin(vUv.x * 20.0 + uTime * 0.3) * sin(vUv.y * 15.0 + uTime * 0.2) * 0.02;
-        glass += shimmer;
+                        // Subtle shimmer
+                        float shimmer = sin(vUv.x * 20.0 + uTime * 0.3) * sin(vUv.y * 15.0 + uTime * 0.2) * 0.012;
+                        glass += shimmer;
 
-        // Edge highlight (glass border effect)
-        float edgeDist = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
-        float edgeGlow = smoothstep(0.0, 0.08, edgeDist);
-        glass = mix(uAccentColor * 0.6 + 0.4, glass, edgeGlow);
+                        // White soft edge — no color border
+                        float edgeDist = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
+                        float edgeGlow = smoothstep(0.0, 0.06, edgeDist);
+                        glass = mix(vec3(1.0), glass, edgeGlow * 0.6 + 0.4);
 
-        // Top shine
-        float shine = smoothstep(0.6, 1.0, vUv.y) * 0.15;
-        glass += shine;
+                        // Top shine
+                        float shine = smoothstep(0.6, 1.0, vUv.y) * 0.08;
+                        glass += shine;
 
-        glass = clamp(glass, 0.0, 1.0);
-        gl_FragColor = vec4(glass, alpha * 0.88);
-    }
-`;
+                        // Blend with content texture
+                        if (uHasImage > 0.5) {
+                            vec4 content = texture2D(tMap, vUv);
+                            glass = mix(glass, content.rgb, content.a * 0.95);
+                        }
+
+                        glass = clamp(glass, 0.0, 1.0);
+                        gl_FragColor = vec4(glass, alpha * 0.85);
+                    }
+                `;
 
                 // Text texture helper
                 function createTextTexture(text, color = '#111111') {
@@ -497,6 +501,106 @@
                     const tex = new Texture(gl, { generateMipmaps: false });
                     tex.image = canvas;
                     return { tex, width: canvas.width, height: canvas.height };
+                }
+
+                // ── Card Content Canvas ───────────────────────────────
+                function createCardContent(item) {
+                    const W = 700, H = 900;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = W; canvas.height = H;
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, W, H);
+
+                    // Top accent bar
+                    ctx.fillStyle = 'rgba(0, 153, 204, 0.12)';
+                    ctx.beginPath();
+                    ctx.roundRect(40, 36, 620, 6, 3);
+                    ctx.fill();
+
+                    // Icon background circle
+                    const cx = W / 2, iconY = 240;
+                    ctx.fillStyle = 'rgba(0, 153, 204, 0.08)';
+                    ctx.beginPath();
+                    ctx.arc(cx, iconY, 88, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Icon ring
+                    ctx.strokeStyle = 'rgba(0, 153, 204, 0.2)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(cx, iconY, 88, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Icon — extract unicode dari Flaticon font via DOM
+                    const _iconEl = document.createElement('i');
+                    _iconEl.className = item.icon;
+                    _iconEl.style.cssText = 'position:absolute;visibility:hidden;font-size:1px;';
+                    document.body.appendChild(_iconEl);
+                    const _iconChar = window.getComputedStyle(_iconEl, '::before').content.replace(/^["']|["']$/g, '');
+                    document.body.removeChild(_iconEl);
+
+                    ctx.font = '72px "uicons-regular-rounded"';
+                    ctx.fillStyle = '#0099CC';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(_iconChar, cx, iconY);
+
+                    // Card title
+                    ctx.font = 'bold 52px Inter, sans-serif';
+                    ctx.fillStyle = '#111111';
+                    ctx.textBaseline = 'alphabetic';
+                    ctx.fillText(item.text, cx, 400);
+
+                    // Subtitle
+                    ctx.font = '500 34px Inter, sans-serif';
+                    ctx.fillStyle = '#0099CC';
+                    ctx.fillText(item.subtitle, cx, 460);
+
+                    // Divider
+                    ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(120, 500); ctx.lineTo(580, 500);
+                    ctx.stroke();
+
+                    // Description (2 lines)
+                    ctx.font = '32px Inter, sans-serif';
+                    ctx.fillStyle = '#555555';
+                    const lines = item.desc.split('\n');
+                    lines.forEach((line, i) => {
+                        ctx.fillText(line, cx, 560 + i * 52);
+                    });
+
+                    // Tag badge
+                    const tagColors = {
+                        'Available': { bg: 'rgba(39,174,96,0.12)', text: '#27AE60', border: 'rgba(39,174,96,0.3)' },
+                        'Beta':      { bg: 'rgba(0,153,204,0.12)', text: '#0099CC', border: 'rgba(0,153,204,0.3)' },
+                        'Soon':      { bg: 'rgba(150,150,150,0.1)', text: '#888888', border: 'rgba(150,150,150,0.25)' },
+                    };
+                    const tc = tagColors[item.tag] || tagColors['Soon'];
+                    const tagW = 180, tagH = 52, tagX = cx - tagW / 2, tagY = 760;
+                    ctx.fillStyle = tc.bg;
+                    ctx.strokeStyle = tc.border;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.roundRect(tagX, tagY, tagW, tagH, 26);
+                    ctx.fill(); ctx.stroke();
+
+                    // Dot in badge
+                    ctx.fillStyle = tc.text;
+                    ctx.beginPath();
+                    ctx.arc(tagX + 24, tagY + tagH / 2, 6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.font = 'bold 26px Inter, sans-serif';
+                    ctx.fillStyle = tc.text;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(item.tag, tagX + tagW / 2 + 6, tagY + tagH / 2);
+
+                    const tex = new Texture(gl, { generateMipmaps: true });
+                    tex.image = canvas;
+                    return tex;
                 }
 
                 // Parse hex to Vec3-compatible array
@@ -525,7 +629,7 @@
                     const texture = new Texture(gl, { generateMipmaps: true });
                     const fallbackRGB = hexToRGB(item.fallback);
 
-                    const accentRGB = hexToRGB(item.color);
+                    const accentRGB = [0, 0.6, 0.8];
                     const program = new Program(gl, {
                         depthTest: false,
                         depthWrite: false,
@@ -543,24 +647,16 @@
                         transparent: true,
                     });
 
-                    // Try to load image
-                    const img = new Image();
-                    img.crossOrigin = 'anonymous';
-                    img.onload = () => {
-                        texture.image = img;
-                        program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
-                        program.uniforms.uHasImage.value = 1;
-                    };
-                    img.onerror = () => {
-                        program.uniforms.uHasImage.value = 0;
-                    };
-                    img.src = item.image;
+                    // Use canvas-drawn card content
+                    const contentTex = createCardContent(item);
+                    program.uniforms.tMap.value = contentTex;
+                    program.uniforms.uHasImage.value = 1;
 
                     const mesh = new Mesh(gl, { geometry: planeGeometry, program });
                     mesh.setParent(scene);
 
                     // Text label below
-                    const { tex: labelTex, width: lw, height: lh } = createTextTexture(item.text, item.color);
+                    const { tex: labelTex, width: lw, height: lh } = createTextTexture(item.text, '#444444');
                     const labelProg = new Program(gl, {
                         vertex: `
                     attribute vec3 position; attribute vec2 uv;

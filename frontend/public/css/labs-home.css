@@ -472,10 +472,10 @@ img {
     height: 520px;
     overflow: hidden;
     cursor: grab;
-    border-radius: 20px;
-    margin-top: 20px;
+    border-radius: 30px;
+    margin-top: 10px;
     position: relative;
-    background: rgba(0, 153, 204, 0.05);
+    background: rgba(255, 255, 255, 0);
 }
 
 .lh-circular-gallery:active {
