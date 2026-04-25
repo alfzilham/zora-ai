@@ -1,312 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ZORA AI Developer Dashboard">
-    <meta name="theme-color" content="#00D4FF">
-    <link rel="icon" href="/favicon.ico">
     <title>Developer Dashboard - ZORA AI</title>
+    <link rel="icon" href="/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-    <link rel="stylesheet"
-        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
-    <link rel="stylesheet" href="/css/global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
     <link rel="stylesheet" href="/css/dashboard.css">
+
     <style>
-        /* ── Password Gate Overlay ── */
         #passwordGate {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #0a0a0f;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; inset: 0; z-index: 9999;
+            background: #0d0d12;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        #passwordGate.hidden {
-            display: none;
-        }
-
+        #passwordGate.hidden { display: none; }
         .gate-box {
-            background: #13131a;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 48px 40px;
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 24px;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+            background: #13131f; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 400px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.6);
         }
-
-        .gate-box.shake {
-            animation: shake 0.4s ease;
+        .gate-box.shake { animation: gateShake 0.4s ease; }
+        @keyframes gateShake {
+            0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)}
+            40%{transform:translateX(10px)} 60%{transform:translateX(-8px)} 80%{transform:translateX(8px)}
         }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20% {
-                transform: translateX(-10px);
-            }
-
-            40% {
-                transform: translateX(10px);
-            }
-
-            60% {
-                transform: translateX(-8px);
-            }
-
-            80% {
-                transform: translateX(8px);
-            }
-        }
-
-        .gate-logo {
-            width: 52px;
-            height: 52px;
-        }
-
-        .gate-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            margin: 0;
-            text-align: center;
-        }
-
-        .gate-subtitle {
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.4);
-            margin: -16px 0 0;
-            text-align: center;
-        }
-
-        .gate-input-wrap {
-            position: relative;
-            width: 100%;
-        }
-
+        .gate-logo { width: 48px; height: 48px; }
+        .gate-title { font-size: 20px; font-weight: 700; color: #fff; margin: 0; text-align: center; }
+        .gate-subtitle { font-size: 13px; color: rgba(255,255,255,0.35); margin: -8px 0 0; text-align: center; }
+        .gate-input-wrap { position: relative; width: 100%; }
         .gate-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 14px 48px 14px 16px;
-            font-size: 15px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
+            width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 13px 44px 13px 16px; font-size: 14px; color: #fff;
+            font-family: 'Inter', sans-serif; outline: none; box-sizing: border-box; transition: border-color 0.2s;
         }
-
-        .gate-input:focus {
-            border-color: #00D4FF;
-        }
-
-        .gate-input.error {
-            border-color: #ff4d4d;
-        }
-
+        .gate-input:focus { border-color: #00D4FF; }
+        .gate-input.error { border-color: #ff4d4d; }
         .gate-eye {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 16px;
-            background: none;
-            border: none;
-            padding: 0;
-            display: flex;
-            align-items: center;
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: rgba(255,255,255,0.3); font-size: 15px;
+            background: none; border: none; padding: 0; display: flex; align-items: center;
         }
-
-        .gate-error {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            color: #ff4d4d;
-            text-align: center;
-            min-height: 18px;
-            margin: -12px 0 0;
-        }
-
+        .gate-error { font-size: 12px; color: #ff4d4d; text-align: center; min-height: 16px; margin: -8px 0 0; }
         .gate-btn {
-            width: 100%;
-            background: #00D4FF;
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            width: 100%; background: linear-gradient(135deg, #00D4FF, #0088ff); color: #020f1a;
+            border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700;
+            font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.2s;
         }
-
-        .gate-btn:hover {
-            opacity: 0.9;
-        }
-
-        .gate-btn:active {
-            transform: scale(0.98);
-        }
+        .gate-btn:hover { opacity: 0.9; }
     </style>
 </head>
-
 <body>
 
-    <!-- ── Password Gate ── -->
-    <div id="passwordGate">
-        <div class="gate-box" id="gateBox">
-            <img class="gate-logo" src="/assets/images/logo/logo.png" alt="ZORA AI">
-            <h1 class="gate-title">Developer Access</h1>
-            <p class="gate-subtitle">Enter your developer password to continue</p>
-
-            <div class="gate-input-wrap">
-                <input id="gatePasswordInput" class="gate-input" type="password" placeholder="Enter password..."
-                    autocomplete="off" />
-                <button class="gate-eye" id="gateEyeBtn" type="button" title="Show/hide password">
-                    <i class="fi fi-rr-eye" id="gateEyeIcon"></i>
-                </button>
-            </div>
-
-            <p class="gate-error" id="gateError"></p>
-            <button class="gate-btn" id="gateSubmitBtn" type="button">Unlock Dashboard</button>
+<!-- Password Gate -->
+<div id="passwordGate">
+    <div class="gate-box" id="gateBox">
+        <img class="gate-logo" src="/assets/images/logo/logo.png" alt="ZORA AI">
+        <h1 class="gate-title">Developer Access</h1>
+        <p class="gate-subtitle">Enter your developer password to continue</p>
+        <div class="gate-input-wrap">
+            <input id="gatePasswordInput" class="gate-input" type="password" placeholder="Enter password..." autocomplete="off">
+            <button class="gate-eye" id="gateEyeBtn" type="button">
+                <i class="fi fi-rr-eye" id="gateEyeIcon"></i>
+            </button>
         </div>
+        <p class="gate-error" id="gateError"></p>
+        <button class="gate-btn" id="gateSubmitBtn" type="button">Unlock Dashboard</button>
     </div>
+</div>
 
-    <!-- ── Dashboard Shell (hidden until unlocked) ── -->
-    <main class="dashboard-shell" id="dashboardShell" style="display:none">
+<!-- Dashboard -->
+<div class="db-app" id="dashboardShell" style="display:none">
 
-        <!-- Header -->
-        <header class="dashboard-header">
-            <div class="dashboard-brand">
-                <div class="dashboard-brand-logo">
-                    <img src="/assets/images/logo/logo.png" alt="ZORA AI">
-                </div>
-                <div class="dashboard-brand-info">
-                    <p class="dashboard-kicker">ZORA AI</p>
-                    <h1>Developer Dashboard</h1>
+    <!-- Sidebar -->
+    <aside class="db-sidebar">
+        <div class="db-sidebar-brand">
+            <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
+            <span class="db-sidebar-name">ZORA AI</span>
+        </div>
+
+        <nav class="db-sidebar-nav">
+            <div class="db-nav-item active">
+                <i class="fi fi-rr-chart-pie-alt"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="db-nav-item">
+                <i class="fi fi-rr-users"></i>
+                <span>Users</span>
+            </div>
+            <div class="db-nav-item">
+                <i class="fi fi-rr-chart-line-up"></i>
+                <span>Analytics</span>
+            </div>
+            <div class="db-nav-item">
+                <i class="fi fi-rr-wallet"></i>
+                <span>Earnings</span>
+            </div>
+            <div class="db-nav-item">
+                <i class="fi fi-rr-settings"></i>
+                <span>Settings</span>
+            </div>
+        </nav>
+
+        <div class="db-sidebar-footer">
+            <a href="/chat/index.html" class="db-back-chat">
+                <i class="fi fi-rr-arrow-left"></i>
+                <span>Back to Chat</span>
+            </a>
+            <button id="dashboardLogoutButton" class="db-logout-btn" type="button">
+                <i class="fi fi-rr-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="db-main">
+
+        <!-- Top Bar -->
+        <header class="db-topbar">
+            <div class="db-topbar-left">
+                <h1 class="db-page-title">Dashboard</h1>
+                <div class="db-tabs">
+                    <button class="db-tab active">Overview</button>
+                    <button class="db-tab">Notifications</button>
+                    <button class="db-tab">Trade History</button>
                 </div>
             </div>
-            <div class="dashboard-header-right">
-                <p id="dashboardStatus" class="dashboard-status"></p>
-                <button id="dashboardLogoutButton" class="dashboard-logout" type="button">
-                    <i class="fi fi-rr-sign-out-alt"></i>
-                    Logout
-                </button>
+            <div class="db-topbar-right">
+                <div class="db-date-badge">
+                    <i class="fi fi-rr-calendar"></i>
+                    <span id="dashboardDateRange">This Month</span>
+                </div>
+                <p id="dashboardStatus" class="db-status"></p>
             </div>
         </header>
 
-        <!-- Stats -->
-        <section class="stats-grid">
-            <article class="stat-card">
-                <div class="stat-card-header">
-                    <p class="stat-label">Total Users</p>
-                    <div class="stat-icon-wrap cyan"><i class="fi fi-rr-users"></i></div>
+        <!-- Stats Row -->
+        <section class="db-stats-row">
+            <article class="db-stat-card db-stat-cyan">
+                <div class="db-stat-top">
+                    <div class="db-stat-icon-wrap">
+                        <i class="fi fi-ss-users"></i>
+                    </div>
+                    <span class="db-stat-badge db-badge-up">↑ Live</span>
                 </div>
-                <div class="stat-value-row">
-                    <strong id="totalUsersValue">0</strong>
-                </div>
+                <p class="db-stat-label">Total Users</p>
+                <strong id="totalUsersValue" class="db-stat-value">0</strong>
+                <p class="db-stat-sub">Registered accounts</p>
             </article>
-            <article class="stat-card">
-                <div class="stat-card-header">
-                    <p class="stat-label">Total Earnings</p>
-                    <div class="stat-icon-wrap green"><i class="fi fi-rr-wallet"></i></div>
+
+            <article class="db-stat-card db-stat-green">
+                <div class="db-stat-top">
+                    <div class="db-stat-icon-wrap">
+                        <i class="fi fi-ss-wallet"></i>
+                    </div>
+                    <span class="db-stat-badge db-badge-up">↑ Earning</span>
                 </div>
-                <div class="stat-value-row">
-                    <strong id="totalEarningsValue">Rp0</strong>
-                </div>
+                <p class="db-stat-label">Total Earnings</p>
+                <strong id="totalEarningsValue" class="db-stat-value">Rp0</strong>
+                <p class="db-stat-sub">From all signups</p>
             </article>
-            <article class="stat-card">
-                <div class="stat-card-header">
-                    <p class="stat-label">Users This Month</p>
-                    <div class="stat-icon-wrap purple"><i class="fi fi-rr-chart-line-up"></i></div>
+
+            <article class="db-stat-card db-stat-purple">
+                <div class="db-stat-top">
+                    <div class="db-stat-icon-wrap">
+                        <i class="fi fi-ss-chart-line-up"></i>
+                    </div>
+                    <span class="db-stat-badge db-badge-neutral">Month</span>
                 </div>
-                <div class="stat-value-row">
-                    <strong id="usersThisMonthValue">0</strong>
-                </div>
+                <p class="db-stat-label">Users This Month</p>
+                <strong id="usersThisMonthValue" class="db-stat-value">0</strong>
+                <p class="db-stat-sub">Compared to last month</p>
             </article>
-            <article class="stat-card">
-                <div class="stat-card-header">
-                    <p class="stat-label">Users This Year</p>
-                    <div class="stat-icon-wrap amber"><i class="fi fi-rr-calendar"></i></div>
+
+            <article class="db-stat-card db-stat-amber">
+                <div class="db-stat-top">
+                    <div class="db-stat-icon-wrap">
+                        <i class="fi fi-ss-calendar"></i>
+                    </div>
+                    <span class="db-stat-badge db-badge-neutral">Year</span>
                 </div>
-                <div class="stat-value-row">
-                    <strong id="usersThisYearValue">0</strong>
-                </div>
+                <p class="db-stat-label">Users This Year</p>
+                <strong id="usersThisYearValue" class="db-stat-value">0</strong>
+                <p class="db-stat-sub">Total annual signups</p>
             </article>
         </section>
 
-        <!-- Charts + Countries -->
-        <section class="dashboard-grid">
-            <article class="dashboard-panel">
-                <div class="panel-heading">
+        <!-- Middle Row: Chart + Countries -->
+        <section class="db-mid-row">
+            <!-- Chart -->
+            <article class="db-panel db-panel-chart">
+                <div class="db-panel-header">
                     <div>
-                        <p class="panel-kicker">Growth</p>
-                        <h2>Users per Month</h2>
+                        <p class="db-panel-kicker">Analytics</p>
+                        <h2 class="db-panel-title">User Growth</h2>
+                    </div>
+                    <div class="db-panel-actions">
+                        <button class="db-pill-btn active">Monthly</button>
                     </div>
                 </div>
-                <div class="chart-shell">
+                <div class="db-chart-wrap">
                     <canvas id="usersByMonthChart"></canvas>
                 </div>
             </article>
-            <article class="dashboard-panel">
-                <div class="panel-heading">
+
+            <!-- Countries -->
+            <article class="db-panel db-panel-countries">
+                <div class="db-panel-header">
                     <div>
-                        <p class="panel-kicker">Geography</p>
-                        <h2>Top Countries</h2>
+                        <p class="db-panel-kicker">Geography</p>
+                        <h2 class="db-panel-title">Session by Country</h2>
                     </div>
                 </div>
-                <div class="table-shell">
-                    <table class="dashboard-table">
-                        <thead>
-                            <tr>
-                                <th>Country</th>
-                                <th>Users</th>
-                            </tr>
-                        </thead>
-                        <tbody id="countriesTableBody"></tbody>
-                    </table>
-                </div>
+                <div id="countriesTableBody" class="db-country-list"></div>
             </article>
         </section>
 
-        <!-- Recent Signups + Withdraw -->
-        <section class="dashboard-grid dashboard-grid--bottom">
-            <article class="dashboard-panel">
-                <div class="panel-heading">
+        <!-- Bottom Row: Signups + Withdraw -->
+        <section class="db-bottom-row">
+            <!-- Recent Signups -->
+            <article class="db-panel db-panel-signups">
+                <div class="db-panel-header">
                     <div>
-                        <p class="panel-kicker">Recent Activity</p>
-                        <h2>Recent Signups</h2>
+                        <p class="db-panel-kicker">Recent Activity</p>
+                        <h2 class="db-panel-title">Recent Signups</h2>
                     </div>
                 </div>
-                <div class="table-shell">
-                    <table class="dashboard-table">
+                <div class="db-table-wrap">
+                    <table class="db-table">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Country</th>
+                                <th>Status</th>
                                 <th>Joined</th>
                             </tr>
                         </thead>
@@ -314,118 +247,112 @@
                     </table>
                 </div>
             </article>
-            <article class="dashboard-panel">
-                <div class="panel-heading">
+
+            <!-- Withdraw -->
+            <article class="db-panel db-panel-withdraw">
+                <div class="db-panel-header">
                     <div>
-                        <p class="panel-kicker">Monetization</p>
-                        <h2>Withdraw Earnings</h2>
+                        <p class="db-panel-kicker">Monetization</p>
+                        <h2 class="db-panel-title">Withdraw Earnings</h2>
                     </div>
                 </div>
-                <form id="withdrawForm" class="withdraw-form">
-                    <label class="withdraw-field">
+                <form id="withdrawForm" class="db-withdraw-form">
+                    <label class="db-field">
                         <span>Amount (Rp)</span>
-                        <input id="withdrawAmount" type="number" min="1" placeholder="1000000" required>
+                        <input id="withdrawAmount" type="number" min="1" placeholder="e.g. 1000000" required>
                     </label>
-                    <label class="withdraw-field">
+                    <label class="db-field">
                         <span>Bank Code</span>
-                        <input id="withdrawBankCode" type="text" placeholder="BCA / BNI / BRI" required>
+                        <input id="withdrawBankCode" type="text" placeholder="BCA / BNI / BRI / MANDIRI" required>
                     </label>
-                    <label class="withdraw-field">
+                    <label class="db-field">
                         <span>Account Number</span>
-                        <input id="withdrawAccountNumber" type="text" placeholder="1234567890" required>
+                        <input id="withdrawAccountNumber" type="text" placeholder="e.g. 1234567890" required>
                     </label>
-                    <label class="withdraw-field">
+                    <label class="db-field">
                         <span>Account Holder Name</span>
                         <input id="withdrawAccountHolderName" type="text" placeholder="Your Full Name" required>
                     </label>
-                    <button class="withdraw-button" type="submit">Withdraw Funds</button>
-                    <p id="withdrawStatus" class="withdraw-status"></p>
+                    <button class="db-withdraw-btn" type="submit">
+                        <i class="fi fi-rr-paper-plane"></i>
+                        Withdraw Funds
+                    </button>
+                    <p id="withdrawStatus" class="db-withdraw-status"></p>
                 </form>
             </article>
         </section>
 
     </main>
+</div>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script defer src="/js/utils/helpers.js"></script>
-    <script defer src="/js/utils/api.js"></script>
-    <script defer src="/js/auth.js"></script>
-    <script defer src="/js/dashboard.js"></script>
-    <script>
-        (function () {
-            // SHA-256 hash of the developer password (JWT_SECRET)
-            // The actual password is NEVER stored here — only its hash
-            const CORRECT_HASH = '61c64f11c79c5381523ad1a65b7aad2cafebaed294a584f172e053d6a798f12f';
-            const SESSION_KEY = 'zora_dashboard_unlocked';
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="/js/utils/helpers.js"></script>
+<script defer src="/js/utils/api.js"></script>
+<script defer src="/js/auth.js"></script>
+<script defer src="/js/dashboard.js"></script>
+<script>
+(function () {
+    const CORRECT_HASH = '61c64f11c79c5381523ad1a65b7aad2cafebaed294a584f172e053d6a798f12f';
+    const SESSION_KEY = 'zora_dashboard_unlocked';
+    const gate = document.getElementById('passwordGate');
+    const gateBox = document.getElementById('gateBox');
+    const input = document.getElementById('gatePasswordInput');
+    const submitBtn = document.getElementById('gateSubmitBtn');
+    const errorEl = document.getElementById('gateError');
+    const eyeBtn = document.getElementById('gateEyeBtn');
+    const eyeIcon = document.getElementById('gateEyeIcon');
+    const shell = document.getElementById('dashboardShell');
 
-            const gate = document.getElementById('passwordGate');
-            const gateBox = document.getElementById('gateBox');
-            const input = document.getElementById('gatePasswordInput');
-            const submitBtn = document.getElementById('gateSubmitBtn');
-            const errorEl = document.getElementById('gateError');
-            const eyeBtn = document.getElementById('gateEyeBtn');
-            const eyeIcon = document.getElementById('gateEyeIcon');
-            const shell = document.getElementById('dashboardShell');
+    if (sessionStorage.getItem(SESSION_KEY) === '1') {
+        gate.classList.add('hidden');
+        shell.style.display = '';
+        return;
+    }
 
-            // If already unlocked this session, skip gate
-            if (sessionStorage.getItem(SESSION_KEY) === '1') {
-                gate.classList.add('hidden');
-                shell.style.display = '';
-                return;
-            }
+    eyeBtn.addEventListener('click', () => {
+        const isPwd = input.type === 'password';
+        input.type = isPwd ? 'text' : 'password';
+        eyeIcon.className = isPwd ? 'fi fi-rr-eye-crossed' : 'fi fi-rr-eye';
+    });
 
-            // Toggle password visibility
-            eyeBtn.addEventListener('click', () => {
-                const isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                eyeIcon.className = isPassword ? 'fi fi-rr-eye-crossed' : 'fi fi-rr-eye';
-            });
+    async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuf = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-            async function hashPassword(password) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(password);
-                const hashBuf = await crypto.subtle.digest('SHA-256', data);
-                return Array.from(new Uint8Array(hashBuf))
-                    .map(b => b.toString(16).padStart(2, '0'))
-                    .join('');
-            }
+    async function unlock() {
+        const password = input.value.trim();
+        if (!password) { errorEl.textContent = 'Please enter your password.'; input.classList.add('error'); return; }
+        const hash = await hashPassword(password);
+        if (hash === CORRECT_HASH) {
+            sessionStorage.setItem(SESSION_KEY, '1');
+            gate.classList.add('hidden');
+            shell.style.display = '';
+        } else {
+            errorEl.textContent = 'Incorrect password. Access denied.';
+            input.classList.add('error');
+            gateBox.classList.remove('shake');
+            void gateBox.offsetWidth;
+            gateBox.classList.add('shake');
+            input.value = '';
+            input.focus();
+        }
+    }
 
-            async function unlock() {
-                const password = input.value.trim();
-                if (!password) {
-                    errorEl.textContent = 'Please enter your password.';
-                    input.classList.add('error');
-                    return;
-                }
+    submitBtn.addEventListener('click', unlock);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(); });
+    input.addEventListener('input', () => { input.classList.remove('error'); errorEl.textContent = ''; });
+    setTimeout(() => input.focus(), 100);
 
-                const hash = await hashPassword(password);
-
-                if (hash === CORRECT_HASH) {
-                    sessionStorage.setItem(SESSION_KEY, '1');
-                    gate.classList.add('hidden');
-                    shell.style.display = '';
-                } else {
-                    errorEl.textContent = 'Incorrect password. Access denied.';
-                    input.classList.add('error');
-                    gateBox.classList.remove('shake');
-                    void gateBox.offsetWidth; // trigger reflow for re-animation
-                    gateBox.classList.add('shake');
-                    input.value = '';
-                    input.focus();
-                }
-            }
-
-            submitBtn.addEventListener('click', unlock);
-            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(); });
-            input.addEventListener('input', () => {
-                input.classList.remove('error');
-                errorEl.textContent = '';
-            });
-
-            // Focus input on load
-            setTimeout(() => input.focus(), 100);
-        })();
-    </script>
+    // Date range display
+    const now = new Date();
+    const dateEl = document.getElementById('dashboardDateRange');
+    if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+})();
+</script>
 </body>
-
 </html>

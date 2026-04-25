@@ -52,17 +52,22 @@ function renderUsersByMonthChart(items) {
     }
 
     usersByMonthChart = new Chart(context, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels,
             datasets: [
                 {
                     label: 'Users',
                     data: values,
-                    backgroundColor: 'rgba(0, 212, 255, 0.65)',
+                    backgroundColor: 'rgba(0,212,255,0.08)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#00D4FF',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
                     borderColor: '#00D4FF',
                     borderWidth: 1,
-                    borderRadius: 10,
+                    
                 }
             ]
         },
@@ -90,21 +95,40 @@ function renderUsersByMonthChart(items) {
 
 function renderCountriesTable(items) {
     const body = dashboardElement('countriesTableBody');
-    body.innerHTML = '';
+    if (!body) return;
 
     if (!items.length) {
-        body.innerHTML = '<tr><td colspan="2">No country data yet.</td></tr>';
+        body.innerHTML = '<p style="color:rgba(255,255,255,0.2);font-size:0.8rem;padding:8px 0">No country data yet.</p>';
         return;
     }
 
-    items.forEach((item) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${item.country}</td>
-            <td>${item.count}</td>
+    const max = Math.max(...items.map(i => i.count), 1);
+
+    const flagMap = {
+        'Indonesia': '🇮🇩', 'United States': '🇺🇸', 'Malaysia': '🇲🇾',
+        'Singapore': '🇸🇬', 'Japan': '🇯🇵', 'South Korea': '🇰🇷',
+        'Australia': '🇦🇺', 'Germany': '🇩🇪', 'United Kingdom': '🇬🇧',
+        'France': '🇫🇷', 'India': '🇮🇳', 'China': '🇨🇳', 'Unknown': '🌐'
+    };
+
+    body.innerHTML = items.slice(0, 6).map(item => {
+        const pct = Math.round((item.count / max) * 100);
+        const flag = flagMap[item.country] || '🌐';
+        return `
+            <div class="db-country-item">
+                <div class="db-country-row">
+                    <span class="db-country-name">
+                        <span class="db-country-flag">${flag}</span>
+                        ${item.country}
+                    </span>
+                    <span class="db-country-pct">${pct}%</span>
+                </div>
+                <div class="db-country-bar-track">
+                    <div class="db-country-bar-fill" style="width:${pct}%"></div>
+                </div>
+            </div>
         `;
-        body.appendChild(row);
-    });
+    }).join('');
 }
 
 function renderRecentSignups(items) {
@@ -112,7 +136,7 @@ function renderRecentSignups(items) {
     body.innerHTML = '';
 
     if (!items.length) {
-        body.innerHTML = '<tr><td colspan="4">No signups yet.</td></tr>';
+        body.innerHTML = '<tr><td colspan="5" style="color:rgba(255,255,255,0.2);padding:16px 14px">No signups yet.</td></tr>';
         return;
     }
 
@@ -120,10 +144,11 @@ function renderRecentSignups(items) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${item.name || '-'}</td>
-            <td>${item.email || '-'}</td>
+            <td style="color:rgba(255,255,255,0.35)">${item.email || '-'}</td>
             <td>${item.country || 'Unknown'}</td>
-            <td>${item.created_at ? new Date(item.created_at).toLocaleString() : '-'}</td>
-        `;
+            <td><span class="db-status-dot">Active</span></td>
+            <td style="color:rgba(255,255,255,0.3)">${item.created_at ? new Date(item.created_at).toLocaleDateString() : '-'}</td>
+        `;;
         body.appendChild(row);
     });
 }
@@ -145,6 +170,8 @@ async function loadDashboardStats() {
 async function handleWithdraw(event) {
     event.preventDefault();
     setWithdrawStatus('');
+    const withdrawBtn = document.querySelector('.withdraw-button');
+    if (withdrawBtn) { withdrawBtn.disabled = true; withdrawBtn.textContent = 'Processing...'; }
 
     const payload = {
         amount: Number(dashboardElement('withdrawAmount').value),
@@ -160,8 +187,10 @@ async function handleWithdraw(event) {
             `${data.message || response.message || 'Withdrawal submitted.'} ${data.disbursement_id ? `(${data.disbursement_id})` : ''}`.trim()
         );
         dashboardElement('withdrawForm').reset();
+        if (withdrawBtn) { withdrawBtn.disabled = false; withdrawBtn.textContent = 'Withdraw Funds'; }
     } catch (error) {
         setWithdrawStatus(error.message || 'Unable to submit withdrawal.');
+        if (withdrawBtn) { withdrawBtn.disabled = false; withdrawBtn.textContent = 'Withdraw Funds'; }
     }
 }
 
@@ -178,7 +207,11 @@ async function bootstrapDashboard() {
         return;
     }
 
-    dashboardElement('dashboardLogoutButton').addEventListener('click', logout);
+    const logoutBtn = dashboardElement('dashboardLogoutButton');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('zora_token');
+        window.location.href = '/auth/login.html';
+    });
     dashboardElement('withdrawForm').addEventListener('submit', handleWithdraw);
 
     await loadDashboardStats();
