@@ -161,6 +161,8 @@ async function loadDashboardStats() {
         renderUsersByMonthChart(data.users_by_month || []);
         renderCountriesTable(data.users_by_country || []);
         renderRecentSignups(data.recent_signups || []);
+        const notifs = buildNotificationsFromSignups(data.recent_signups || []);
+        renderNotifications(notifs);
         setDashboardStatus('');
     } catch (error) {
         setDashboardStatus(error.message || 'Unable to load dashboard stats.');
@@ -201,6 +203,170 @@ function startAutoRefresh() {
     dashboardRefreshHandle = setInterval(loadDashboardStats, 60000);
 }
 
+
+// ─── NOTIFICATIONS ────────────────────────────────────
+const NOTIF_KEY = 'zora_dashboard_notifications';
+const SEEN_KEY = 'zora_dashboard_seen_signups';
+
+function loadNotifications() {
+    try {
+        return JSON.parse(localStorage.getItem(NOTIF_KEY) || '[]');
+    } catch { return []; }
+}
+
+function saveNotifications(notifs) {
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(notifs));
+}
+
+function loadSeenSignups() {
+    try {
+        return JSON.parse(localStorage.getItem(SEEN_KEY) || '[]');
+    } catch { return []; }
+}
+
+function saveSeenSignups(ids) {
+    localStorage.setItem(SEEN_KEY, JSON.stringify(ids));
+}
+
+function timeAgoLabel(dateString) {
+    if (!dateString) return 'Just now';
+    const diff = Date.now() - new Date(dateString).getTime();
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
+}
+
+function buildNotificationsFromSignups(signups) {
+    const seenIds = loadSeenSignups();
+    const existing = loadNotifications();
+    const existingIds = existing.map(n => n.id);
+
+    const newNotifs = [];
+
+    signups.forEach(signup => {
+        const id = `signup_${signup.email}`;
+        if (!existingIds.includes(id)) {
+            newNotifs.push({
+                id,
+                type: 'signup',
+                title: 'New User Signed Up',
+                desc: `${signup.name || 'Someone'} (${signup.email}) joined from ${signup.country || 'Unknown'}.`,
+                time: signup.created_at || new Date().toISOString(),
+                read: seenIds.includes(id),
+                icon: 'cyan',
+                iconClass: 'fi-rr-user-add',
+            });
+        }
+    });
+
+    const merged = [...newNotifs, ...existing].slice(0, 50);
+    saveNotifications(merged);
+    return merged;
+}
+
+function renderNotifications(notifs) {
+    const list = document.getElementById('notifList');
+    const badge = document.getElementById('notifBadge');
+    if (!list) return;
+
+    const unreadCount = notifs.filter(n => !n.read).length;
+
+    if (badge) {
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    if (!notifs.length) {
+        list.innerHTML = '<p class="db-notif-empty">No notifications yet.</p>';
+        return;
+    }
+
+    list.innerHTML = notifs.map(n => `
+        <div class="db-notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
+            <div class="db-notif-icon-wrap ${n.icon}">
+                <i class="fi ${n.iconClass}"></i>
+            </div>
+            <div class="db-notif-body">
+                <p class="db-notif-title">${n.title}</p>
+                <p class="db-notif-desc">${n.desc}</p>
+            </div>
+            <span class="db-notif-time">${timeAgoLabel(n.time)}</span>
+            <button class="db-notif-dismiss" data-dismiss="${n.id}" title="Dismiss">
+                <i class="fi fi-rr-cross-small"></i>
+            </button>
+        </div>
+    `).join('');
+
+    // Click to mark as read
+    list.querySelectorAll('.db-notif-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (e.target.closest('.db-notif-dismiss')) return;
+            const id = item.dataset.id;
+            const notifs = loadNotifications();
+            const found = notifs.find(n => n.id === id);
+            if (found && !found.read) {
+                found.read = true;
+                saveNotifications(notifs);
+                renderNotifications(notifs);
+            }
+        });
+    });
+
+    // Dismiss button
+    list.querySelectorAll('.db-notif-dismiss').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.dismiss;
+            const notifs = loadNotifications().filter(n => n.id !== id);
+            saveNotifications(notifs);
+            renderNotifications(notifs);
+        });
+    });
+}
+
+function markAllRead() {
+    const notifs = loadNotifications().map(n => ({ ...n, read: true }));
+    saveNotifications(notifs);
+    renderNotifications(notifs);
+}
+
+function bindNotificationTabs() {
+    const overviewTab = document.querySelector('.db-tab.active');
+    const allTabs = document.querySelectorAll('.db-tab');
+    const notifPanel = document.getElementById('notifPanel');
+    const midRow = document.querySelector('.db-mid-row');
+    const bottomRow = document.querySelector('.db-bottom-row');
+    const statsRow = document.querySelector('.db-stats-row');
+    const markAllBtn = document.getElementById('markAllReadBtn');
+
+    if (markAllBtn) markAllBtn.addEventListener('click', markAllRead);
+
+    allTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            allTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            const isNotif = tab.id === 'notifTab';
+
+            if (notifPanel) notifPanel.classList.toggle('hidden', !isNotif);
+            if (midRow) midRow.classList.toggle('hidden', isNotif);
+            if (bottomRow) bottomRow.classList.toggle('hidden', isNotif);
+
+            if (isNotif) {
+                renderNotifications(loadNotifications());
+            }
+        });
+    });
+}
+
 async function bootstrapDashboard() {
     const settingsData = await ensureDeveloperAccess();
     if (!settingsData) {
@@ -214,6 +380,7 @@ async function bootstrapDashboard() {
     });
     dashboardElement('withdrawForm').addEventListener('submit', handleWithdraw);
 
+    bindNotificationTabs();
     await loadDashboardStats();
     startAutoRefresh();
 }

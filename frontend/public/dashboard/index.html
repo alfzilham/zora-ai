@@ -128,7 +128,7 @@
                 <h1 class="db-page-title">Dashboard</h1>
                 <div class="db-tabs">
                     <button class="db-tab active">Overview</button>
-                    <button class="db-tab">Notifications</button>
+                    <button class="db-tab" id="notifTab">Notifications <span id="notifBadge" class="db-notif-badge hidden">0</span></button>
                     <button class="db-tab">Trade History</button>
                 </div>
             </div>
@@ -193,6 +193,22 @@
         </section>
 
         <!-- Middle Row: Chart + Countries -->
+                <!-- Notification Panel (hidden by default) -->
+        <section class="db-notif-panel hidden" id="notifPanel">
+            <article class="db-panel">
+                <div class="db-panel-header">
+                    <div>
+                        <p class="db-panel-kicker">Inbox</p>
+                        <h2 class="db-panel-title">Notifications</h2>
+                    </div>
+                    <button class="db-pill-btn" id="markAllReadBtn">Mark all as read</button>
+                </div>
+                <div id="notifList" class="db-notif-list">
+                    <p class="db-notif-empty">No notifications yet.</p>
+                </div>
+            </article>
+        </section>
+
         <section class="db-mid-row">
             <!-- Chart -->
             <article class="db-panel db-panel-chart">
