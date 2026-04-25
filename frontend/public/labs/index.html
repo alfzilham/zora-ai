@@ -281,13 +281,12 @@
 
                 let targetHover = 0, currentRot = 0, lastTime = 0;
 
-                container.addEventListener('mousemove', (e) => {
+                window.addEventListener('mousemove', (e) => {
                     const rect = container.getBoundingClientRect();
                     const uvX = ((e.clientX - rect.left - rect.width / 2) / Math.min(rect.width, rect.height)) * 2;
                     const uvY = ((e.clientY - rect.top - rect.height / 2) / Math.min(rect.width, rect.height)) * 2;
                     targetHover = Math.hypot(uvX, uvY) < 0.75 ? 1 : 0;
                 });
-                container.addEventListener('mouseleave', () => { targetHover = 0; });
 
                 (function loop(t) {
                     requestAnimationFrame(loop);
@@ -437,45 +436,55 @@
 
                 // Fragment shader
                 const frag = `
-            precision highp float;
-            uniform vec2 uImageSizes;
-            uniform vec2 uPlaneSizes;
-            uniform sampler2D tMap;
-            uniform float uBorderRadius;
-            uniform vec3 uFallbackColor;
-            uniform float uHasImage;
-            varying vec2 vUv;
-            float roundedBoxSDF(vec2 p, vec2 b, float r) {
-                vec2 d = abs(p) - b;
-                return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
-            }
-            void main() {
-                vec4 color;
-                if (uHasImage > 0.5) {
-                    vec2 ratio = vec2(
-                        min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
-                        min((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
-                    );
-                    vec2 uv = vec2(
-                        vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
-                        vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
-                    );
-                    color = texture2D(tMap, uv);
-                } else {
-                    float grad = vUv.y;
-                    color = vec4(mix(uFallbackColor * 0.6, uFallbackColor, grad), 1.0);
-                }
-                float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-                float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
-                gl_FragColor = vec4(color.rgb, alpha);
-            }
-        `;
+    precision highp float;
+    uniform vec2 uPlaneSizes;
+    uniform sampler2D tMap;
+    uniform float uBorderRadius;
+    uniform vec3 uAccentColor;
+    uniform float uHasImage;
+    uniform float uTime;
+    varying vec2 vUv;
+
+    float roundedBoxSDF(vec2 p, vec2 b, float r) {
+        vec2 d = abs(p) - b;
+        return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+    }
+
+    void main() {
+        float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
+        float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
+
+        // Glassmorphism base
+        vec3 glassBase = vec3(0.97, 0.97, 1.0);
+
+        // Subtle gradient overlay
+        float grad = vUv.y;
+        vec3 accentTint = mix(uAccentColor * 0.12, uAccentColor * 0.04, grad);
+        vec3 glass = glassBase + accentTint;
+
+        // Subtle noise shimmer
+        float shimmer = sin(vUv.x * 20.0 + uTime * 0.3) * sin(vUv.y * 15.0 + uTime * 0.2) * 0.02;
+        glass += shimmer;
+
+        // Edge highlight (glass border effect)
+        float edgeDist = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
+        float edgeGlow = smoothstep(0.0, 0.08, edgeDist);
+        glass = mix(uAccentColor * 0.6 + 0.4, glass, edgeGlow);
+
+        // Top shine
+        float shine = smoothstep(0.6, 1.0, vUv.y) * 0.15;
+        glass += shine;
+
+        glass = clamp(glass, 0.0, 1.0);
+        gl_FragColor = vec4(glass, alpha * 0.88);
+    }
+`;
 
                 // Text texture helper
                 function createTextTexture(text, color = '#111111') {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const font = 'bold 32px Inter, sans-serif';
+                    const font = 'bold 36px Inter, sans-serif';
                     ctx.font = font;
                     const metrics = ctx.measureText(text);
                     canvas.width = Math.ceil(metrics.width) + 40;
@@ -516,6 +525,7 @@
                     const texture = new Texture(gl, { generateMipmaps: true });
                     const fallbackRGB = hexToRGB(item.fallback);
 
+                    const accentRGB = hexToRGB(item.color);
                     const program = new Program(gl, {
                         depthTest: false,
                         depthWrite: false,
@@ -524,11 +534,10 @@
                         uniforms: {
                             tMap: { value: texture },
                             uPlaneSizes: { value: [0, 0] },
-                            uImageSizes: { value: [0, 0] },
                             uSpeed: { value: 0 },
                             uTime: { value: Math.random() * 100 },
-                            uBorderRadius: { value: 0.05 },
-                            uFallbackColor: { value: fallbackRGB },
+                            uBorderRadius: { value: 0.08 },
+                            uAccentColor: { value: accentRGB },
                             uHasImage: { value: 0 },
                         },
                         transparent: true,
@@ -551,7 +560,7 @@
                     mesh.setParent(scene);
 
                     // Text label below
-                    const { tex: labelTex, width: lw, height: lh } = createTextTexture(item.text, '#111111');
+                    const { tex: labelTex, width: lw, height: lh } = createTextTexture(item.text, item.color);
                     const labelProg = new Program(gl, {
                         vertex: `
                     attribute vec3 position; attribute vec2 uv;
