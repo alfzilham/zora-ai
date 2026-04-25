@@ -8,8 +8,7 @@
     <link rel="icon" href="/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
@@ -22,10 +21,7 @@
 
 <body>
 
-    <!-- ── NOISE OVERLAY ─────────────────────────────────── -->
-    <div class="noise-overlay"></div>
-
-    <!-- ── FEEDBACK PULL TAB ─────────────────────────────── -->
+    <!-- ── PULL TAB ───────────────────────────────────────── -->
     <div class="feedback-pull-tab" id="feedbackTab" title="Give us your feedback">
         <div class="pull-tab-pulse"></div>
         <div class="pull-tab-inner">
@@ -35,7 +31,7 @@
         <div class="pull-tab-tooltip">Click to share your thoughts ✨</div>
     </div>
 
-    <!-- ── DRAWER BACKDROP ───────────────────────────────── -->
+    <!-- ── DRAWER BACKDROP ────────────────────────────────── -->
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
     <!-- ── FEEDBACK DRAWER ───────────────────────────────── -->
@@ -61,22 +57,12 @@
             <div class="form-group">
                 <label class="form-label">Category</label>
                 <div class="category-grid">
-                    <button class="cat-btn active" data-cat="suggestion">
-                        <i class="fi fi-rr-lightbulb"></i>
-                        <span>Suggestion</span>
-                    </button>
-                    <button class="cat-btn" data-cat="bug">
-                        <i class="fi fi-rr-bug"></i>
-                        <span>Bug Report</span>
-                    </button>
-                    <button class="cat-btn" data-cat="praise">
-                        <i class="fi fi-rr-heart"></i>
-                        <span>Praise</span>
-                    </button>
-                    <button class="cat-btn" data-cat="question">
-                        <i class="fi fi-rr-interrogation"></i>
-                        <span>Question</span>
-                    </button>
+                    <button class="cat-btn active" data-cat="suggestion"><i
+                            class="fi fi-rr-lightbulb"></i><span>Suggestion</span></button>
+                    <button class="cat-btn" data-cat="bug"><i class="fi fi-rr-bug"></i><span>Bug Report</span></button>
+                    <button class="cat-btn" data-cat="praise"><i class="fi fi-rr-heart"></i><span>Praise</span></button>
+                    <button class="cat-btn" data-cat="question"><i
+                            class="fi fi-rr-interrogation"></i><span>Question</span></button>
                 </div>
             </div>
 
@@ -84,11 +70,11 @@
             <div class="form-group">
                 <label class="form-label">Your Experience</label>
                 <div class="star-rating" id="starRating">
-                    <button class="star-btn" data-val="1" aria-label="1 star">★</button>
-                    <button class="star-btn" data-val="2" aria-label="2 stars">★</button>
-                    <button class="star-btn" data-val="3" aria-label="3 stars">★</button>
-                    <button class="star-btn" data-val="4" aria-label="4 stars">★</button>
-                    <button class="star-btn" data-val="5" aria-label="5 stars">★</button>
+                    <button class="star-btn" data-val="1">★</button>
+                    <button class="star-btn" data-val="2">★</button>
+                    <button class="star-btn" data-val="3">★</button>
+                    <button class="star-btn" data-val="4">★</button>
+                    <button class="star-btn" data-val="5">★</button>
                     <span class="star-label" id="starLabel">Select rating</span>
                 </div>
             </div>
@@ -112,117 +98,167 @@
                     </div>
                     <div class="upload-preview hidden" id="uploadPreview">
                         <img id="previewImg" src="" alt="Preview">
-                        <button class="remove-img-btn" id="removeImgBtn" aria-label="Remove image">
-                            <i class="fi fi-rr-cross"></i>
-                        </button>
+                        <button class="remove-img-btn" id="removeImgBtn"><i class="fi fi-rr-cross"></i></button>
                     </div>
                 </div>
             </div>
 
-            <!-- Submit -->
             <button class="submit-btn" id="submitFeedbackBtn">
                 <span class="submit-btn-text">Send Feedback</span>
-                <i class="fi fi-rs-paper-plane submit-btn-icon"></i>
+                <i class="fi fi-rs-paper-plane"></i>
             </button>
         </div>
     </aside>
 
-    <!-- ── MAIN LAYOUT ───────────────────────────────────── -->
-    <div class="feedback-shell">
+    <!-- ── APP SHELL ──────────────────────────────────────── -->
+    <div class="app-shell">
 
-        <!-- Topbar -->
-        <header class="feedback-topbar">
+        <!-- TOPBAR -->
+        <header class="topbar">
             <div class="topbar-left">
-                <a href="/chat/index.html" class="topbar-back-btn" aria-label="Back to chat">
+                <a href="/chat/index.html" class="back-btn" aria-label="Back">
                     <i class="fi fi-rr-arrow-left"></i>
                 </a>
-                <div class="topbar-brand">
-                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="topbar-logo"
+                <div class="brand">
+                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="brand-logo"
                         onerror="this.style.display='none'">
-                    <span class="topbar-name">ZORA <span class="topbar-accent">AI</span></span>
+                    <span class="brand-name">ZORA <span class="brand-cyan">AI</span></span>
                 </div>
-            </div>
-            <div class="topbar-center">
-                <span class="topbar-page-title">Feedback</span>
+                <span class="topbar-divider">/</span>
+                <span class="topbar-page">Feedback</span>
             </div>
             <div class="topbar-right">
-                <div class="topbar-avatar" id="topbarAvatar">
-                    <span id="topbarInitial">U</span>
+                <div class="user-chip" id="userChip">
+                    <div class="user-chip-avatar" id="userAvatar"><span id="userInitial">U</span></div>
+                    <span class="user-chip-name" id="userName">User</span>
                 </div>
             </div>
         </header>
 
-        <!-- Chat Stage -->
-        <main class="feedback-stage">
-            <div class="chat-scroll" id="chatScroll">
-                <div class="chat-inner">
+        <!-- BODY: 2-COLUMN -->
+        <div class="body-split">
 
-                    <!-- System message -->
-                    <div class="system-msg">
-                        <span>Today</span>
-                    </div>
-
-                    <!-- Dev welcome bubble -->
-                    <div class="bubble-row bubble-row--dev" id="welcomeBubble">
-                        <div class="bubble-avatar bubble-avatar--dev">
-                            <img src="/assets/images/logo/logo.png" alt="Dev"
-                                onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
-                        </div>
-                        <div class="bubble-content">
-                            <div class="bubble-meta">
-                                <span class="bubble-sender">ZORA Team</span>
-                                <span class="bubble-badge">Developer</span>
-                                <span class="bubble-time" id="welcomeTime"></span>
-                            </div>
-                            <div class="bubble-body bubble-body--dev">
-                                <p>Hey there! 👋 We'd love to hear your thoughts about ZORA AI.</p>
-                                <p>Pull the <strong>Feedback tab</strong> on the right edge of the screen to share your
-                                    experience, report a bug, or suggest a new feature.</p>
-                                <p>Every message helps us build a better AI for you. 🚀</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic messages injected here -->
-                    <div id="messageList"></div>
-
-                    <!-- Typing indicator -->
-                    <div class="typing-row hidden" id="typingRow">
-                        <div class="bubble-avatar bubble-avatar--dev">
-                            <img src="/assets/images/logo/logo.png" alt="Dev"
-                                onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
-                        </div>
-                        <div class="typing-indicator">
-                            <span></span><span></span><span></span>
-                        </div>
-                    </div>
-
+            <!-- ── LEFT COLUMN: feedback list ────────────────── -->
+            <aside class="left-col">
+                <div class="left-col-header">
+                    <h2 class="left-col-title">My Feedback</h2>
+                    <button class="new-feedback-btn" id="newFeedbackBtn" title="New Feedback">
+                        <i class="fi fi-rr-edit"></i>
+                    </button>
                 </div>
-            </div>
 
-            <!-- Empty state hint -->
-            <div class="stage-hint" id="stageHint">
-                <div class="hint-arrow">
-                    <svg width="60" height="40" viewBox="0 0 60 40" fill="none">
-                        <path d="M4 36 C10 10, 40 8, 55 8" stroke="var(--cyan)" stroke-width="1.5"
-                            stroke-dasharray="4 3" fill="none" />
-                        <path d="M50 4 L55 8 L51 13" stroke="var(--cyan)" stroke-width="1.5" fill="none"
+                <div class="left-col-search">
+                    <i class="fi fi-rr-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search feedback...">
+                </div>
+
+                <div class="feedback-list" id="feedbackList">
+                    <!-- Welcome item always shown -->
+                    <div class="feedback-list-item active" data-id="welcome" id="welcomeListItem">
+                        <div class="fli-avatar fli-avatar--dev">
+                            <img src="/assets/images/logo/logo.png" alt="ZORA" onerror="this.parentNode.innerHTML='Z'">
+                        </div>
+                        <div class="fli-content">
+                            <div class="fli-top">
+                                <span class="fli-name">ZORA Team</span>
+                                <span class="fli-time" id="welcomeTime"></span>
+                            </div>
+                            <p class="fli-preview">Hey there! We'd love to hear your thoughts...</p>
+                        </div>
+                    </div>
+                    <!-- Dynamic items injected here -->
+                    <div id="feedbackListItems"></div>
+                </div>
+
+                <!-- Empty hint -->
+                <div class="left-empty" id="leftEmpty">
+                    <i class="fi fi-rr-comment-alt left-empty-icon"></i>
+                    <p>No feedback yet.<br>Pull the tab to get started.</p>
+                </div>
+            </aside>
+
+            <!-- ── RIGHT COLUMN: active chat ─────────────────── -->
+            <main class="right-col">
+
+                <!-- Right col header -->
+                <div class="right-col-header" id="rightColHeader">
+                    <div class="right-header-info">
+                        <div class="right-header-avatar">
+                            <img src="/assets/images/logo/logo.png" alt="ZORA"
+                                onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
+                        </div>
+                        <div>
+                            <p class="right-header-name" id="rightHeaderName">ZORA Team</p>
+                            <p class="right-header-sub" id="rightHeaderSub">Developer · Online</p>
+                        </div>
+                    </div>
+                    <div class="right-header-actions">
+                        <span class="right-header-badge" id="rightHeaderBadge">General</span>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="chat-scroll" id="chatScroll">
+                    <div class="chat-inner">
+                        <div class="date-divider"><span>Today</span></div>
+
+                        <!-- Dev welcome bubble -->
+                        <div class="bubble-wrap bubble-wrap--dev" id="welcomeBubble">
+                            <div class="bubble-avatar bubble-avatar--dev">
+                                <img src="/assets/images/logo/logo.png" alt="Z"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
+                            </div>
+                            <div class="bubble-group">
+                                <div class="bubble-meta">
+                                    <span class="bubble-sender">ZORA Team</span>
+                                    <span class="bubble-badge">Developer</span>
+                                    <span class="bubble-time" id="devWelcomeTime"></span>
+                                </div>
+                                <div class="bubble bubble--dev">
+                                    <p>Hey there! 👋 We'd love to hear your thoughts about ZORA AI.</p>
+                                    <p>Pull the <strong>Feedback tab</strong> on the right edge of the screen to share
+                                        your experience, report a bug, or suggest a new feature.</p>
+                                    <p>Every message helps us build a better AI for you. 🚀</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic messages -->
+                        <div id="messageList"></div>
+
+                        <!-- Typing -->
+                        <div class="typing-wrap hidden" id="typingWrap">
+                            <div class="bubble-avatar bubble-avatar--dev">
+                                <img src="/assets/images/logo/logo.png" alt="Z"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
+                            </div>
+                            <div class="typing-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage hint -->
+                <div class="stage-hint" id="stageHint">
+                    <svg width="56" height="36" viewBox="0 0 56 36" fill="none">
+                        <path d="M4 32 C10 8, 36 6, 50 6" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4 3"
+                            fill="none" />
+                        <path d="M46 2 L50 6 L46 10" stroke="#00d4ff" stroke-width="1.5" fill="none"
                             stroke-linecap="round" />
                     </svg>
+                    <span>Pull the tab to share feedback →</span>
                 </div>
-                <p class="hint-text">Pull the tab to share your feedback →</p>
-            </div>
-        </main>
-
+            </main>
+        </div>
     </div>
 
     <!-- Toast -->
-    <div class="toast hidden" id="toast"></div>
+    <div class="fb-toast hidden" id="fbToast"></div>
 
     <script src="/js/utils/api.js" defer></script>
     <script src="/js/utils/helpers.js" defer></script>
     <script src="/js/feedback.js" defer></script>
-
 </body>
 
 </html>
