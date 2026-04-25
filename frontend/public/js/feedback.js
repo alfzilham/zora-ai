@@ -14,22 +14,22 @@ const fb = {
 };
 
 const starLabels = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
-const catLabels  = { suggestion: 'Suggestion', bug: 'Bug Report', praise: 'Praise', question: 'Question' };
+const catLabels = { suggestion: 'Suggestion', bug: 'Bug Report', praise: 'Praise', question: 'Question' };
 const autoReplies = {
     suggestion: "Thanks for the suggestion! Our team will review it for future updates. 💡",
-    bug:        "Thanks for the report! Our team will investigate and fix it ASAP. 🔧",
-    praise:     "Thank you so much — that means a lot to us! 🚀",
-    question:   "Thanks for reaching out! We'll get back to you with an answer shortly. 💬",
+    bug: "Thanks for the report! Our team will investigate and fix it ASAP. 🔧",
+    praise: "Thank you so much — that means a lot to us! 🚀",
+    question: "Thanks for reaching out! We'll get back to you with an answer shortly. 💬",
 };
 
 // ── UTILS ────────────────────────────────────────────
-const qs  = id => document.getElementById(id);
+const qs = id => document.getElementById(id);
 const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 function esc(str) {
     return String(str || '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function getToken() {
@@ -42,7 +42,7 @@ async function apiSafe(endpoint, method = 'GET', body = null) {
     try {
         if (typeof apiCall === 'function') return await apiCall(endpoint, method, body, true);
         const token = localStorage.getItem('zora_token');
-        const opts  = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } };
+        const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } };
         if (body) opts.body = JSON.stringify(body);
         const res = await fetch(`/api${endpoint}`, opts);
         return await res.json();
@@ -66,7 +66,7 @@ function scrollBottom() {
 }
 
 // ── DRAWER ───────────────────────────────────────────
-function openDrawer()  {
+function openDrawer() {
     qs('feedbackDrawer')?.classList.add('open');
     qs('drawerBackdrop')?.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -126,7 +126,7 @@ function appendUserBubble(data) {
 
     qs('stageHint')?.classList.add('hidden');
 
-    const stars   = data.rating > 0 ? '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating) : '';
+    const stars = data.rating > 0 ? '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating) : '';
     const initial = fb.user?.name?.[0]?.toUpperCase() || 'U';
     const shotHtml = data.screenshotBase64
         ? `<div class="bubble-screenshot"><img src="${data.screenshotBase64}" alt="Screenshot"></div>`
@@ -218,12 +218,12 @@ function highlightStars(val) {
 }
 
 function bindUpload() {
-    const input   = qs('screenshotInput');
-    const zone    = qs('uploadZone');
+    const input = qs('screenshotInput');
+    const zone = qs('uploadZone');
     const preview = qs('uploadPreview');
     const content = qs('uploadContent');
-    const img     = qs('previewImg');
-    const rmBtn   = qs('removeImgBtn');
+    const img = qs('previewImg');
+    const rmBtn = qs('removeImgBtn');
 
     if (!input) return;
 
@@ -241,9 +241,9 @@ function bindUpload() {
     };
 
     input.addEventListener('change', () => loadFile(input.files?.[0]));
-    zone?.addEventListener('dragover',  e => { e.preventDefault(); zone.style.borderColor = 'var(--cyan)'; });
+    zone?.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--cyan)'; });
     zone?.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
-    zone?.addEventListener('drop',      e => { e.preventDefault(); zone.style.borderColor = ''; loadFile(e.dataTransfer.files?.[0]); });
+    zone?.addEventListener('drop', e => { e.preventDefault(); zone.style.borderColor = ''; loadFile(e.dataTransfer.files?.[0]); });
 
     rmBtn?.addEventListener('click', e => {
         e.preventDefault(); e.stopPropagation();
@@ -265,7 +265,7 @@ function resetForm() {
     const prev = qs('uploadPreview'), cont = qs('uploadContent');
     prev?.classList.add('hidden'); cont?.classList.remove('hidden');
     const inp = qs('screenshotInput'); if (inp) inp.value = '';
-    const pi  = qs('previewImg'); if (pi) pi.src = '';
+    const pi = qs('previewImg'); if (pi) pi.src = '';
 }
 
 // ── SUBMIT ────────────────────────────────────────────
@@ -328,30 +328,137 @@ function bindSearch() {
     });
 }
 
-// ── LOAD HISTORY ─────────────────────────────────────
-async function loadHistory() {
-    const data = await apiSafe('/feedback/my', 'GET');
-    if (!data?.data?.length) return;
+// ── LIGHTBOX ──────────────────────────────────────────
+function openLightbox(userData) {
+    const lb = qs('fbLightbox');
+    const bd = qs('lbBackdrop');
+    if (!lb || !bd) return;
 
-    qs('stageHint')?.classList.add('hidden');
+    // Set user info
+    const initial = userData.name?.[0]?.toUpperCase() || 'U';
+    const lbAv = qs('lbAvatar');
+    if (lbAv) {
+        lbAv.innerHTML = userData.avatar_url
+            ? `<img src="${esc(userData.avatar_url)}" alt="avatar">`
+            : initial;
+    }
+    const lbN = qs('lbName'); if (lbN) lbN.textContent = userData.name || 'User';
+    const lbE = qs('lbEmail'); if (lbE) lbE.textContent = userData.email || '—';
 
-    data.data.forEach(item => {
-        const fbData = {
-            id: item.id || `fb_${Date.now()}_${Math.random()}`,
-            category: item.category,
-            rating: item.rating || 0,
-            message: item.message,
-            screenshotBase64: item.screenshot_url || null,
-            time: item.created_at
-                ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                : now(),
-        };
+    // Build feedback cards
+    const body = qs('lbBody');
+    if (!body) return;
 
-        fb.feedbacks.push(fbData);
-        addToList(fbData);
-        appendUserBubble(fbData);
-        if (item.reply) appendDevBubble(item.reply);
+    if (!userData.feedbacks?.length) {
+        body.innerHTML = `<p class="lb-empty">No feedback found for this user.</p>`;
+    } else {
+        body.innerHTML = userData.feedbacks.map(f => {
+            const stars = f.rating > 0
+                ? '★'.repeat(f.rating) + '☆'.repeat(5 - f.rating)
+                : '';
+            const shotHtml = f.screenshot_url
+                ? `<div class="lb-card-screenshot"><img src="${esc(f.screenshot_url)}" alt="Screenshot"></div>`
+                : '';
+            return `
+                <div class="lb-card">
+                    <div class="lb-card-top">
+                        <span class="lb-card-cat">${esc(catLabels[f.category] || f.category)}</span>
+                        <span class="lb-card-time">${f.created_at
+                    ? new Date(f.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
+                    : now()}</span>
+                    </div>
+                    ${stars ? `<div class="lb-card-stars">${stars} <span style="font-size:.72rem;color:var(--text-secondary)">${starLabels[f.rating] || ''}</span></div>` : ''}
+                    <p class="lb-card-msg">${esc(f.message)}</p>
+                    ${shotHtml}
+                </div>
+            `;
+        }).join('');
+    }
+
+    bd.classList.remove('hidden');
+}
+
+function closeLightbox() {
+    qs('lbBackdrop')?.classList.add('hidden');
+}
+
+// ── BUILD USER LIST ────────────────────────────────────
+function buildUserListItem(userData) {
+    const el = document.createElement('div');
+    el.className = 'feedback-list-item';
+    el.dataset.uid = userData.user_id || userData.id;
+
+    const initial = userData.name?.[0]?.toUpperCase() || 'U';
+    const lastFb = userData.feedbacks?.[userData.feedbacks.length - 1];
+    const preview = lastFb?.message?.slice(0, 46) + (lastFb?.message?.length > 46 ? '…' : '') || '—';
+    const timeStr = lastFb?.created_at
+        ? new Date(lastFb.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        : now();
+    const cat = lastFb ? catLabels[lastFb.category] || lastFb.category : '';
+
+    el.innerHTML = `
+        <div class="fli-avatar fli-avatar--user-photo">
+            ${userData.avatar_url
+            ? `<img src="${esc(userData.avatar_url)}" alt="${esc(userData.name)}">`
+            : initial}
+        </div>
+        <div class="fli-content">
+            <div class="fli-top">
+                <span class="fli-name">${esc(userData.name || 'User')}</span>
+                <span class="fli-time">${timeStr}</span>
+            </div>
+            <p class="fli-preview">${esc(preview)}</p>
+            ${cat ? `<span class="fli-cat-badge">${esc(cat)}</span>` : ''}
+        </div>
+        ${userData.unread ? '<div class="fli-unread"></div>' : ''}
+    `;
+
+    el.addEventListener('click', () => {
+        document.querySelectorAll('.feedback-list-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        openLightbox(userData);
     });
+
+    return el;
+}
+
+async function loadHistory() {
+    const data = await apiSafe('/feedback/all', 'GET');
+    const container = qs('feedbackListItems');
+    const badge = qs('userCountBadge');
+    const leftEmpty = qs('leftEmpty');
+
+    if (!data?.data?.length) {
+        leftEmpty?.classList.add('show');
+        return;
+    }
+
+    // Group feedbacks by user
+    const userMap = {};
+    data.data.forEach(item => {
+        const uid = item.user_id || item.id;
+        if (!userMap[uid]) {
+            userMap[uid] = {
+                user_id: uid,
+                name: item.user_name || item.name || 'User',
+                email: item.user_email || item.email || '—',
+                avatar_url: item.avatar_url || null,
+                feedbacks: [],
+                unread: false,
+            };
+        }
+        userMap[uid].feedbacks.push(item);
+        if (!item.read) userMap[uid].unread = true;
+    });
+
+    const users = Object.values(userMap);
+    if (badge) badge.textContent = users.length;
+
+    users.forEach(u => {
+        container?.appendChild(buildUserListItem(u));
+    });
+
+    leftEmpty?.classList.remove('show');
 }
 
 // ── BOOTSTRAP ─────────────────────────────────────────
@@ -366,10 +473,10 @@ async function bootstrap() {
     try {
         const res = await apiSafe('/auth/me');
         fb.user = res?.data || res;
-        const name    = fb.user?.name || 'User';
+        const name = fb.user?.name || 'User';
         const initial = name[0]?.toUpperCase() || 'U';
-        const uname   = qs('userName'); if (uname) uname.textContent = name;
-        const uinit   = qs('userInitial'); if (uinit) uinit.textContent = initial;
+        const uname = qs('userName'); if (uname) uname.textContent = name;
+        const uinit = qs('userInitial'); if (uinit) uinit.textContent = initial;
         if (fb.user?.avatar_url) {
             const av = qs('userAvatar');
             if (av) av.innerHTML = `<img src="${fb.user.avatar_url}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
@@ -383,8 +490,14 @@ async function bootstrap() {
     qs('drawerCloseBtn')?.addEventListener('click', closeDrawer);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
-    // Welcome list item click → show welcome bubble
-    qs('welcomeListItem')?.addEventListener('click', () => setActive('welcome'));
+    // Lightbox close
+    qs('lbCloseBtn')?.addEventListener('click', closeLightbox);
+    qs('lbBackdrop')?.addEventListener('click', e => {
+        if (e.target === qs('lbBackdrop')) closeLightbox();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeLightbox();
+    });
 
     // Submit
     qs('submitFeedbackBtn')?.addEventListener('click', submitFeedback);

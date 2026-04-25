@@ -141,10 +141,8 @@
             <!-- ── LEFT COLUMN: feedback list ────────────────── -->
             <aside class="left-col">
                 <div class="left-col-header">
-                    <h2 class="left-col-title">My Feedback</h2>
-                    <button class="new-feedback-btn" id="newFeedbackBtn" title="New Feedback">
-                        <i class="fi fi-rr-edit"></i>
-                    </button>
+                    <h2 class="left-col-title">Users</h2>
+                    <span class="user-count-badge" id="userCountBadge">0</span>
                 </div>
 
                 <div class="left-col-search">
@@ -153,20 +151,6 @@
                 </div>
 
                 <div class="feedback-list" id="feedbackList">
-                    <!-- Welcome item always shown -->
-                    <div class="feedback-list-item active" data-id="welcome" id="welcomeListItem">
-                        <div class="fli-avatar fli-avatar--dev">
-                            <img src="/assets/images/logo/logo.png" alt="ZORA" onerror="this.parentNode.innerHTML='Z'">
-                        </div>
-                        <div class="fli-content">
-                            <div class="fli-top">
-                                <span class="fli-name">ZORA Team</span>
-                                <span class="fli-time" id="welcomeTime"></span>
-                            </div>
-                            <p class="fli-preview">Hey there! We'd love to hear your thoughts...</p>
-                        </div>
-                    </div>
-                    <!-- Dynamic items injected here -->
                     <div id="feedbackListItems"></div>
                 </div>
 
@@ -259,6 +243,23 @@
     <script src="/js/utils/api.js" defer></script>
     <script src="/js/utils/helpers.js" defer></script>
     <script src="/js/feedback.js" defer></script>
+
+    <!-- LIGHTBOX -->
+    <div class="fb-lightbox-backdrop hidden" id="lbBackdrop">
+        <div class="fb-lightbox" id="fbLightbox">
+            <div class="lb-header">
+                <div class="lb-user-info">
+                    <div class="lb-avatar" id="lbAvatar">U</div>
+                    <div>
+                        <p class="lb-name" id="lbName">User</p>
+                        <p class="lb-email" id="lbEmail">—</p>
+                    </div>
+                </div>
+                <button class="lb-close-btn" id="lbCloseBtn"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <div class="lb-body" id="lbBody"></div>
+        </div>
+    </div>
 </body>
 
 </html>
