@@ -378,7 +378,7 @@ img {
 .lh-features-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(245, 248, 252, 0.02);
+    background: rgba(245, 248, 252, 0.2);
 }
 
 .lh-features-content {
