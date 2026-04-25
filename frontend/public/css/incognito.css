@@ -131,80 +131,142 @@ html, body {
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 20px;
+    gap: 18px;
     text-align: center;
     padding: 40px 24px;
 }
 
-/* Orb — premium ring design */
-.incognito-orb {
+/* ─── ORB — Multi-ring ───────────────────────────────── */
+.incognito-orb-wrap {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 160px;
+    height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    animation: orbFloatY 5s ease-in-out infinite;
 }
 
-.incognito-orb::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.08);
-    animation: orbPulse 3s ease-in-out infinite;
-}
-
-.incognito-orb::after {
-    content: '';
-    position: absolute;
-    inset: -12px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.04);
-    animation: orbPulse 3s ease-in-out infinite 0.5s;
-}
-
-@keyframes orbPulse {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.04); }
-}
-
-.incognito-orb-inner {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: orbFloat 4s ease-in-out infinite;
-}
-
-@keyframes orbFloat {
+@keyframes orbFloatY {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+    50% { transform: translateY(-10px); }
 }
 
-.incognito-orb-icon {
-    font-size: 1.6rem;
-    color: rgba(255,255,255,0.25);
+.incognito-orb-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+    animation: orbRingPulse 4s ease-in-out infinite;
 }
 
+.incognito-orb-ring--1 {
+    inset: 24px;
+    border-color: rgba(255,255,255,0.1);
+    animation-delay: 0s;
+}
+
+.incognito-orb-ring--2 {
+    inset: 10px;
+    border-color: rgba(255,255,255,0.05);
+    animation-delay: 0.4s;
+}
+
+.incognito-orb-ring--3 {
+    inset: -4px;
+    border-color: rgba(255,255,255,0.03);
+    animation-delay: 0.8s;
+}
+
+@keyframes orbRingPulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.03); opacity: 1; }
+}
+
+.incognito-orb-core {
+    position: relative;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.09);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.incognito-orb-svg {
+    width: 60px;
+    height: 60px;
+}
+
+/* ─── TITLE ──────────────────────────────────────────── */
 .incognito-welcome-title {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     font-weight: 600;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: -0.03em;
+    color: rgba(255,255,255,0.7);
+    -letter-radius: -0.03em;
     line-height: 1.3;
+    margin: 0;
 }
 
-.incognito-welcome-desc {
+/* ─── TYPEWRITER ─────────────────────────────────────── */
+.incognito-typewriter {
     font-size: 0.875rem;
-    color: rgba(255,255,255,0.25);
-    line-height: 1.8;
-    max-width: 300px;
+    color: rgba(255,255,255,0.28);
+    min-height: 22px;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.typewriter-text {
+    letter-spacing: 0.01em;
+}
+
+.typewriter-cursor {
+    display: inline-block;
+    margin-left: 1px;
+    color: rgba(255,255,255,0.35);
+    animation: cursorBlink 0.9s ease-in-out infinite;
+    font-weight: 300;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* ─── PILLS ──────────────────────────────────────────── */
+.incognito-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+.incognito-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.22);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.incognito-pill svg {
+    width: 11px;
+    height: 11px;
+    opacity: 0.5;
+    flex-shrink: 0;
 }
 
 /* ─── MESSAGE SCREEN ─────────────────────────────────── */

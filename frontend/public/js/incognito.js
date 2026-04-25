@@ -210,6 +210,64 @@ function stopVoice() {
     recognitionInstance = null;
 }
 
+
+// ─── TYPEWRITER ───────────────────────────────────────
+function initTypewriter() {
+    const textEl = document.getElementById("typewriterText");
+    const cursorEl = document.getElementById("typewriterCursor");
+    if (!textEl || cursorEl === null) return;
+
+    const phrases = [
+        "No history saved. No traces left.",
+        "ZORA is active. You are invisible.",
+        "Your conversation stays private.",
+        "Think freely. Nothing is recorded.",
+        "Incognito mode. Full AI power.",
+    ];
+
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isPaused = false;
+
+    function tick() {
+        const current = phrases[phraseIndex];
+
+        if (!isDeleting) {
+            textEl.textContent = current.slice(0, charIndex + 1);
+            charIndex++;
+            if (charIndex === current.length) {
+                isPaused = true;
+                setTimeout(() => { isPaused = false; isDeleting = true; tick(); }, 2200);
+                return;
+            }
+        } else {
+            textEl.textContent = current.slice(0, charIndex - 1);
+            charIndex--;
+            if (charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+        }
+
+        const speed = isDeleting ? 28 : 52 + (Math.random() * 20 - 10);
+        setTimeout(tick, speed);
+    }
+
+    // Cursor blink via GSAP if available
+    if (typeof gsap !== "undefined" && cursorEl) {
+        gsap.killTweensOf(cursorEl);
+        gsap.to(cursorEl, {
+            opacity: 0,
+            duration: 0.45,
+            repeat: -1,
+            yoyo: true,
+            ease: "power2.inOut"
+        });
+    }
+
+    setTimeout(tick, 800);
+}
 // ─── BOOTSTRAP ───────────────────────────────────────
 async function bootstrap() {
     const token = getTokenOrRedirect();
@@ -252,6 +310,7 @@ async function bootstrap() {
     bindVoiceButton();
     autoResize();
     renderMessages();
+    initTypewriter();
 }
 
 document.addEventListener("DOMContentLoaded", bootstrap);
