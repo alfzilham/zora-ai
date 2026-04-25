@@ -1,21 +1,36 @@
 /**
- * ZORA AI — Feedback Page
- * Sliding drawer, chat bubbles, API integration
+ * ZORA AI — Feedback Page JS
+ * 2-column layout · Light cyan theme
  */
 
-const fbState = {
+const fb = {
     user: null,
     category: 'suggestion',
     rating: 0,
-    screenshotFile: null,
     screenshotBase64: null,
     isSubmitting: false,
+    feedbacks: [],
+    activeId: 'welcome',
 };
 
 const starLabels = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
+const catLabels  = { suggestion: 'Suggestion', bug: 'Bug Report', praise: 'Praise', question: 'Question' };
+const autoReplies = {
+    suggestion: "Thanks for the suggestion! Our team will review it for future updates. 💡",
+    bug:        "Thanks for the report! Our team will investigate and fix it ASAP. 🔧",
+    praise:     "Thank you so much — that means a lot to us! 🚀",
+    question:   "Thanks for reaching out! We'll get back to you with an answer shortly. 💬",
+};
 
 // ── UTILS ────────────────────────────────────────────
-function qs(id) { return document.getElementById(id); }
+const qs  = id => document.getElementById(id);
+const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+function esc(str) {
+    return String(str || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function getToken() {
     const t = localStorage.getItem('zora_token');
@@ -23,17 +38,24 @@ function getToken() {
     return t;
 }
 
-function nowTime() {
-    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+async function apiSafe(endpoint, method = 'GET', body = null) {
+    try {
+        if (typeof apiCall === 'function') return await apiCall(endpoint, method, body, true);
+        const token = localStorage.getItem('zora_token');
+        const opts  = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(`/api${endpoint}`, opts);
+        return await res.json();
+    } catch (e) { console.warn('API:', endpoint, e); return null; }
 }
 
-function showToast(msg, type = 'success') {
-    const t = qs('toast');
-    if (!t) return;
-    t.textContent = msg;
-    t.className = `toast ${type}`;
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => { t.className = 'toast hidden'; }, 3500);
+function toast(msg, type = 'success') {
+    const el = qs('fbToast');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = `fb-toast ${type}`;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.className = 'fb-toast hidden'; }, 3200);
 }
 
 function scrollBottom() {
@@ -43,28 +65,8 @@ function scrollBottom() {
     });
 }
 
-async function safeApiCall(endpoint, method = 'GET', body = null) {
-    try {
-        if (typeof apiCall === 'function') {
-            return await apiCall(endpoint, method, body, true);
-        }
-        // fallback fetch
-        const token = localStorage.getItem('zora_token');
-        const opts = {
-            method,
-            headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        };
-        if (body) opts.body = JSON.stringify(body);
-        const res = await fetch(`/api${endpoint}`, opts);
-        return await res.json();
-    } catch (err) {
-        console.warn('API error:', endpoint, err);
-        return null;
-    }
-}
-
 // ── DRAWER ───────────────────────────────────────────
-function openDrawer() {
+function openDrawer()  {
     qs('feedbackDrawer')?.classList.add('open');
     qs('drawerBackdrop')?.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -76,84 +78,176 @@ function closeDrawer() {
     document.body.style.overflow = '';
 }
 
-// ── CATEGORY ─────────────────────────────────────────
-function bindCategoryBtns() {
+// ── LEFT COL — list item ──────────────────────────────
+function buildListItem(fbData) {
+    const el = document.createElement('div');
+    el.className = 'feedback-list-item';
+    el.dataset.id = fbData.id;
+
+    const initial = fb.user?.name?.[0]?.toUpperCase() || 'U';
+    el.innerHTML = `
+        <div class="fli-avatar fli-avatar--user">${initial}</div>
+        <div class="fli-content">
+            <div class="fli-top">
+                <span class="fli-name">You</span>
+                <span class="fli-time">${fbData.time || now()}</span>
+            </div>
+            <p class="fli-preview">${esc(fbData.message).slice(0, 48)}${fbData.message.length > 48 ? '…' : ''}</p>
+            <span class="fli-cat-badge">${catLabels[fbData.category] || fbData.category}</span>
+        </div>
+    `;
+
+    el.addEventListener('click', () => setActive(fbData.id));
+    return el;
+}
+
+function addToList(fbData) {
+    const container = qs('feedbackListItems');
+    if (!container) return;
+
+    const existing = container.querySelector(`[data-id="${fbData.id}"]`);
+    if (existing) return;
+
+    container.appendChild(buildListItem(fbData));
+    qs('leftEmpty')?.classList.remove('show');
+}
+
+function setActive(id) {
+    document.querySelectorAll('.feedback-list-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+    });
+    fb.activeId = id;
+}
+
+// ── RIGHT COL — bubbles ───────────────────────────────
+function appendUserBubble(data) {
+    const list = qs('messageList');
+    if (!list) return;
+
+    qs('stageHint')?.classList.add('hidden');
+
+    const stars   = data.rating > 0 ? '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating) : '';
+    const initial = fb.user?.name?.[0]?.toUpperCase() || 'U';
+    const shotHtml = data.screenshotBase64
+        ? `<div class="bubble-screenshot"><img src="${data.screenshotBase64}" alt="Screenshot"></div>`
+        : '';
+
+    const div = document.createElement('div');
+    div.className = 'bubble-wrap bubble-wrap--user';
+    div.innerHTML = `
+        <div class="bubble-group">
+            <div class="bubble-meta" style="justify-content:flex-end">
+                <span class="bubble-time">${data.time || now()}</span>
+                <span class="bubble-sender">${esc(fb.user?.name || 'You')}</span>
+            </div>
+            <div class="bubble bubble--user">
+                <p>${esc(data.message)}</p>
+                ${shotHtml}
+                <div class="bubble-tags">
+                    <span class="bubble-tag">${catLabels[data.category] || data.category}</span>
+                    ${stars ? `<span class="bubble-tag">${stars}</span>` : ''}
+                </div>
+                ${data.rating > 0 ? `<div class="bubble-stars" style="color:rgba(255,255,255,0.9)">${stars} <span style="font-size:.72rem;opacity:.8">${starLabels[data.rating]}</span></div>` : ''}
+            </div>
+        </div>
+        <div class="bubble-avatar bubble-avatar--user">${initial}</div>
+    `;
+
+    list.appendChild(div);
+    scrollBottom();
+}
+
+function appendDevBubble(text, time) {
+    const list = qs('messageList');
+    if (!list) return;
+
+    const div = document.createElement('div');
+    div.className = 'bubble-wrap bubble-wrap--dev';
+    div.innerHTML = `
+        <div class="bubble-avatar bubble-avatar--dev">
+            <img src="/assets/images/logo/logo.png" alt="Z" onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
+        </div>
+        <div class="bubble-group">
+            <div class="bubble-meta">
+                <span class="bubble-sender">ZORA Team</span>
+                <span class="bubble-badge">Developer</span>
+                <span class="bubble-time">${time || now()}</span>
+            </div>
+            <div class="bubble bubble--dev"><p>${esc(text)}</p></div>
+        </div>
+    `;
+
+    list.appendChild(div);
+    scrollBottom();
+}
+
+function showTyping(visible) {
+    qs('typingWrap')?.classList.toggle('hidden', !visible);
+    if (visible) scrollBottom();
+}
+
+// ── FORM CONTROLS ─────────────────────────────────────
+function bindCategories() {
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            fbState.category = btn.dataset.cat;
+            fb.category = btn.dataset.cat;
         });
     });
 }
 
-// ── STARS ─────────────────────────────────────────────
-function bindStarRating() {
+function bindStars() {
     const stars = document.querySelectorAll('.star-btn');
     const label = qs('starLabel');
-
     stars.forEach(btn => {
-        btn.addEventListener('mouseenter', () => highlightStars(Number(btn.dataset.val)));
-        btn.addEventListener('mouseleave', () => highlightStars(fbState.rating));
+        btn.addEventListener('mouseenter', () => highlightStars(+btn.dataset.val));
+        btn.addEventListener('mouseleave', () => highlightStars(fb.rating));
         btn.addEventListener('click', () => {
-            fbState.rating = Number(btn.dataset.val);
-            highlightStars(fbState.rating);
-            if (label) label.textContent = starLabels[fbState.rating] || '';
+            fb.rating = +btn.dataset.val;
+            highlightStars(fb.rating);
+            if (label) label.textContent = starLabels[fb.rating] || '';
         });
     });
 }
 
 function highlightStars(val) {
     document.querySelectorAll('.star-btn').forEach(btn => {
-        btn.classList.toggle('active', Number(btn.dataset.val) <= val);
+        btn.classList.toggle('active', +btn.dataset.val <= val);
     });
 }
 
-// ── SCREENSHOT ───────────────────────────────────────
-function bindUploadZone() {
-    const input = qs('screenshotInput');
-    const zone = qs('uploadZone');
+function bindUpload() {
+    const input   = qs('screenshotInput');
+    const zone    = qs('uploadZone');
     const preview = qs('uploadPreview');
     const content = qs('uploadContent');
-    const img = qs('previewImg');
-    const removeBtn = qs('removeImgBtn');
+    const img     = qs('previewImg');
+    const rmBtn   = qs('removeImgBtn');
 
     if (!input) return;
 
-    input.addEventListener('change', () => {
-        const file = input.files?.[0];
-        if (!file) return;
-        if (file.size > 5 * 1024 * 1024) { showToast('Image too large (max 5MB)', 'error'); return; }
-        fbState.screenshotFile = file;
-
+    const loadFile = file => {
+        if (!file?.type.startsWith('image/')) return;
+        if (file.size > 5 * 1024 * 1024) { toast('Image too large (max 5MB)', 'error'); return; }
         const reader = new FileReader();
-        reader.onload = (e) => {
-            fbState.screenshotBase64 = e.target.result;
+        reader.onload = e => {
+            fb.screenshotBase64 = e.target.result;
             if (img) img.src = e.target.result;
             preview?.classList.remove('hidden');
             content?.classList.add('hidden');
         };
         reader.readAsDataURL(file);
-    });
+    };
 
-    // Drag & drop
-    zone?.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--cyan)'; });
+    input.addEventListener('change', () => loadFile(input.files?.[0]));
+    zone?.addEventListener('dragover',  e => { e.preventDefault(); zone.style.borderColor = 'var(--cyan)'; });
     zone?.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
-    zone?.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.style.borderColor = '';
-        const file = e.dataTransfer.files?.[0];
-        if (file && file.type.startsWith('image/')) {
-            input.files = e.dataTransfer.files;
-            input.dispatchEvent(new Event('change'));
-        }
-    });
+    zone?.addEventListener('drop',      e => { e.preventDefault(); zone.style.borderColor = ''; loadFile(e.dataTransfer.files?.[0]); });
 
-    removeBtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        fbState.screenshotFile = null;
-        fbState.screenshotBase64 = null;
+    rmBtn?.addEventListener('click', e => {
+        e.preventDefault(); e.stopPropagation();
+        fb.screenshotBase64 = null;
         input.value = '';
         if (img) img.src = '';
         preview?.classList.add('hidden');
@@ -161,223 +255,148 @@ function bindUploadZone() {
     });
 }
 
-// ── APPEND BUBBLES ────────────────────────────────────
-function appendUserBubble({ category, rating, message, screenshotBase64 }) {
-    const list = qs('messageList');
-    if (!list) return;
-
-    const hint = qs('stageHint');
-    if (hint) hint.classList.add('hidden');
-
-    const stars = rating > 0 ? '★'.repeat(rating) + '☆'.repeat(5 - rating) : '';
-    const catLabel = { suggestion: 'Suggestion', bug: 'Bug Report', praise: 'Praise', question: 'Question' }[category] || category;
-    const initial = fbState.user?.name?.[0]?.toUpperCase() || 'U';
-
-    const screenshotHtml = screenshotBase64
-        ? `<div class="bubble-screenshot"><img src="${screenshotBase64}" alt="Screenshot"></div>`
-        : '';
-
-    const div = document.createElement('div');
-    div.className = 'bubble-row bubble-row--user';
-    div.innerHTML = `
-        <div class="bubble-content">
-            <div class="bubble-meta" style="justify-content:flex-end">
-                <span class="bubble-time">${nowTime()}</span>
-                <span class="bubble-sender">${fbState.user?.name || 'You'}</span>
-            </div>
-            <div class="bubble-body bubble-body--user">
-                <p>${escapeHtml(message)}</p>
-                ${screenshotHtml}
-                <div class="bubble-tags">
-                    <span class="bubble-tag">${catLabel}</span>
-                    ${stars ? `<span class="bubble-tag">${stars}</span>` : ''}
-                </div>
-                ${rating > 0 ? `<div class="bubble-stars">${stars} <span style="font-size:0.78rem;color:var(--text-secondary);font-family:var(--font)">${starLabels[rating]}</span></div>` : ''}
-            </div>
-        </div>
-        <div class="bubble-avatar bubble-avatar--user">${initial}</div>
-    `;
-    list.appendChild(div);
-    scrollBottom();
-}
-
-function appendDevBubble(text) {
-    const list = qs('messageList');
-    if (!list) return;
-
-    const div = document.createElement('div');
-    div.className = 'bubble-row bubble-row--dev';
-    div.innerHTML = `
-        <div class="bubble-avatar bubble-avatar--dev">
-            <img src="/assets/images/logo/logo.png" alt="ZORA" onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
-        </div>
-        <div class="bubble-content">
-            <div class="bubble-meta">
-                <span class="bubble-sender">ZORA Team</span>
-                <span class="bubble-badge">Developer</span>
-                <span class="bubble-time">${nowTime()}</span>
-            </div>
-            <div class="bubble-body bubble-body--dev">
-                <p>${text}</p>
-            </div>
-        </div>
-    `;
-    list.appendChild(div);
-    scrollBottom();
-}
-
-function showTyping(visible) {
-    qs('typingRow')?.classList.toggle('hidden', !visible);
-    if (visible) scrollBottom();
-}
-
-function escapeHtml(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
-
-// ── LOAD EXISTING FEEDBACKS ───────────────────────────
-async function loadFeedbacks() {
-    const data = await safeApiCall('/feedback/my', 'GET');
-    if (!data?.data?.length) return;
-
-    const hint = qs('stageHint');
-    if (hint) hint.classList.add('hidden');
-
-    data.data.forEach(fb => {
-        appendUserBubble({
-            category: fb.category,
-            rating: fb.rating || 0,
-            message: fb.message,
-            screenshotBase64: fb.screenshot_url || null,
-        });
-        if (fb.reply) {
-            appendDevBubble(escapeHtml(fb.reply));
-        }
-    });
+function resetForm() {
+    if (qs('feedbackMsg')) qs('feedbackMsg').value = '';
+    fb.rating = 0; fb.screenshotBase64 = null; fb.category = 'suggestion';
+    highlightStars(0);
+    const sl = qs('starLabel'); if (sl) sl.textContent = 'Select rating';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-cat="suggestion"]')?.classList.add('active');
+    const prev = qs('uploadPreview'), cont = qs('uploadContent');
+    prev?.classList.add('hidden'); cont?.classList.remove('hidden');
+    const inp = qs('screenshotInput'); if (inp) inp.value = '';
+    const pi  = qs('previewImg'); if (pi) pi.src = '';
 }
 
 // ── SUBMIT ────────────────────────────────────────────
 async function submitFeedback() {
-    if (fbState.isSubmitting) return;
+    if (fb.isSubmitting) return;
 
     const message = qs('feedbackMsg')?.value?.trim();
-    if (!message) { showToast('Please write a message', 'error'); return; }
-    if (fbState.rating === 0) { showToast('Please select a rating', 'error'); return; }
+    if (!message) { toast('Please write a message', 'error'); return; }
+    if (fb.rating === 0) { toast('Please select a rating', 'error'); return; }
 
-    fbState.isSubmitting = true;
+    fb.isSubmitting = true;
     const btn = qs('submitFeedbackBtn');
-    if (btn) { btn.disabled = true; btn.querySelector('.submit-btn-text').textContent = 'Sending...'; }
+    if (btn) { btn.disabled = true; btn.querySelector('.submit-btn-text').textContent = 'Sending…'; }
 
-    const payload = {
-        category: fbState.category,
-        rating: fbState.rating,
-        message,
-        screenshot: fbState.screenshotBase64 || null,
-    };
+    const payload = { category: fb.category, rating: fb.rating, message, screenshot: fb.screenshotBase64 || null };
 
     try {
-        const res = await safeApiCall('/feedback', 'POST', payload);
-        const ok = res?.success !== false;
+        await apiSafe('/feedback', 'POST', payload);
+    } catch (e) { console.warn('Submit warn:', e); }
 
-        closeDrawer();
+    const fbData = {
+        id: `fb_${Date.now()}`,
+        category: fb.category,
+        rating: fb.rating,
+        message,
+        screenshotBase64: fb.screenshotBase64,
+        time: now(),
+    };
 
-        appendUserBubble({
-            category: fbState.category,
-            rating: fbState.rating,
-            message,
-            screenshotBase64: fbState.screenshotBase64,
-        });
+    fb.feedbacks.push(fbData);
 
-        // Reset form
-        if (qs('feedbackMsg')) qs('feedbackMsg').value = '';
-        fbState.rating = 0;
-        fbState.screenshotFile = null;
-        fbState.screenshotBase64 = null;
-        fbState.category = 'suggestion';
-        highlightStars(0);
-        const starLabel = qs('starLabel');
-        if (starLabel) starLabel.textContent = 'Select rating';
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector('[data-cat="suggestion"]')?.classList.add('active');
-        const preview = qs('uploadPreview');
-        const content = qs('uploadContent');
-        if (preview) preview.classList.add('hidden');
-        if (content) content.classList.remove('hidden');
-        if (qs('screenshotInput')) qs('screenshotInput').value = '';
-        if (qs('previewImg')) qs('previewImg').src = '';
+    closeDrawer();
+    addToList(fbData);
+    setActive(fbData.id);
+    appendUserBubble(fbData);
+    resetForm();
+    toast('Feedback sent! Thank you 🙏', 'success');
 
-        showToast('Feedback sent! Thank you 🙏', 'success');
-
-        // Auto reply after short delay
+    // Auto-reply
+    setTimeout(() => {
+        showTyping(true);
         setTimeout(() => {
-            showTyping(true);
-            setTimeout(() => {
-                showTyping(false);
-                const autoReplies = {
-                    suggestion: "Thanks for your suggestion! Our team will review it and consider it for future updates. 💡",
-                    bug: "Thanks for reporting this bug! Our team will investigate and fix it as soon as possible. 🔧",
-                    praise: "Thank you so much for the kind words! It means the world to us. 🚀",
-                    question: "Thanks for reaching out! Our team will get back to you with an answer shortly. 💬",
-                };
-                appendDevBubble(autoReplies[fbState.category] || "Thank you for your feedback! We'll get back to you soon.");
-            }, 2000);
-        }, 800);
+            showTyping(false);
+            appendDevBubble(autoReplies[fbData.category] || "Thank you for your feedback! We'll get back to you soon.");
+        }, 2200);
+    }, 700);
 
-        if (!ok) console.warn('Feedback saved locally (API issue):', res);
+    if (btn) { btn.disabled = false; btn.querySelector('.submit-btn-text').textContent = 'Send Feedback'; }
+    fb.isSubmitting = false;
+}
 
-    } catch (err) {
-        showToast('Failed to send feedback. Please try again.', 'error');
-        console.error('Submit error:', err);
-    } finally {
-        fbState.isSubmitting = false;
-        if (btn) { btn.disabled = false; btn.querySelector('.submit-btn-text').textContent = 'Send Feedback'; }
-    }
+// ── SEARCH ────────────────────────────────────────────
+function bindSearch() {
+    qs('searchInput')?.addEventListener('input', e => {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#feedbackListItems .feedback-list-item').forEach(el => {
+            const preview = el.querySelector('.fli-preview')?.textContent?.toLowerCase() || '';
+            el.style.display = preview.includes(q) ? '' : 'none';
+        });
+    });
+}
+
+// ── LOAD HISTORY ─────────────────────────────────────
+async function loadHistory() {
+    const data = await apiSafe('/feedback/my', 'GET');
+    if (!data?.data?.length) return;
+
+    qs('stageHint')?.classList.add('hidden');
+
+    data.data.forEach(item => {
+        const fbData = {
+            id: item.id || `fb_${Date.now()}_${Math.random()}`,
+            category: item.category,
+            rating: item.rating || 0,
+            message: item.message,
+            screenshotBase64: item.screenshot_url || null,
+            time: item.created_at
+                ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : now(),
+        };
+
+        fb.feedbacks.push(fbData);
+        addToList(fbData);
+        appendUserBubble(fbData);
+        if (item.reply) appendDevBubble(item.reply);
+    });
 }
 
 // ── BOOTSTRAP ─────────────────────────────────────────
 async function bootstrap() {
-    const token = getToken();
-    if (!token) return;
+    if (!getToken()) return;
 
-    // Set welcome time
-    const wt = qs('welcomeTime');
-    if (wt) wt.textContent = nowTime();
+    // Set times
+    const wt = qs('welcomeTime'); if (wt) wt.textContent = now();
+    const dt = qs('devWelcomeTime'); if (dt) dt.textContent = now();
 
     // Load user
     try {
-        const res = await safeApiCall('/auth/me');
-        fbState.user = res?.data || res;
-        const initial = fbState.user?.name?.[0]?.toUpperCase() || 'U';
-        const el = qs('topbarInitial');
-        if (el) el.textContent = initial;
-        if (fbState.user?.avatar_url) {
-            const av = qs('topbarAvatar');
-            if (av) av.innerHTML = `<img src="${fbState.user.avatar_url}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+        const res = await apiSafe('/auth/me');
+        fb.user = res?.data || res;
+        const name    = fb.user?.name || 'User';
+        const initial = name[0]?.toUpperCase() || 'U';
+        const uname   = qs('userName'); if (uname) uname.textContent = name;
+        const uinit   = qs('userInitial'); if (uinit) uinit.textContent = initial;
+        if (fb.user?.avatar_url) {
+            const av = qs('userAvatar');
+            if (av) av.innerHTML = `<img src="${fb.user.avatar_url}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
         }
-    } catch (e) { console.warn('User load failed:', e); }
+    } catch (e) { console.warn('User load:', e); }
 
-    // Pull tab → open drawer
+    // Drawer
     qs('feedbackTab')?.addEventListener('click', openDrawer);
+    qs('newFeedbackBtn')?.addEventListener('click', openDrawer);
     qs('drawerBackdrop')?.addEventListener('click', closeDrawer);
     qs('drawerCloseBtn')?.addEventListener('click', closeDrawer);
-
-    // ESC to close
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+    // Welcome list item click → show welcome bubble
+    qs('welcomeListItem')?.addEventListener('click', () => setActive('welcome'));
 
     // Submit
     qs('submitFeedbackBtn')?.addEventListener('click', submitFeedback);
 
-    // Bind controls
-    bindCategoryBtns();
-    bindStarRating();
-    bindUploadZone();
+    // Form controls
+    bindCategories();
+    bindStars();
+    bindUpload();
+    bindSearch();
 
-    // Load existing feedbacks
-    await loadFeedbacks();
+    // Load existing
+    await loadHistory();
 }
 
 document.addEventListener('DOMContentLoaded', bootstrap);
