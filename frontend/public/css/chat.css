@@ -1686,12 +1686,17 @@ textarea {
     background: #0099CC;
 }
 
-/* ─── SETTINGS CENTER ───────────────────────────────── */
+/*
+ * ─── SETTINGS CENTER (UPDATED) ───────────────────────────────────────────────
+ * Replace the entire "SETTINGS CENTER" block in chat.css with this.
+ * FAQ and Language tab styles are preserved from existing code — do NOT remove them.
+ */
+
 .settings-center-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1704,48 +1709,47 @@ textarea {
 }
 
 .settings-center-modal {
-    width: 760px;
-    max-width: 95vw;
-    height: 540px;
-    max-height: 90vh;
+    width: 860px;
+    max-width: 96vw;
+    height: 600px;
+    max-height: 92vh;
     background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+    border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     overflow: hidden;
-    animation: slideUpCard 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideUpCard 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
 }
 
 /* ── Sidebar ── */
 .settings-sidebar {
-    width: 200px;
+    width: 220px;
     flex-shrink: 0;
-    background: #f8f8f8;
-    border-right: 1px solid #eeeeee;
+    background: #ffffff;
+    border-right: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    padding: 20px 12px;
-    gap: 4px;
+    padding: 0;
+    gap: 0;
 }
 
 .settings-sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 8px 16px;
-    border-bottom: 1px solid #eeeeee;
-    margin-bottom: 8px;
-}
-
-.settings-logo {
-    width: 24px;
-    height: 24px;
+    padding: 24px 20px 20px;
+    border-bottom: none;
+    margin-bottom: 4px;
 }
 
 .settings-sidebar-title {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: #111111;
+    letter-spacing: -0.01em;
+}
+
+/* No logo image in header */
+.settings-logo {
+    display: none;
 }
 
 .settings-nav {
@@ -1753,17 +1757,19 @@ textarea {
     flex-direction: column;
     gap: 2px;
     flex: 1;
+    padding: 0 10px;
 }
 
 .settings-tab {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
+    padding: 9px 12px;
+    border-radius: 9px;
     background: transparent;
     border: none;
-    color: #555555;
+    /* All icons/text gray by default */
+    color: #888888;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -1775,31 +1781,39 @@ textarea {
 .settings-tab i {
     font-size: 0.95rem;
     flex-shrink: 0;
+    /* Icon gray, not colored */
+    color: inherit;
 }
 
 .settings-tab:hover {
-    background: #eeeeee;
+    background: #f5f5f5;
+    color: #333333;
+}
+
+/* Active: dark background + black text — no cyan */
+.settings-tab.active {
+    background: #f0f0f0;
+    color: #111111;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.settings-tab.active i {
     color: #111111;
 }
 
-.settings-tab.active {
-    background: #ffffff;
-    color: #0099CC;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-    font-weight: 600;
-}
-
 .settings-sidebar-footer {
-    padding-top: 12px;
-    border-top: 1px solid #eeeeee;
+    padding: 12px 10px 16px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: auto;
 }
 
 .settings-logout-btn {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
+    padding: 9px 12px;
+    border-radius: 9px;
     background: transparent;
     border: none;
     color: #FF4B4B;
@@ -1817,7 +1831,8 @@ textarea {
 /* ── Content ── */
 .settings-content {
     flex: 1;
-    padding: 32px 36px;
+    padding: 28px 32px 80px;
+    /* bottom padding for save button */
     overflow-y: auto;
     position: relative;
 }
@@ -1835,18 +1850,19 @@ textarea {
     position: absolute;
     top: 16px;
     right: 16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
     background: transparent;
     border: none;
-    color: #999999;
+    color: #aaaaaa;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: background 0.15s, color 0.15s;
+    z-index: 2;
 }
 
 .settings-close-btn:hover {
@@ -1854,6 +1870,7 @@ textarea {
     color: #111111;
 }
 
+/* ── Panel visibility ── */
 .settings-panel {
     display: none;
 }
@@ -1862,42 +1879,53 @@ textarea {
     display: block;
 }
 
+/* Panel title — bigger, bolder, no desc */
 .settings-panel-title {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #111111;
-    margin: 0 0 4px;
+    margin: 0 0 20px;
+    letter-spacing: -0.02em;
 }
 
+/* desc still used by FAQ/Language, keep it */
 .settings-panel-desc {
     font-size: 0.875rem;
     color: #999999;
-    margin: 0 0 28px;
+    margin: -12px 0 20px;
+}
+
+/* ── Shared utility ── */
+.sc-divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 18px 0;
 }
 
 /* ── Profile Tab ── */
-.profile-center-avatar {
+
+/* Avatar row: horizontal layout */
+.sc-avatar-row {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
+    gap: 18px;
+    padding: 4px 0 8px;
 }
 
 .sc-avatar-preview {
-    width: 80px;
-    height: 80px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     background: #0099CC;
     color: #ffffff;
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     flex-shrink: 0;
-    border: 3px solid #e5e5e5;
+    border: 2px solid #f0f0f0;
 }
 
 .sc-avatar-preview img {
@@ -1906,78 +1934,235 @@ textarea {
     object-fit: cover;
 }
 
-.sc-avatar-btn {
+.sc-avatar-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sc-avatar-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111111;
+}
+
+.sc-avatar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Chip-style buttons for avatar actions */
+.sc-avatar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    border: 1px solid #e5e5e5;
+    background: #f5f5f5;
+    color: #333333;
+    text-decoration: none;
+}
+
+.sc-avatar-chip:hover {
+    background: #ebebeb;
+    border-color: #d0d0d0;
+}
+
+.sc-avatar-chip-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: #888888;
+}
+
+.sc-avatar-chip-ghost:hover {
+    background: #f5f5f5;
+    border-color: #e5e5e5;
+    color: #333333;
+}
+
+/* Field rows: label left, input right */
+.sc-field-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.82rem;
-    color: #0099CC;
-    cursor: pointer;
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1px solid #0099CC;
-    transition: background 0.15s;
+    gap: 20px;
+    padding: 4px 0;
 }
 
-.sc-avatar-btn:hover {
-    background: #e8f4fa;
-}
-
-.sc-form-group {
-    margin-bottom: 16px;
-}
-
-.sc-label {
-    display: block;
-    font-size: 0.8rem;
+.sc-field-label {
+    width: 120px;
+    flex-shrink: 0;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #555555;
-    margin-bottom: 6px;
+    color: #111111;
 }
 
-.sc-input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #e5e5e5;
-    border-radius: 10px;
-    font-size: 0.95rem;
+.sc-field-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #eeeeee;
+    border-radius: 8px;
+    font-size: 0.9rem;
     color: #111111;
     outline: none;
-    transition: border-color 0.15s;
+    background: #fafafa;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: inherit;
+}
+
+.sc-field-input:focus {
+    border-color: #cccccc;
     background: #ffffff;
 }
 
-.sc-input:focus {
-    border-color: #0099CC;
+.sc-field-input--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: #f5f5f5;
 }
 
-.sc-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 24px;
-}
-
-.sc-btn-primary {
-    padding: 10px 24px;
-    background: #0099CC;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-
-.sc-btn-primary:hover {
-    background: #007aaa;
-}
-
+/* Status message */
 .sc-status {
-    font-size: 0.82rem;
+    display: block;
+    font-size: 0.8rem;
     color: #0099CC;
     font-weight: 500;
+    margin-top: 12px;
+    min-height: 18px;
+}
+
+/* ── About Tab ── */
+
+/* Logo + name horizontal */
+.sc-about-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 0 8px;
+}
+
+.sc-about-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.sc-about-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 4px;
+}
+
+.sc-about-version {
+    display: inline-block;
+    font-size: 0.72rem;
+    color: #888888;
+    background: #f0f0f0;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-weight: 500;
+}
+
+/* About sections */
+.sc-about-section {
+    padding: 2px 0;
+}
+
+.sc-about-section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #999999;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+}
+
+.sc-about-desc {
+    font-size: 0.875rem;
+    color: #555555;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.sc-about-models {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sc-model-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #555555;
+    background: #f5f5f5;
+    border-radius: 6px;
+    padding: 3px 10px;
+    border: 1px solid #eeeeee;
+}
+
+.sc-about-links-row {
+    display: flex;
+    gap: 10px;
+}
+
+.sc-about-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82rem;
+    color: #555555;
+    text-decoration: none;
+    padding: 5px 12px;
+    border: 1px solid #e5e5e5;
+    border-radius: 7px;
+    background: #fafafa;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.sc-about-link:hover {
+    background: #f0f0f0;
+    border-color: #d0d0d0;
+    color: #111111;
+}
+
+.sc-about-copy {
+    font-size: 0.72rem;
+    color: #cccccc;
+    margin: 16px 0 0;
+}
+
+/* ── Save Button — fixed bottom-right inside modal ── */
+.sc-save-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 24px;
+    padding: 9px 24px;
+    background: #1a1a1a;
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s;
+    z-index: 10;
+    font-family: inherit;
+}
+
+.sc-save-btn:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+.sc-save-btn:active {
+    transform: translateY(0);
 }
 
 /* ── Language Tab ── */
@@ -2087,92 +2272,6 @@ textarea {
     max-height: 240px;
     padding-bottom: 14px;
     border-top-color: #f0f0f0;
-}
-
-/* ── About Tab ── */
-.sc-about-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 12px;
-    padding: 8px 0;
-}
-
-.sc-about-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-}
-
-.sc-about-name {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #111111;
-    margin: 0;
-}
-
-.sc-about-version {
-    font-size: 0.78rem;
-    color: #ffffff;
-    background: #0099CC;
-    border-radius: 999px;
-    padding: 2px 10px;
-    font-weight: 600;
-}
-
-.sc-about-desc {
-    font-size: 0.875rem;
-    color: #555555;
-    line-height: 1.7;
-    max-width: 380px;
-    margin: 0;
-}
-
-.sc-about-models {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin: 4px 0;
-}
-
-.sc-model-tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #0099CC;
-    background: #e8f4fa;
-    border-radius: 999px;
-    padding: 3px 12px;
-    border: 1px solid #b3dff0;
-}
-
-.sc-about-links {
-    display: flex;
-    gap: 12px;
-}
-
-.sc-about-link {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    color: #0099CC;
-    text-decoration: none;
-    padding: 6px 14px;
-    border: 1px solid #0099CC;
-    border-radius: 8px;
-    transition: background 0.15s;
-}
-
-.sc-about-link:hover {
-    background: #e8f4fa;
-}
-
-.sc-about-copy {
-    font-size: 0.75rem;
-    color: #cccccc;
-    margin: 4px 0 0;
 }
 
 /* ─── ATTACHMENT PREVIEW ────────────────────────────── */

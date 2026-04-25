@@ -1157,7 +1157,6 @@ function bindSettingsFeatures() {
         }
     });
 
-    // ── Tab switching ─────────────────────────────────────
     function switchSettingsTab(tabId) {
         document.querySelectorAll('.settings-tab').forEach((btn) => {
             btn.classList.toggle('active', btn.dataset.tab === tabId);
@@ -1165,6 +1164,7 @@ function bindSettingsFeatures() {
         document.querySelectorAll('.settings-panel').forEach((panel) => {
             panel.classList.toggle('active', panel.id === `tab-${tabId}`);
         });
+        updateSaveBtnVisibility(tabId);
     }
 
     document.querySelectorAll('.settings-tab').forEach((btn) => {
@@ -1197,17 +1197,27 @@ function bindSettingsFeatures() {
         window.location.href = '/auth/login.html';
     });
 
-    // ── Profile Tab ───────────────────────────────────────
+    function updateSaveBtnVisibility(tabId) {
+        const saveBtn = document.getElementById('scProfileSave');
+        if (!saveBtn) return;
+        const hiddenTabs = ['faq', 'language'];
+        saveBtn.style.display = hiddenTabs.includes(tabId) ? 'none' : 'block';
+    }
+
+    // Init visibility saat pertama buka
+    updateSaveBtnVisibility('profile');
+
+    // ── Profile Tab (UPDATED) ────────────────────────────────────────────────────
     function prefillProfile() {
-        const nameInput = qs('scDisplayName');
-        const emailInput = qs('scEmail');
-        const preview = qs('scAvatarPreview');
+        const nameInput = document.getElementById('scDisplayName');
+        const emailInput = document.getElementById('scEmail');
+        const preview = document.getElementById('scAvatarPreview');
 
         if (nameInput) nameInput.value = chatState.user?.display_name || chatState.user?.name || '';
         if (emailInput) emailInput.value = chatState.user?.email || '';
 
         if (preview) {
-            const sidebarAvatar = qs('profileAvatar');
+            const sidebarAvatar = document.getElementById('profileAvatar');
             const img = sidebarAvatar?.querySelector('img');
             if (img) {
                 preview.innerHTML = `<img src="${img.src}" alt="avatar">`;
@@ -1217,22 +1227,33 @@ function bindSettingsFeatures() {
         }
     }
 
-    qs('scAvatarInput')?.addEventListener('change', () => {
-        const file = qs('scAvatarInput').files?.[0];
+    // Avatar file input
+    document.getElementById('scAvatarInput')?.addEventListener('change', () => {
+        const file = document.getElementById('scAvatarInput').files?.[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-            const preview = qs('scAvatarPreview');
+            const preview = document.getElementById('scAvatarPreview');
             if (preview) preview.innerHTML = `<img src="${ev.target.result}" alt="avatar">`;
         };
         reader.readAsDataURL(file);
     });
 
-    qs('scProfileSave')?.addEventListener('click', async () => {
-        const newName = qs('scDisplayName')?.value.trim();
+    // Remove avatar button
+    document.getElementById('scRemoveAvatar')?.addEventListener('click', () => {
+        const preview = document.getElementById('scAvatarPreview');
+        const initial = (chatState.user?.display_name || chatState.user?.name || 'Z')[0].toUpperCase();
+        if (preview) preview.textContent = initial;
+        const fileInput = document.getElementById('scAvatarInput');
+        if (fileInput) fileInput.value = '';
+    });
+
+    // Save button (now positioned in modal root, not inside content)
+    document.getElementById('scProfileSave')?.addEventListener('click', async () => {
+        const newName = document.getElementById('scDisplayName')?.value.trim();
         if (!newName) return;
 
-        const status = qs('scProfileStatus');
+        const status = document.getElementById('scProfileStatus');
 
         if (chatState.user) {
             chatState.user.display_name = newName;
@@ -1242,12 +1263,12 @@ function bindSettingsFeatures() {
         localStorage.setItem('zora_onboarding_name', newName);
 
         // Update sidebar name
-        const nameEl = qs('profileName');
+        const nameEl = document.getElementById('profileName');
         if (nameEl) nameEl.textContent = newName;
 
         // Update sidebar avatar
-        const avatarEl = qs('profileAvatar');
-        const previewImg = qs('scAvatarPreview')?.querySelector('img');
+        const avatarEl = document.getElementById('profileAvatar');
+        const previewImg = document.getElementById('scAvatarPreview')?.querySelector('img');
         if (avatarEl) {
             if (previewImg) {
                 avatarEl.innerHTML = `<img src="${previewImg.src}" alt="avatar">`;
@@ -1501,6 +1522,7 @@ const TRANSLATIONS = {
         displayName: 'Display Name',
         email: 'Email',
         saveChanges: 'Save Changes',
+        save: 'Save',
         saved: '✓ Saved!',
         languageTitle: 'Language',
         languageDesc: 'Choose your preferred language for ZORA AI.',
@@ -1565,6 +1587,7 @@ const TRANSLATIONS = {
         displayName: 'Nama Tampilan',
         email: 'Email',
         saveChanges: 'Simpan Perubahan',
+        save: 'Simpan',
         saved: '✓ Tersimpan!',
         languageTitle: 'Bahasa',
         languageDesc: 'Pilih bahasa yang kamu inginkan untuk ZORA AI.',
@@ -1625,6 +1648,7 @@ const TRANSLATIONS = {
         displayName: '表示名',
         email: 'メール',
         saveChanges: '変更を保存',
+        save: '保存',
         saved: '✓ 保存しました！',
         languageTitle: '言語',
         languageDesc: 'ZORA AIの言語を選択してください。',
@@ -1684,7 +1708,8 @@ const TRANSLATIONS = {
         changePhoto: '사진 변경',
         displayName: '표시 이름',
         email: '이메일',
-        saveChanges: '변경사항 저장',
+        saveChanges: '변경 사항 저장',
+        save: '저장',
         saved: '✓ 저장됨!',
         languageTitle: '언어',
         languageDesc: 'ZORA AI 언어를 선택하세요.',
@@ -1745,6 +1770,7 @@ const TRANSLATIONS = {
         displayName: '显示名称',
         email: '邮箱',
         saveChanges: '保存更改',
+        save: '保存',
         saved: '✓ 已保存！',
         languageTitle: '语言',
         languageDesc: '选择您的 ZORA AI 首选语言。',
@@ -1804,7 +1830,8 @@ const TRANSLATIONS = {
         changePhoto: 'Changer la photo',
         displayName: 'Nom affiché',
         email: 'Email',
-        saveChanges: 'Enregistrer',
+        saveChanges: 'Enregistrer les modifications',
+        save: 'Enregistrer',
         saved: '✓ Enregistré!',
         languageTitle: 'Langue',
         languageDesc: 'Choisissez votre langue préférée pour ZORA AI.',
@@ -1865,6 +1892,7 @@ const TRANSLATIONS = {
         displayName: 'Anzeigename',
         email: 'E-Mail',
         saveChanges: 'Änderungen speichern',
+        save: 'Speichern',
         saved: '✓ Gespeichert!',
         languageTitle: 'Sprache',
         languageDesc: 'Wähle deine bevorzugte Sprache für ZORA AI.',
@@ -1924,7 +1952,8 @@ const TRANSLATIONS = {
         changePhoto: 'Cambia foto',
         displayName: 'Nome visualizzato',
         email: 'Email',
-        saveChanges: 'Salva modifiche',
+        saveChanges: 'Salva le modifiche',
+        save: 'Salva',
         saved: '✓ Salvato!',
         languageTitle: 'Lingua',
         languageDesc: 'Scegli la lingua preferita per ZORA AI.',
@@ -1985,6 +2014,7 @@ const TRANSLATIONS = {
         displayName: 'Nome de exibição',
         email: 'E-mail',
         saveChanges: 'Salvar alterações',
+        save: 'Salvar',
         saved: '✓ Salvo!',
         languageTitle: 'Idioma',
         languageDesc: 'Escolha seu idioma preferido para o ZORA AI.',
@@ -2045,6 +2075,7 @@ const TRANSLATIONS = {
         displayName: 'Nombre de pantalla',
         email: 'Correo',
         saveChanges: 'Guardar cambios',
+        save: 'Guardar',
         saved: '✓ ¡Guardado!',
         languageTitle: 'Idioma',
         languageDesc: 'Elige tu idioma preferido para ZORA AI.',
@@ -2153,10 +2184,10 @@ function applyTranslations() {
     const scDisplayLabel = document.querySelector('#tab-profile .sc-label:first-of-type');
     const scEmailLabel = document.querySelector('#tab-profile .sc-label:last-of-type');
     const scSaveBtn = qs('scProfileSave');
-    const scAvatarBtn = document.querySelector('.sc-avatar-btn');
+    const scAvatarBtn = document.querySelector('.sc-avatar-chip:not(.sc-avatar-chip-ghost)');
     if (scDisplayLabel) scDisplayLabel.textContent = t('displayName');
     if (scEmailLabel) scEmailLabel.textContent = t('email');
-    if (scSaveBtn) scSaveBtn.textContent = t('saveChanges');
+    if (scSaveBtn) scSaveBtn.textContent = t('save');
     if (scAvatarBtn) {
         scAvatarBtn.innerHTML = `<i class="fi fi-rr-camera"></i> ${t('changePhoto')}`;
     }

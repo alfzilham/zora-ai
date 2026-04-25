@@ -284,15 +284,19 @@
         </div>
     </div>
 
-    <!-- ZORA Settings Center -->
+    <!-- 
+  ZORA AI — Settings Center Modal (UPDATED)
+  Replace the entire #settingsCenter div in chat/index.html with this block.
+  FAQ (#tab-faq) and Language (#tab-language) panels are untouched.
+-->
+
     <div id="settingsCenter" class="settings-center-overlay hidden">
         <div class="settings-center-modal">
 
             <!-- Sidebar -->
             <aside class="settings-sidebar">
                 <div class="settings-sidebar-header">
-                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="settings-logo">
-                    <span class="settings-sidebar-title">Settings</span>
+                    <span class="settings-sidebar-title">System settings</span>
                 </div>
                 <nav class="settings-nav">
                     <button class="settings-tab active" data-tab="profile">
@@ -328,37 +332,48 @@
                     <i class="fi fi-rr-cross"></i>
                 </button>
 
-                <!-- Tab: Profile -->
+                <!-- ── Tab: Profile ───────────────────────────────── -->
                 <div class="settings-panel active" id="tab-profile">
                     <h2 class="settings-panel-title">Profile</h2>
-                    <p class="settings-panel-desc">Manage your personal information.</p>
 
-                    <div class="profile-center-avatar">
+                    <!-- Avatar row -->
+                    <div class="sc-avatar-row">
                         <div id="scAvatarPreview" class="sc-avatar-preview">Z</div>
-                        <label for="scAvatarInput" class="sc-avatar-btn">
-                            <i class="fi fi-rr-camera"></i> Change Photo
-                        </label>
-                        <input type="file" id="scAvatarInput" accept="image/*" style="display:none">
+                        <div class="sc-avatar-meta">
+                            <span class="sc-avatar-label">Profile Image</span>
+                            <div class="sc-avatar-actions">
+                                <label for="scAvatarInput" class="sc-avatar-chip">
+                                    <i class="fi fi-rr-camera"></i> Change Photo
+                                </label>
+                                <button class="sc-avatar-chip sc-avatar-chip-ghost" id="scRemoveAvatar" type="button">
+                                    Remove
+                                </button>
+                            </div>
+                            <input type="file" id="scAvatarInput" accept="image/*" style="display:none">
+                        </div>
                     </div>
 
-                    <div class="sc-form-group">
-                        <label class="sc-label">Display Name</label>
-                        <input id="scDisplayName" class="sc-input" type="text" placeholder="Your name...">
+                    <div class="sc-divider"></div>
+
+                    <!-- Name row -->
+                    <div class="sc-field-row">
+                        <label class="sc-field-label">Name</label>
+                        <input id="scDisplayName" class="sc-field-input" type="text" placeholder="Your name...">
                     </div>
 
-                    <div class="sc-form-group">
-                        <label class="sc-label">Email</label>
-                        <input id="scEmail" class="sc-input" type="email" disabled
-                            style="opacity:0.5;cursor:not-allowed;">
+                    <div class="sc-divider"></div>
+
+                    <!-- Email row -->
+                    <div class="sc-field-row">
+                        <label class="sc-field-label">Email</label>
+                        <input id="scEmail" class="sc-field-input sc-field-input--disabled" type="email" disabled>
                     </div>
 
-                    <div class="sc-actions">
-                        <button id="scProfileSave" class="sc-btn-primary">Save Changes</button>
-                        <span id="scProfileStatus" class="sc-status"></span>
-                    </div>
+                    <!-- Status -->
+                    <span id="scProfileStatus" class="sc-status"></span>
                 </div>
 
-                <!-- Tab: Language -->
+                <!-- ── Tab: Language (UNTOUCHED) ──────────────────── -->
                 <div class="settings-panel" id="tab-language">
                     <h2 class="settings-panel-title">Language</h2>
                     <p class="settings-panel-desc">Choose your preferred language for ZORA AI.</p>
@@ -417,7 +432,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: FAQ -->
+                <!-- ── Tab: FAQ (UNTOUCHED) ───────────────────────── -->
                 <div class="settings-panel" id="tab-faq">
                     <h2 class="settings-panel-title">FAQ</h2>
                     <p class="settings-panel-desc">Frequently asked questions about ZORA AI.</p>
@@ -457,18 +472,30 @@
                     </div>
                 </div>
 
-                <!-- Tab: About -->
+                <!-- ── Tab: About ─────────────────────────────────── -->
                 <div class="settings-panel" id="tab-about">
                     <h2 class="settings-panel-title">About ZORA</h2>
-                    <p class="settings-panel-desc">Learn more about ZORA AI.</p>
 
-                    <div class="sc-about-card">
+                    <div class="sc-about-row">
                         <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="sc-about-logo">
-                        <h3 class="sc-about-name">ZORA AI</h3>
-                        <span class="sc-about-version">Version 1.0.0</span>
+                        <div>
+                            <div class="sc-about-name">ZORA AI</div>
+                            <span class="sc-about-version">Version 1.0.0</span>
+                        </div>
+                    </div>
+
+                    <div class="sc-divider"></div>
+
+                    <div class="sc-about-section">
+                        <p class="sc-about-section-title">About</p>
                         <p class="sc-about-desc">ZORA is a SuperIntelligence Autonomous AI platform that orchestrates
                             multiple AI models to deliver the best response for every task.</p>
+                    </div>
 
+                    <div class="sc-divider"></div>
+
+                    <div class="sc-about-section">
+                        <p class="sc-about-section-title">Powered by</p>
                         <div class="sc-about-models">
                             <div class="sc-model-tag">Nemotron</div>
                             <div class="sc-model-tag">Deepseek</div>
@@ -479,21 +506,27 @@
                             <div class="sc-model-tag">Gemini</div>
                             <div class="sc-model-tag">Groq</div>
                         </div>
-
-                        <div class="sc-about-links">
-                            <a href="/docs/ROADMAP.md" class="sc-about-link" target="_blank">
-                                <i class="fi fi-rr-road"></i> Roadmap
-                            </a>
-                            <a href="/docs/ARCHITECTURE.md" class="sc-about-link" target="_blank">
-                                <i class="fi fi-rr-blueprint"></i> Architecture
-                            </a>
-                        </div>
-
-                        <p class="sc-about-copy">© 2026 ZORA AI. All rights reserved.</p>
                     </div>
+
+                    <div class="sc-divider"></div>
+
+                    <div class="sc-about-section sc-about-links-row">
+                        <a href="/docs/ROADMAP.md" class="sc-about-link" target="_blank">
+                            <i class="fi fi-rr-road"></i> Roadmap
+                        </a>
+                        <a href="/docs/ARCHITECTURE.md" class="sc-about-link" target="_blank">
+                            <i class="fi fi-rr-blueprint"></i> Architecture
+                        </a>
+                    </div>
+
+                    <p class="sc-about-copy">© 2026 ZORA AI. All rights reserved.</p>
                 </div>
 
             </div>
+
+            <!-- Save button — fixed bottom-right inside modal -->
+            <button class="sc-save-btn" id="scProfileSave" type="button">Save</button>
+
         </div>
     </div>
 </body>
