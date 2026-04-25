@@ -28,33 +28,18 @@ function setWithdrawStatus(message = '') {
 }
 
 async function ensureDeveloperAccess() {
-    const token = localStorage.getItem('zora_token');
-    if (!token) {
-        window.location.href = '/auth/login.html';
+    const user = await requireAuth();
+    if (!user) {
         return null;
     }
 
-    try {
-        const settingsResponse = await apiCall('/settings', 'GET', null, true);
-        const data = settingsResponse?.data || settingsResponse || {};
-
-        const isDev = window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1';
-
-        if (!data.is_developer && !isDev) {
-            window.location.href = '/chat/index.html';
-            return null;
-        }
-
-        return data;
-    } catch (err) {
-        console.warn('Settings check failed:', err.message);
-        const isDev = window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1';
-        if (isDev) return {};
-        window.location.href = '/auth/login.html';
+    const settingsResponse = await apiCall('/settings', 'GET', null, true);
+    if (!settingsResponse.data?.is_developer) {
+        window.location.href = '../chat/index.html';
         return null;
     }
+
+    return settingsResponse.data;
 }
 
 function renderStats(data) {
@@ -195,7 +180,6 @@ function startAutoRefresh() {
 }
 
 async function bootstrapDashboard() {
-    setDashboardStatus('Loading dashboard...');
     const settingsData = await ensureDeveloperAccess();
     if (!settingsData) {
         return;
