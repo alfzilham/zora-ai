@@ -1,36 +1,21 @@
 /*
- * ZORA AI - Incognito Mode
- * Blue-black tech theme — matched to ZORA brand logo
+ * ZORA AI — Incognito Mode
+ * Professional dark UI, inspired by premium AI interfaces
  */
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
-body {
-    margin: 0;
+html, body {
     height: 100%;
     font-family: "Inter", system-ui, sans-serif;
-    background: #080b13;
-    color: #bcc6dc;
+    background: #0d0d0f;
+    color: #e0e0e0;
     overflow: hidden;
 }
 
 /* ─── RIPPLE ─────────────────────────────────────────── */
-.ripple-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-}
-
-.ripple-overlay.hidden {
-    display: none;
-}
-
+.ripple-overlay { position: fixed; inset: 0; z-index: 9999; pointer-events: none; }
+.ripple-overlay.hidden { display: none; }
 .ripple-circle {
     position: fixed;
     border-radius: 50%;
@@ -38,157 +23,96 @@ body {
     animation: rippleGrow 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     pointer-events: none;
 }
-
-@keyframes rippleGrow {
-    to {
-        transform: scale(1);
-        opacity: 0;
-    }
-}
+@keyframes rippleGrow { to { transform: scale(1); opacity: 0; } }
 
 /* ─── SHELL ──────────────────────────────────────────── */
 .incognito-shell {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background: transparent;
-    position: relative;
-}
-
-/* Ambient depth layer */
-.incognito-shell::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(40, 90, 200, 0.13) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 35% at 85% 100%, rgba(30, 70, 160, 0.07) 0%, transparent 60%),
-        #080b13;
-    z-index: -1;
-    pointer-events: none;
+    background: #0d0d0f;
 }
 
 /* ─── TOPBAR ─────────────────────────────────────────── */
 .incognito-topbar {
-    height: 54px;
+    height: 52px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: space-between;
     padding: 0 20px;
-    background: rgba(10, 13, 22, 0.75);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
     flex-shrink: 0;
-    z-index: 10;
-    position: relative;
-}
-
-/* Gradient accent line under topbar */
-.incognito-topbar::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 15%;
-    right: 15%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(74, 140, 255, 0.28), transparent);
-    pointer-events: none;
 }
 
 .incognito-topbar-left {
-    flex: 1;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .incognito-logo {
-    width: 26px;
-    height: 26px;
-    opacity: 0.9;
-    filter: drop-shadow(0 0 6px rgba(74, 140, 255, 0.35));
+    width: 24px;
+    height: 24px;
+    opacity: 0.5;
+    filter: grayscale(1);
 }
 
 .incognito-badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    background: rgba(50, 100, 220, 0.07);
-    border: 1px solid rgba(74, 140, 255, 0.14);
-    border-radius: 6px;
-    padding: 3px 10px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: rgba(110, 165, 255, 0.8);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
+    gap: 5px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 3px 10px 3px 8px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.03em;
 }
 
-/* Animated pulse dot inside badge */
-.incognito-badge-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: rgba(74, 140, 255, 0.8);
-    animation: badgeDotPulse 2.4s ease-in-out infinite;
-    flex-shrink: 0;
-}
-
-@keyframes badgeDotPulse {
-
-    0%,
-    100% {
-        opacity: 0.35;
-        transform: scale(0.75);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.3);
-    }
-}
-
-.incognito-badge i {
-    font-size: 0.75rem;
-    opacity: 0.7;
-}
-
-.incognito-topbar-sep {
-    width: 1px;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    flex-shrink: 0;
-}
+.incognito-badge i { font-size: 0.8rem; opacity: 0.7; }
 
 .incognito-topbar-right {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 
+/* ─── ICON BUTTONS ───────────────────────────────────── */
 .incognito-icon-btn {
     width: 34px;
     height: 34px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #434d6a;
-    transition: all 0.18s ease;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
 }
 
 .incognito-icon-btn:hover {
-    background: rgba(74, 140, 255, 0.06);
-    color: rgba(110, 165, 255, 0.85);
-    border-color: rgba(74, 140, 255, 0.15);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
 }
 
-.incognito-icon-btn svg {
-    flex-shrink: 0;
+.incognito-exit-btn {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.09);
+    color: rgba(255,255,255,0.45);
+}
+
+.incognito-exit-btn:hover {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.85);
+    border-color: rgba(255,255,255,0.15);
 }
 
 /* ─── STAGE ──────────────────────────────────────────── */
@@ -207,174 +131,80 @@ body {
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 18px;
+    gap: 20px;
     text-align: center;
-    padding: 24px;
+    padding: 40px 24px;
 }
 
-/* ─── ORB SYSTEM ─────────────────────────────────────── */
+/* Orb — premium ring design */
 .incognito-orb {
     position: relative;
-    width: 148px;
-    height: 148px;
-    margin-bottom: 10px;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 4px;
 }
 
-/* Sonar expand rings — pulse outward */
-.incognito-orb-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1px solid rgba(74, 140, 255, 0.12);
-    animation: sonarExpand 3.6s ease-out infinite;
-    pointer-events: none;
-}
-
-.incognito-orb-ring:nth-child(2) {
-    animation-delay: 1.3s;
-}
-
-@keyframes sonarExpand {
-    0% {
-        transform: scale(1);
-        opacity: 0.7;
-    }
-
-    100% {
-        transform: scale(1.6);
-        opacity: 0;
-    }
-}
-
-/* Arc-only rotating spinner */
 .incognito-orb::before {
     content: '';
     position: absolute;
-    inset: -4px;
+    inset: 0;
     border-radius: 50%;
-    background: conic-gradient(from 200deg,
-            rgba(74, 140, 255, 0.0) 0deg,
-            rgba(74, 140, 255, 0.8) 50deg,
-            rgba(130, 185, 255, 0.45) 80deg,
-            rgba(74, 140, 255, 0.0) 120deg,
-            rgba(74, 140, 255, 0.0) 360deg);
-    animation: orbSpinArc 5s linear infinite;
-    mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), black calc(100% - 1.5px));
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), black calc(100% - 1.5px));
-    z-index: 1;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    animation: orbPulse 3s ease-in-out infinite;
 }
 
-@keyframes orbSpinArc {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Ambient glow halo */
 .incognito-orb::after {
     content: '';
     position: absolute;
-    inset: -30px;
+    inset: -12px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(50, 110, 230, 0.1) 0%, transparent 65%);
-    animation: orbAmbientGlow 3.8s ease-in-out infinite;
-    z-index: 0;
-    pointer-events: none;
+    border: 1px solid rgba(255,255,255,0.04);
+    animation: orbPulse 3s ease-in-out infinite 0.5s;
 }
 
-@keyframes orbAmbientGlow {
-
-    0%,
-    100% {
-        opacity: 0.45;
-        transform: scale(0.9);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
+@keyframes orbPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.04); }
 }
 
-/* Inner circle core */
 .incognito-orb-inner {
-    position: relative;
-    z-index: 2;
-    width: 126px;
-    height: 126px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: radial-gradient(circle at 38% 32%, #111928, #080c18);
-    border: 1px solid rgba(74, 140, 255, 0.15);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: orbFloat 4.2s ease-in-out infinite;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.03),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    animation: orbFloat 4s ease-in-out infinite;
 }
 
 @keyframes orbFloat {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
 }
 
 .incognito-orb-icon {
-    position: relative;
-    z-index: 2;
-    font-size: 3rem;
-    color: rgba(100, 155, 255, 0.6);
-    filter: drop-shadow(0 0 10px rgba(74, 140, 255, 0.28));
+    font-size: 1.6rem;
+    color: rgba(255,255,255,0.25);
 }
 
-/* ─── WELCOME TEXT ───────────────────────────────────── */
 .incognito-welcome-title {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #d4dcf0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
     letter-spacing: -0.03em;
-    font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+    line-height: 1.3;
 }
 
-.incognito-welcome-features {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin-top: 2px;
-}
-
-.incognito-feature {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 16px;
-    font-size: 0.78rem;
-    color: #3e4862;
-    white-space: nowrap;
-    letter-spacing: 0.01em;
-}
-
-.incognito-feature svg {
-    opacity: 0.35;
-    flex-shrink: 0;
-}
-
-.incognito-feature-sep {
-    width: 1px;
-    height: 13px;
-    background: rgba(255, 255, 255, 0.05);
-    flex-shrink: 0;
+.incognito-welcome-desc {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.25);
+    line-height: 1.8;
+    max-width: 300px;
 }
 
 /* ─── MESSAGE SCREEN ─────────────────────────────────── */
@@ -385,15 +215,13 @@ body {
     overflow: hidden;
 }
 
-.incognito-message-screen.hidden {
-    display: none;
-}
+.incognito-message-screen.hidden { display: none; }
 
 .incognito-message-inner {
     flex: 1;
     overflow-y: auto;
-    padding: 28px 24px;
-    max-width: 760px;
+    padding: 32px 24px;
+    max-width: 720px;
     width: 100%;
     margin: 0 auto;
 }
@@ -404,164 +232,104 @@ body {
     gap: 28px;
 }
 
-.incognito-message {
-    width: 100%;
-}
-
-.incognito-user-msg {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
+/* User message */
 .incognito-user-msg .msg-sender {
     display: block;
-    font-size: 0.75rem;
-    color: #3e4862;
-    margin-bottom: 5px;
-    padding-right: 2px;
-}
-
-.incognito-user-msg .msg-content {
-    display: inline-block;
-    max-width: 85%;
-    font-size: 0.95rem;
-    color: #d0d8ee;
-    line-height: 1.65;
-    background: rgba(74, 140, 255, 0.05);
-    border: 1px solid rgba(74, 140, 255, 0.08);
-    padding: 10px 16px;
-    border-radius: 14px 14px 4px 14px;
-    text-align: left;
-}
-
-.incognito-zora-msg {
-    border-left: 2px solid rgba(74, 140, 255, 0.12);
-    padding-left: 16px;
-}
-
-.incognito-zora-msg .msg-header {
-    display: flex;
-    align-items: center;
-    gap: 7px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     margin-bottom: 6px;
 }
 
-.incognito-zora-msg .msg-sender {
-    font-size: 0.75rem;
-    color: #3e4862;
-    font-weight: 500;
+.incognito-user-msg .msg-content {
+    font-size: 0.975rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: inline-block;
+    max-width: 85%;
+}
+
+/* ZORA message */
+.incognito-zora-msg .msg-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .incognito-zora-msg .zora-msg-avatar {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    opacity: 0.5;
+    opacity: 0.3;
+    filter: grayscale(1);
+}
+
+.incognito-zora-msg .msg-sender {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
 .incognito-zora-msg .msg-content {
-    font-size: 0.95rem;
-    color: #a8b4cc;
-    line-height: 1.75;
+    font-size: 0.975rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.8;
 }
 
-.incognito-zora-msg .msg-content p {
-    margin: 0 0 8px;
-}
-
-.incognito-zora-msg .msg-content p:last-child {
-    margin-bottom: 0;
-}
-
-.incognito-zora-msg .msg-content code {
-    background: rgba(74, 140, 255, 0.06);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.88rem;
-}
-
-.incognito-zora-msg .msg-content pre {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 8px;
-    padding: 14px 16px;
-    overflow-x: auto;
-    margin: 10px 0;
-}
-
-.incognito-zora-msg .msg-content pre code {
-    background: none;
-    padding: 0;
-}
-
-/* ─── TYPING INDICATOR ───────────────────────────────── */
+/* Typing indicator */
 .incognito-typing {
     display: flex;
     gap: 5px;
-    padding: 14px 0;
+    padding: 12px 0;
     align-items: center;
 }
 
-.incognito-typing.hidden {
-    display: none;
-}
+.incognito-typing.hidden { display: none; }
 
 .incognito-typing span {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: rgba(74, 140, 255, 0.3);
-    animation: incognitoDot 1.4s infinite;
+    background: rgba(255,255,255,0.2);
+    animation: incognitoDot 1.4s ease-in-out infinite;
 }
 
-.incognito-typing span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.incognito-typing span:nth-child(3) {
-    animation-delay: 0.4s;
-}
+.incognito-typing span:nth-child(2) { animation-delay: 0.15s; }
+.incognito-typing span:nth-child(3) { animation-delay: 0.3s; }
 
 @keyframes incognitoDot {
-
-    0%,
-    80%,
-    100% {
-        transform: scale(0.6);
-        opacity: 0.2;
-    }
-
-    40% {
-        transform: scale(1);
-        opacity: 0.9;
-    }
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.2; }
+    40% { transform: scale(1); opacity: 0.7; }
 }
 
 /* ─── COMPOSER ───────────────────────────────────────── */
 .incognito-composer-wrap {
     flex-shrink: 0;
-    padding: 14px 24px 10px;
-    background: linear-gradient(to top, #080b13 55%, transparent);
+    padding: 16px 20px 14px;
+    background: #0d0d0f;
 }
 
 .incognito-composer {
-    max-width: 760px;
+    max-width: 720px;
     margin: 0 auto;
-    background: rgba(11, 14, 24, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
-    padding: 14px 16px;
-    transition: border-color 0.22s ease, box-shadow 0.22s ease;
-    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 14px 16px 10px;
+    transition: border-color 0.2s;
 }
 
 .incognito-composer:focus-within {
-    border-color: rgba(74, 140, 255, 0.22);
-    box-shadow:
-        0 0 0 1px rgba(74, 140, 255, 0.05),
-        0 0 28px rgba(50, 110, 230, 0.07),
-        0 6px 28px rgba(0, 0, 0, 0.35);
+    border-color: rgba(255,255,255,0.14);
 }
 
 .incognito-textarea {
@@ -570,24 +338,23 @@ body {
     outline: none;
     resize: none;
     background: transparent;
-    color: #bcc6dc;
+    color: rgba(255,255,255,0.75);
     font-size: 0.95rem;
     font-family: inherit;
-    padding: 6px 2px;
-    line-height: 1.5;
+    padding: 4px 0 8px;
+    line-height: 1.6;
+    caret-color: rgba(255,255,255,0.5);
 }
 
-.incognito-textarea::placeholder {
-    color: #2a3252;
-}
+.incognito-textarea::placeholder { color: rgba(255,255,255,0.18); }
 
 .incognito-composer-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 8px;
+    margin-top: 4px;
     padding-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255,255,255,0.05);
 }
 
 .incognito-composer-left,
@@ -597,216 +364,143 @@ body {
     gap: 6px;
 }
 
-.incognito-file-input {
-    display: none;
-}
-
+/* Toggle */
 .incognito-toggle-group {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-left: 4px;
+    gap: 7px;
 }
 
 .incognito-toggle-switch {
-    width: 34px;
+    width: 32px;
     height: 18px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
     position: relative;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .incognito-toggle-switch::after {
     content: '';
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 12px;
-    height: 12px;
+    top: 3px;
+    left: 3px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: #333d58;
+    background: rgba(255,255,255,0.3);
     transition: transform 0.2s, background 0.2s;
 }
 
 .incognito-toggle-switch.active {
-    background: rgba(74, 140, 255, 0.12);
-    border-color: rgba(74, 140, 255, 0.28);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
 }
 
 .incognito-toggle-switch.active::after {
-    transform: translateX(16px);
-    background: rgba(110, 165, 255, 0.9);
+    transform: translateX(14px);
+    background: rgba(255,255,255,0.7);
 }
 
 .incognito-toggle-label {
-    font-size: 0.8rem;
-    color: #333d58;
-}
-
-/* Send button — solid fill */
-.incognito-send-btn {
-    background: rgba(55, 110, 220, 0.85) !important;
-    border-color: rgba(74, 140, 255, 0.5) !important;
-    color: rgba(210, 230, 255, 0.95) !important;
-    box-shadow: 0 2px 12px rgba(50, 100, 220, 0.2);
-    transition: all 0.18s ease !important;
-}
-
-.incognito-send-btn:hover {
-    background: rgba(65, 125, 240, 0.95) !important;
-    border-color: rgba(100, 160, 255, 0.6) !important;
-    color: #fff !important;
-    transform: scale(1.05);
-    box-shadow: 0 4px 18px rgba(50, 100, 220, 0.35);
-}
-
-/* ─── ATTACHMENT PREVIEW ─────────────────────────────── */
-.incognito-attachment-preview {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    background: rgba(74, 140, 255, 0.03);
-    border: 1px solid rgba(74, 140, 255, 0.08);
-    border-radius: 8px;
-}
-
-.incognito-attachment-preview.hidden {
-    display: none;
-}
-
-.incog-att-icon {
-    flex-shrink: 0;
-    color: #3e4862;
-}
-
-.incog-att-name {
-    font-size: 0.82rem;
-    color: #6e789a;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-    min-width: 0;
-}
-
-.incog-att-size {
-    font-size: 0.72rem;
-    color: #333d58;
-    flex-shrink: 0;
-}
-
-.incog-att-remove {
-    background: none;
-    border: none;
-    color: #333d58;
-    cursor: pointer;
-    font-size: 1.3rem;
-    line-height: 1;
-    padding: 0 2px;
-    transition: color 0.15s;
-    flex-shrink: 0;
-}
-
-.incog-att-remove:hover {
-    color: #bcc6dc;
-}
-
-/* ─── DISCLAIMER ─────────────────────────────────────── */
-.incognito-disclaimer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: 0.7rem;
-    color: #1c2438;
-    margin: 8px 0 0;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.22);
+    font-weight: 500;
     letter-spacing: 0.02em;
 }
 
-.incognito-disclaimer svg {
-    flex-shrink: 0;
-    opacity: 0.55;
+/* Composer icon buttons */
+.incognito-composer .incognito-icon-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-size: 0.85rem;
 }
 
-/* ─── SCROLLBAR ──────────────────────────────────────── */
-.incognito-message-inner::-webkit-scrollbar {
-    width: 3px;
+/* Send button */
+.incognito-send-btn {
+    background: rgba(255,255,255,0.08) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    color: rgba(255,255,255,0.5) !important;
+    border-radius: 8px !important;
 }
 
-.incognito-message-inner::-webkit-scrollbar-track {
-    background: transparent;
+.incognito-send-btn:hover {
+    background: rgba(255,255,255,0.13) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+    color: rgba(255,255,255,0.9) !important;
 }
 
+/* Disclaimer */
+.incognito-disclaimer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.12);
+    margin: 10px 0 0;
+    letter-spacing: 0.02em;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Scrollbar */
+.incognito-message-inner::-webkit-scrollbar { width: 3px; }
+.incognito-message-inner::-webkit-scrollbar-track { background: transparent; }
 .incognito-message-inner::-webkit-scrollbar-thumb {
-    background: rgba(74, 140, 255, 0.1);
+    background: rgba(255,255,255,0.08);
     border-radius: 999px;
 }
 
-/* ─── VOICE RECORDING ────────────────────────────────── */
+/* Voice recording */
 .incognito-icon-btn.recording {
-    background: rgba(220, 60, 60, 0.06) !important;
-    border-color: rgba(220, 60, 60, 0.35) !important;
-    color: #cc4444 !important;
-    animation: recordPulse 1s infinite;
+    border-color: rgba(255, 80, 80, 0.3) !important;
+    color: rgba(255, 100, 100, 0.7) !important;
+    animation: recordPulse 1.2s ease-in-out infinite;
 }
 
 @keyframes recordPulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
-/* ─── RESPONSIVE ─────────────────────────────────────── */
+/* Markdown body in dark */
+.incognito-zora-msg .markdown-body h1,
+.incognito-zora-msg .markdown-body h2,
+.incognito-zora-msg .markdown-body h3 {
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    margin: 16px 0 8px;
+}
+
+.incognito-zora-msg .markdown-body code {
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.875em;
+    color: rgba(255,255,255,0.5);
+}
+
+.incognito-zora-msg .markdown-body pre {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 12px 0;
+}
+
+.incognito-zora-msg .markdown-body a {
+    color: rgba(255,255,255,0.45);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 @media (max-width: 767px) {
-    .incognito-composer-wrap {
-        padding: 10px 14px 8px;
-    }
-
-    .incognito-message-inner {
-        padding: 18px 14px;
-    }
-
-    .incognito-topbar {
-        padding: 0 14px;
-        gap: 10px;
-    }
-
-    .incognito-welcome-features {
-        flex-direction: column;
-        gap: 0;
-    }
-
-    .incognito-feature-sep {
-        width: 14px;
-        height: 1px;
-    }
-
-    .incognito-orb {
-        width: 128px;
-        height: 128px;
-    }
-
-    .incognito-orb-inner {
-        width: 108px;
-        height: 108px;
-    }
-
-    .incognito-orb-icon {
-        font-size: 2.6rem;
-    }
-
-    .incognito-user-msg .msg-content {
-        max-width: 92%;
-    }
+    .incognito-composer-wrap { padding: 12px 14px 10px; }
+    .incognito-message-inner { padding: 20px 16px; }
+    .incognito-topbar { padding: 0 14px; }
+    .incognito-welcome-title { font-size: 1.25rem; }
 }
