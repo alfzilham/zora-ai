@@ -55,3 +55,44 @@ async def create_disbursement(
         "status": data.get("status", "PENDING"),
         "message": "Disbursement created successfully",
     }
+
+
+async def get_disbursements(limit: int = 20) -> list:
+    """Fetch list of disbursements from Xendit."""
+    secret_key = settings.XENDIT_SECRET_KEY or settings.xendit_secret_key
+    if not secret_key:
+        raise ValueError("Xendit secret key is not configured")
+
+    auth_value = base64.b64encode(f"{secret_key}:".encode("utf-8")).decode("utf-8")
+    headers = {
+        "Authorization": f"Basic {auth_value}",
+        "Content-Type": "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        response = await client.get(
+            XENDIT_DISBURSEMENT_URL,
+            headers=headers,
+            params={"limit": limit},
+        )
+        response.raise_for_status()
+        data = response.json()
+
+    # Xendit returns a list directly
+    items = data if isinstance(data, list) else data.get("data", [])
+
+    return [
+        {
+            "id": item.get("id", ""),
+            "external_id": item.get("external_id", ""),
+            "amount": item.get("amount", 0),
+            "bank_code": item.get("bank_code", ""),
+            "account_number": item.get("account_number", ""),
+            "account_holder_name": item.get("account_holder_name", ""),
+            "status": item.get("status", "UNKNOWN"),
+            "description": item.get("description", ""),
+            "created": item.get("created", ""),
+            "updated": item.get("updated", ""),
+        }
+        for item in items
+    ]

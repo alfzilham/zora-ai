@@ -8,7 +8,7 @@ Security is handled by the frontend password gate.
 from collections import defaultdict
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -16,7 +16,7 @@ from sqlalchemy.future import select
 from app.database import get_db
 from app.middleware.auth_middleware import get_current_user
 from app.models.user import User
-from app.services.xendit import create_disbursement, verify_webhook
+from app.services.xendit import create_disbursement, get_disbursements, verify_webhook
 
 router = APIRouter()
 
@@ -110,8 +110,7 @@ async def get_dashboard_stats(
 
         total_users = len(user_rows)
         users_this_month = sum(
-            1
-            for user in user_rows
+            1 for user in user_rows
             if user["created_at"] and user["created_at"].year == now.year and user["created_at"].month == now.month
         )
         users_this_year = sum(
@@ -134,6 +133,23 @@ async def get_dashboard_stats(
         raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to load dashboard stats: {exc}") from exc
+
+
+@router.get("/dashboard/trade-history")
+async def get_trade_history(
+    current_user: User = Depends(get_current_user),
+):
+    """Fetch withdrawal history from Xendit."""
+    try:
+        items = await get_disbursements(limit=50)
+        return api_success(
+            {"trades": items, "total": len(items)},
+            "Trade history retrieved successfully",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to load trade history: {exc}") from exc
 
 
 @router.post("/dashboard/withdraw")
