@@ -423,9 +423,8 @@ function buildUserListItem(userData) {
 }
 
 async function loadHistory() {
-    const data = await apiSafe('/feedback/all', 'GET');
+    const data = await apiSafe('/feedback/my', 'GET');
     const container = qs('feedbackListItems');
-    const badge = qs('userCountBadge');
     const leftEmpty = qs('leftEmpty');
 
     if (!data?.data?.length) {
@@ -433,32 +432,26 @@ async function loadHistory() {
         return;
     }
 
-    // Group feedbacks by user
-    const userMap = {};
-    data.data.forEach(item => {
-        const uid = item.user_id || item.id;
-        if (!userMap[uid]) {
-            userMap[uid] = {
-                user_id: uid,
-                name: item.user_name || item.name || 'User',
-                email: item.user_email || item.email || '—',
-                avatar_url: item.avatar_url || null,
-                feedbacks: [],
-                unread: false,
-            };
-        }
-        userMap[uid].feedbacks.push(item);
-        if (!item.read) userMap[uid].unread = true;
-    });
-
-    const users = Object.values(userMap);
-    if (badge) badge.textContent = users.length;
-
-    users.forEach(u => {
-        container?.appendChild(buildUserListItem(u));
-    });
-
     leftEmpty?.classList.remove('show');
+    qs('stageHint')?.classList.add('hidden');
+
+    data.data.forEach(item => {
+        const fbData = {
+            id: item.id || `fb_${Date.now()}_${Math.random()}`,
+            category: item.category || 'suggestion',
+            rating: item.rating || 0,
+            message: item.message || '',
+            screenshotBase64: item.screenshot_url || null,
+            time: item.created_at
+                ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : now(),
+        };
+
+        fb.feedbacks.push(fbData);
+        addToList(fbData);
+        appendUserBubble(fbData);
+        if (item.reply) appendDevBubble(item.reply);
+    });
 }
 
 // ── BOOTSTRAP ─────────────────────────────────────────
