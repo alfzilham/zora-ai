@@ -475,11 +475,7 @@ img {
     border-radius: 20px;
     margin-top: 20px;
     position: relative;
-    background: linear-gradient(135deg,
-            rgba(0, 153, 204, 0.06) 0%,
-            rgba(155, 89, 182, 0.06) 33%,
-            rgba(39, 174, 96, 0.06) 66%,
-            rgba(243, 156, 18, 0.06) 100%);
+    background: rgba(0, 153, 204, 0.05);
 }
 
 .lh-circular-gallery:active {
