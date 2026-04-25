@@ -1320,6 +1320,33 @@ function bindSettingsFeatures() {
             q.parentElement.classList.toggle('open');
         });
     });
+
+    // ── Interface Tab — toggle persistence ───────────────
+    const interfaceToggles = [
+        { id: 'toggle-bubble', key: 'zora_ui_bubble', default: true },
+        { id: 'toggle-widescreen', key: 'zora_ui_widescreen', default: false },
+        { id: 'toggle-title-gen', key: 'zora_ui_title_gen', default: true },
+        { id: 'toggle-tags-gen', key: 'zora_ui_tags_gen', default: true },
+        { id: 'toggle-autocopy', key: 'zora_ui_autocopy', default: false },
+        { id: 'toggle-paste-file', key: 'zora_ui_paste_file', default: false },
+        { id: 'toggle-scroll-branch', key: 'zora_ui_scroll_branch', default: true },
+        { id: 'toggle-improve-model', key: 'zora_ui_improve_model', default: true },
+    ];
+
+    interfaceToggles.forEach(({ id, key, default: def }) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+
+        // Restore saved state
+        const saved = localStorage.getItem(key);
+        const isActive = saved !== null ? saved === 'true' : def;
+        btn.classList.toggle('active', isActive);
+
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            localStorage.setItem(key, btn.classList.contains('active'));
+        });
+    });
 }
 
 // ─── SEARCH COMMAND PALETTE ───────────────────────────────────────────────────

@@ -307,6 +307,14 @@
                         <i class="fi fi-rr-language-exchange"></i>
                         <span>Language</span>
                     </button>
+                    <button class="settings-tab" data-tab="interface">
+                        <i class="fi fi-rr-computer"></i>
+                        <span>Interface</span>
+                    </button>
+                    <button class="settings-tab" data-tab="dialogue">
+                        <i class="fi fi-rs-comments"></i>
+                        <span>Dialogue</span>
+                    </button>
                     <button class="settings-tab" data-tab="faq">
                         <i class="fi fi-rs-comment-question"></i>
                         <span>FAQ</span>
@@ -432,7 +440,92 @@
                     </div>
                 </div>
 
-                <!-- ── Tab: FAQ (UNTOUCHED) ───────────────────────── -->
+                <!-- ── Tab: Interface ────────────────────────────── -->
+                <div class="settings-panel" id="tab-interface">
+                    <h2 class="settings-panel-title">Interface</h2>
+
+                    <div class="sc-section-label">Interface</div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Chat Bubble UI</span>
+                        <button class="sc-toggle active" id="toggle-bubble" type="button"
+                            aria-label="Chat Bubble UI"></button>
+                    </div>
+                    <div class="sc-divider"></div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Widescreen Mode</span>
+                        <button class="sc-toggle" id="toggle-widescreen" type="button"
+                            aria-label="Widescreen Mode"></button>
+                    </div>
+
+                    <div class="sc-section-label" style="margin-top:24px;">Dialogue</div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Title Auto-Generation</span>
+                        <button class="sc-toggle active" id="toggle-title-gen" type="button"
+                            aria-label="Title Auto-Generation"></button>
+                    </div>
+                    <div class="sc-divider"></div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Chat Tags Auto-Generation</span>
+                        <button class="sc-toggle active" id="toggle-tags-gen" type="button"
+                            aria-label="Chat Tags Auto-Generation"></button>
+                    </div>
+                    <div class="sc-divider"></div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Auto-Copy Response to Clipboard</span>
+                        <button class="sc-toggle" id="toggle-autocopy" type="button"
+                            aria-label="Auto-Copy Response"></button>
+                    </div>
+                    <div class="sc-divider"></div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Paste Large Text as File</span>
+                        <button class="sc-toggle" id="toggle-paste-file" type="button"
+                            aria-label="Paste Large Text as File"></button>
+                    </div>
+                    <div class="sc-divider"></div>
+                    <div class="sc-toggle-row">
+                        <span class="sc-toggle-name">Scroll to bottom when switching between branches</span>
+                        <button class="sc-toggle active" id="toggle-scroll-branch" type="button"
+                            aria-label="Scroll to bottom"></button>
+                    </div>
+                </div>
+
+                <!-- ── Tab: Dialogue ─────────────────────────────── -->
+                <div class="settings-panel" id="tab-dialogue">
+                    <h2 class="settings-panel-title">Dialogue</h2>
+
+                    <div class="sc-improve-card">
+                        <div class="sc-improve-text">
+                            <p class="sc-improve-title">Improve Model</p>
+                            <p class="sc-improve-desc">By sharing your data to train our model, you can help improve
+                                your own experience and the quality of all users' models. We take measures to ensure
+                                your privacy is protected throughout the process.</p>
+                        </div>
+                        <button class="sc-toggle active" id="toggle-improve-model" type="button"
+                            aria-label="Improve Model"></button>
+                    </div>
+
+                    <div class="sc-dialogue-action">
+                        <i class="fi fi-rr-upload"></i>
+                        <span>Import Chats</span>
+                    </div>
+                    <div class="sc-dialogue-action">
+                        <i class="fi fi-rr-download"></i>
+                        <span>Export Chats</span>
+                    </div>
+
+                    <div class="sc-divider"></div>
+
+                    <div class="sc-dialogue-action sc-dialogue-action--danger" id="archiveAllChatsBtn">
+                        <i class="fi fi-rr-box-alt"></i>
+                        <span>Archive All Chats</span>
+                    </div>
+                    <div class="sc-dialogue-action sc-dialogue-action--danger" id="deleteAllChatsBtn">
+                        <i class="fi fi-rr-trash"></i>
+                        <span>Delete All Chats</span>
+                    </div>
+                </div>
+
+                <!-- ── Tab: FAQ ───────────────────────── -->
                 <div class="settings-panel" id="tab-faq">
                     <h2 class="settings-panel-title">FAQ</h2>
                     <p class="settings-panel-desc">Frequently asked questions about ZORA AI.</p>
