@@ -34,18 +34,21 @@ LOGS_DIR = Path(__file__).resolve().parents[1] / ".remember" / "logs"
 
 def log_error_to_file(request: Request, status_code: int, message: str, detail=None) -> None:
     """Append structured error information to the daily log file."""
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
-    log_path = LOGS_DIR / f"{datetime.utcnow():%Y-%m-%d}.log"
-    payload = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "status_code": status_code,
-        "path": str(request.url.path),
-        "method": request.method,
-        "message": message,
-        "detail": detail,
-    }
-    with log_path.open("a", encoding="utf-8") as file_handle:
-        file_handle.write(json.dumps(payload) + "\n")
+    try:
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        log_path = LOGS_DIR / f"{datetime.utcnow():%Y-%m-%d}.log"
+        payload = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "status_code": status_code,
+            "path": str(request.url.path),
+            "method": request.method,
+            "message": message,
+            "detail": detail,
+        }
+        with log_path.open("a", encoding="utf-8") as file_handle:
+            file_handle.write(json.dumps(payload) + "\n")
+    except OSError:
+        pass  # Read-only filesystem on Vercel — skip logging to file
 
 
 @asynccontextmanager
@@ -55,7 +58,7 @@ async def lifespan(app: FastAPI):
         GENERATED_DIR.mkdir(parents=True, exist_ok=True)
         LOGS_DIR.mkdir(parents=True, exist_ok=True)
     except OSError:
-        pass  # Read-only filesystem on Vercel serverless  safe to ignore
+        pass  # Read-only filesystem on Vercel serverless — safe to ignore
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -194,5 +197,3 @@ if __name__ == "__main__":
         port=8000,
         reload=settings.ENV == "development"
     )
-
-app = app
