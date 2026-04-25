@@ -71,6 +71,7 @@ html, body {
     font-size: 0.875rem;
     font-weight: 500;
     transition: all 0.15s;
+    text-decoration: none;
 }
 
 .db-nav-item i {
@@ -186,6 +187,7 @@ html, body {
     cursor: pointer;
     margin-bottom: -1px;
     transition: all 0.15s;
+    text-decoration: none;
 }
 
 .db-tab:hover { color: rgba(255,255,255,0.6); }

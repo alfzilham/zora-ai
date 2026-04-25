@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,110 +9,114 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/notifications.css">
 </head>
+
 <body>
-<div class="db-app">
+    <div class="db-app">
 
-    <!-- Sidebar -->
-    <aside class="db-sidebar">
-        <div class="db-sidebar-brand">
-            <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
-            <span class="db-sidebar-name">ZORA AI</span>
-        </div>
-        <nav class="db-sidebar-nav">
-            <a href="/dashboard/index.html" class="db-nav-item">
-                <i class="fi fi-rr-chart-pie-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <div class="db-nav-item">
-                <i class="fi fi-rr-users"></i>
-                <span>Users</span>
+        <!-- Sidebar -->
+        <aside class="db-sidebar">
+            <div class="db-sidebar-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
+                <span class="db-sidebar-name">ZORA AI</span>
             </div>
-            <div class="db-nav-item">
-                <i class="fi fi-rr-chart-line-up"></i>
-                <span>Analytics</span>
-            </div>
-            <div class="db-nav-item">
-                <i class="fi fi-rr-wallet"></i>
-                <span>Earnings</span>
-            </div>
-            <div class="db-nav-item active">
-                <i class="fi fi-rr-bell"></i>
-                <span>Notifications</span>
-                <span id="sidebarBadge" class="db-sidebar-badge hidden">0</span>
-            </div>
-            <div class="db-nav-item">
-                <i class="fi fi-rr-settings"></i>
-                <span>Settings</span>
-            </div>
-        </nav>
-        <div class="db-sidebar-footer">
-            <a href="/chat/index.html" class="db-back-chat">
-                <i class="fi fi-rr-arrow-left"></i>
-                <span>Back to Chat</span>
-            </a>
-            <button id="logoutBtn" class="db-logout-btn" type="button">
-                <i class="fi fi-rr-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="db-main">
-
-        <!-- Topbar -->
-        <header class="notif-topbar">
-            <div class="notif-topbar-left">
-                <h1 class="db-page-title">Notifications</h1>
-                <p class="notif-subtitle">Stay updated on user activity and system events</p>
-            </div>
-            <div class="notif-topbar-right">
-                <button class="db-pill-btn" id="markAllBtn">
-                    <i class="fi fi-rr-check-double"></i>
-                    Mark all as read
-                </button>
-                <button class="db-pill-btn" id="clearAllBtn">
-                    <i class="fi fi-rr-trash"></i>
-                    Clear all
+            <nav class="db-sidebar-nav">
+                <a href="/dashboard/index.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-pie-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-users"></i>
+                    <span>Users</span>
+                </div>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-chart-line-up"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-wallet"></i>
+                    <span>Earnings</span>
+                </div>
+                <div class="db-nav-item active">
+                    <i class="fi fi-rr-bell"></i>
+                    <span>Notifications</span>
+                    <span id="sidebarBadge" class="db-sidebar-badge hidden">0</span>
+                </div>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-settings"></i>
+                    <span>Settings</span>
+                </div>
+            </nav>
+            <div class="db-sidebar-footer">
+                <a href="/chat/index.html" class="db-back-chat">
+                    <i class="fi fi-rr-arrow-left"></i>
+                    <span>Back to Chat</span>
+                </a>
+                <button id="logoutBtn" class="db-logout-btn" type="button">
+                    <i class="fi fi-rr-sign-out-alt"></i>
+                    <span>Logout</span>
                 </button>
             </div>
-        </header>
+        </aside>
 
-        <!-- Filter Bar -->
-        <div class="notif-filter-bar">
-            <button class="notif-filter-btn active" data-filter="all">All</button>
-            <button class="notif-filter-btn" data-filter="today">Today</button>
-            <button class="notif-filter-btn" data-filter="yesterday">Yesterday</button>
-            <button class="notif-filter-btn" data-filter="week">This Week</button>
-            <button class="notif-filter-btn" data-filter="month">This Month</button>
-            <button class="notif-filter-btn" data-filter="unread">Unread</button>
+        <!-- Main -->
+        <main class="db-main">
 
-            <div class="notif-filter-right">
-                <span id="notifCount" class="notif-count-label">0 notifications</span>
-            </div>
-        </div>
+            <!-- Topbar -->
+            <header class="notif-topbar">
+                <div class="notif-topbar-left">
+                    <h1 class="db-page-title">Notifications</h1>
+                    <p class="notif-subtitle">Stay updated on user activity and system events</p>
+                </div>
+                <div class="notif-topbar-right">
+                    <button class="db-pill-btn" id="markAllBtn">
+                        <i class="fi fi-rr-check-double"></i>
+                        Mark all as read
+                    </button>
+                    <button class="db-pill-btn" id="clearAllBtn">
+                        <i class="fi fi-rr-trash"></i>
+                        Clear all
+                    </button>
+                </div>
+            </header>
 
-        <!-- Notification List -->
-        <div class="notif-content">
-            <div id="notifGroups" class="notif-groups">
-                <div class="notif-loading">
-                    <i class="fi fi-rr-loading notif-spin"></i>
-                    Loading notifications...
+            <!-- Filter Bar -->
+            <div class="notif-filter-bar">
+                <button class="notif-filter-btn active" data-filter="all">All</button>
+                <button class="notif-filter-btn" data-filter="today">Today</button>
+                <button class="notif-filter-btn" data-filter="yesterday">Yesterday</button>
+                <button class="notif-filter-btn" data-filter="week">This Week</button>
+                <button class="notif-filter-btn" data-filter="month">This Month</button>
+                <button class="notif-filter-btn" data-filter="unread">Unread</button>
+
+                <div class="notif-filter-right">
+                    <span id="notifCount" class="notif-count-label">0 notifications</span>
                 </div>
             </div>
-        </div>
 
-    </main>
-</div>
+            <!-- Notification List -->
+            <div class="notif-content">
+                <div id="notifGroups" class="notif-groups">
+                    <div class="notif-loading">
+                        <i class="fi fi-rr-loading notif-spin"></i>
+                        Loading notifications...
+                    </div>
+                </div>
+            </div>
 
-<script defer src="/js/utils/helpers.js"></script>
-<script defer src="/js/utils/api.js"></script>
-<script defer src="/js/auth.js"></script>
-<script defer src="/js/notifications.js"></script>
+        </main>
+    </div>
+
+    <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/auth.js"></script>
+    <script defer src="/js/notifications.js"></script>
 </body>
+
 </html>
