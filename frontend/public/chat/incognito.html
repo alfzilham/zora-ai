@@ -65,46 +65,37 @@
 
             <!-- Welcome Screen -->
             <section id="welcomeScreen" class="incognito-welcome">
-
-                <!-- Orb with sonar rings + arc spinner + inner core -->
-                <div class="incognito-orb">
-                    <div class="incognito-orb-ring"></div>
-                    <div class="incognito-orb-ring"></div>
-                    <div class="incognito-orb-inner">
-                        <i class="fi fi-rr-incognito incognito-orb-icon"></i>
+                <div class="incognito-orb-wrap">
+                    <div class="incognito-orb-ring incognito-orb-ring--3"></div>
+                    <div class="incognito-orb-ring incognito-orb-ring--2"></div>
+                    <div class="incognito-orb-ring incognito-orb-ring--1"></div>
+                    <div class="incognito-orb-core">
+                        <svg class="incognito-orb-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="40" cy="34" rx="18" ry="5" fill="rgba(255,255,255,0.18)"/>
+                            <path d="M22 34 Q22 18 40 18 Q58 18 58 34" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                            <rect x="20" y="44" width="16" height="11" rx="5.5" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+                            <rect x="44" y="44" width="16" height="11" rx="5.5" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+                            <path d="M36 49.5 L44 49.5" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-linecap="round"/>
+                            <path d="M20 49.5 L16 50" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-linecap="round"/>
+                            <path d="M60 49.5 L64 50" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
                     </div>
                 </div>
-
-                <h1 class="incognito-welcome-title">You're in Incognito</h1>
-
-                <div class="incognito-welcome-features">
-                    <span class="incognito-feature">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                            <line x1="1" y1="1" x2="23" y2="23" />
-                        </svg>
+                <h1 class="incognito-welcome-title">You are in Incognito</h1>
+                <div class="incognito-typewriter" id="typewriterEl">
+                    <span id="typewriterText" class="typewriter-text"></span><span id="typewriterCursor" class="typewriter-cursor">_</span>
+                </div>
+                <div class="incognito-pills">
+                    <span class="incognito-pill">
+                        <svg viewBox="0 0 16 16" fill="none"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 110 10A5 5 0 018 3zm-1 3v2.5l2 1.2-.5.87-2.5-1.5V6H7z" fill="currentColor"/></svg>
                         No history saved
                     </span>
-                    <span class="incognito-feature-sep"></span>
-                    <span class="incognito-feature">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <ellipse cx="12" cy="5" rx="9" ry="3" />
-                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-                            <line x1="2" y1="2" x2="22" y2="22" />
-                        </svg>
+                    <span class="incognito-pill">
+                        <svg viewBox="0 0 16 16" fill="none"><path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm3.5 9.5l-4-2.5V4h1.5v3.2l3 1.8-.5.5z" fill="currentColor"/></svg>
                         No data stored
                     </span>
-                    <span class="incognito-feature-sep"></span>
-                    <span class="incognito-feature">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                            <polyline points="9 12 11 14 15 10" />
-                        </svg>
+                    <span class="incognito-pill">
+                        <svg viewBox="0 0 16 16" fill="none"><path d="M8 1L2 4v4c0 3.31 2.56 6.41 6 7 3.44-.59 6-3.69 6-7V4L8 1zm-1 9.41L4.59 8 5.66 6.93 7 8.27l3.34-3.34 1.07 1.07L7 10.41z" fill="currentColor"/></svg>
                         Zero traces
                     </span>
                 </div>
