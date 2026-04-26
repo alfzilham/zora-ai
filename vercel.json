@@ -16,6 +16,50 @@
       "dest": "api/index.py"
     },
     {
+      "src": "/dashboard/(.*)",
+      "dest": "frontend/public/dashboard/$1"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "frontend/public/auth/$1"
+    },
+    {
+      "src": "/chat/(.*)",
+      "dest": "frontend/public/chat/$1"
+    },
+    {
+      "src": "/feedback/(.*)",
+      "dest": "frontend/public/feedback/$1"
+    },
+    {
+      "src": "/onboarding/(.*)",
+      "dest": "frontend/public/onboarding/$1"
+    },
+    {
+      "src": "/labs/(.*)",
+      "dest": "frontend/public/labs/$1"
+    },
+    {
+      "src": "/settings/(.*)",
+      "dest": "frontend/public/settings/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "frontend/public/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "frontend/public/js/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "frontend/public/assets/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "frontend/public/favicon.ico"
+    },
+    {
       "src": "/(.*)",
       "dest": "frontend/public/$1"
     }
