@@ -231,10 +231,12 @@ img {
 
 .cn-card--labs {
     background-image: url('/assets/images/labs/labs.png');
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .cn-card--navigate {
     background-image: url('/assets/images/labs/navigate.png');
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .cn-nav.open .cn-card:nth-child(1) {
