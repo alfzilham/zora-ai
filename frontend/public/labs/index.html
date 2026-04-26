@@ -169,34 +169,38 @@
             <!-- RIGHT: Lanyard visual -->
             <div class="lh-hero-right" id="heroLanyard">
                 <div class="lanyard-scene">
-                    <!-- Strap -->
-                    <div class="lanyard-strap-wrap">
-                        <div class="lanyard-strap">
-                            <div class="lanyard-strap-pattern"></div>
-                        </div>
-                        <div class="lanyard-hook">
-                            <svg viewBox="0 0 20 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 2C10 2 4 5 4 13C4 18 7 21 10 22C13 21 16 18 16 13C16 5 10 2 10 2Z"
-                                    stroke="#888" stroke-width="1.5" fill="none" />
-                                <rect x="8.5" y="21" width="3" height="5" rx="1" fill="#888" />
-                            </svg>
-                        </div>
-                    </div>
-                    <!-- Card -->
-                    <div class="lanyard-card" id="lanyardCard">
-                        <div class="lanyard-card-inner">
-                            <div class="lanyard-card-front">
-                                <div class="lanyard-card-logo-wrap">
-                                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="lanyard-card-logo">
+                    <!-- Fixed anchor point at top -->
+                    <div class="lanyard-anchor">
+                        <!-- The entire pendulum swings from here -->
+                        <div class="lanyard-pendulum" id="lanyardPendulum">
+                            <!-- Strap -->
+                            <div class="lanyard-strap">
+                                <div class="lanyard-strap-pattern"></div>
+                            </div>
+                            <!-- Hook -->
+                            <div class="lanyard-hook">
+                                <svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <ellipse cx="8" cy="8" rx="5" ry="5" stroke="#999" stroke-width="1.5" fill="none"/>
+                                    <rect x="6.5" y="12" width="3" height="6" rx="1.5" fill="#999"/>
+                                </svg>
+                            </div>
+                            <!-- Card -->
+                            <div class="lanyard-card" id="lanyardCard">
+                                <div class="lanyard-card-inner">
+                                    <div class="lanyard-card-front">
+                                        <div class="lanyard-card-logo-wrap">
+                                            <img src="/assets/images/logo/logo.png" alt="ZORA" class="lanyard-card-logo">
+                                        </div>
+                                        <div class="lanyard-card-info">
+                                            <div class="lanyard-card-name">ZORA AI</div>
+                                            <div class="lanyard-card-sub">SuperIntelligence</div>
+                                        </div>
+                                        <div class="lanyard-card-badge">
+                                            <span class="lanyard-badge-dot"></span> LABS
+                                        </div>
+                                        <div class="lanyard-card-stripe"></div>
+                                    </div>
                                 </div>
-                                <div class="lanyard-card-info">
-                                    <div class="lanyard-card-name">ZORA AI</div>
-                                    <div class="lanyard-card-sub">SuperIntelligence</div>
-                                </div>
-                                <div class="lanyard-card-badge">
-                                    <span class="lanyard-badge-dot"></span> LABS
-                                </div>
-                                <div class="lanyard-card-stripe"></div>
                             </div>
                         </div>
                     </div>
@@ -1160,11 +1164,9 @@ void main() {
         // ── Lanyard Physics (Spring/Elastic) ──────────────────────
         (function initLanyard() {
             const scene = document.querySelector('.lanyard-scene');
+            const pendulum = document.getElementById('lanyardPendulum');
             const card = document.getElementById('lanyardCard');
-            if (!scene || !card) return;
-
-            // Stop CSS idle animation — physics handles everything
-            card.style.animation = 'none';
+            if (!scene || !pendulum || !card) return;
 
             // ── State ──────────────────────────────────────────────
             let angle = 0;          // current rotation angle (deg)
@@ -1243,11 +1245,15 @@ void main() {
                 tiltX += (targetTiltX - tiltX) * 0.08 * dt;
                 tiltY += (targetTiltY - tiltY) * 0.08 * dt;
 
+                // Whole pendulum rotates from anchor top
+                pendulum.style.transform = `rotate(${displayAngle}deg)`;
+
+                // Card gets counter-rotated tilt for 3D feel
+                // but stays visually upright — only subtle tilt
                 card.style.transform = [
-                    `rotate(${displayAngle}deg)`,
                     `perspective(700px)`,
-                    `rotateX(${tiltX}deg)`,
-                    `rotateY(${tiltY}deg)`,
+                    `rotateX(${tiltX * 0.5}deg)`,
+                    `rotateY(${tiltY * 0.5}deg)`,
                 ].join(' ');
 
                 requestAnimationFrame(loop);
