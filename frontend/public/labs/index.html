@@ -135,29 +135,72 @@
         <!-- Light overlay -->
         <div class="lh-hero-orb-overlay"></div>
 
-        <div class="lh-hero-content">
-            <span class="lh-badge lh-badge--light" data-aos="fade-down" data-aos-duration="600">
-                <span class="lh-badge-dot"></span>
-                ZORA LABS
-            </span>
+        <div class="lh-hero-content lh-hero-two-col">
 
-            <!-- Blur Text Title -->
-            <h1 class="lh-hero-title" id="heroTitle" aria-label="SuperIntelligence Tools for Every Task"></h1>
+            <!-- LEFT: Text content -->
+            <div class="lh-hero-left">
+                <span class="lh-badge lh-badge--light" data-aos="fade-down" data-aos-duration="600">
+                    <span class="lh-badge-dot"></span>
+                    ZORA LABS
+                </span>
 
-            <p class="lh-hero-desc" id="heroDesc" style="opacity:0; transform:translateY(20px);">
-                Six powerful AI labs — each powered by the best model for the job.
-                Code, design, create, research, and analyze like never before.
-            </p>
+                <!-- Shuffle Title -->
+                <h1 class="lh-hero-title" id="heroTitle" aria-label="SuperIntelligence Tools for Every Task">
+                    <span class="shuffle-text" id="shuffleTitle">SuperIntelligence Tools for Every Task</span>
+                </h1>
 
-            <div class="lh-hero-actions" id="heroActions" style="opacity:0; transform:translateY(20px);">
-                <a href="#features" class="lh-btn-hero-primary">
-                    Explore Now
-                    <i class="fi fi-rr-arrow-down"></i>
-                </a>
-                <a href="#footer" class="lh-btn-hero-secondary">
-                    View Roadmap
-                    <i class="fi fi-rr-map"></i>
-                </a>
+                <p class="lh-hero-desc" id="heroDesc" style="opacity:0; transform:translateY(20px);">
+                    Six powerful AI labs — each powered by the best model for the job.
+                    Code, design, create, research, and analyze like never before.
+                </p>
+
+                <div class="lh-hero-actions" id="heroActions" style="opacity:0; transform:translateY(20px);">
+                    <a href="#features" class="lh-btn-hero-primary">
+                        Explore Now
+                        <i class="fi fi-rr-arrow-down"></i>
+                    </a>
+                    <a href="#footer" class="lh-btn-hero-secondary">
+                        View Roadmap
+                        <i class="fi fi-rr-map"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- RIGHT: Lanyard visual -->
+            <div class="lh-hero-right" id="heroLanyard">
+                <div class="lanyard-scene">
+                    <!-- Strap -->
+                    <div class="lanyard-strap-wrap">
+                        <div class="lanyard-strap">
+                            <div class="lanyard-strap-pattern"></div>
+                        </div>
+                        <div class="lanyard-hook">
+                            <svg viewBox="0 0 20 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 2C10 2 4 5 4 13C4 18 7 21 10 22C13 21 16 18 16 13C16 5 10 2 10 2Z"
+                                    stroke="#888" stroke-width="1.5" fill="none" />
+                                <rect x="8.5" y="21" width="3" height="5" rx="1" fill="#888" />
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Card -->
+                    <div class="lanyard-card" id="lanyardCard">
+                        <div class="lanyard-card-inner">
+                            <div class="lanyard-card-front">
+                                <div class="lanyard-card-logo-wrap">
+                                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="lanyard-card-logo">
+                                </div>
+                                <div class="lanyard-card-info">
+                                    <div class="lanyard-card-name">ZORA AI</div>
+                                    <div class="lanyard-card-sub">SuperIntelligence</div>
+                                </div>
+                                <div class="lanyard-card-badge">
+                                    <span class="lanyard-badge-dot"></span> LABS
+                                </div>
+                                <div class="lanyard-card-stripe"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -500,6 +543,70 @@
                 document.getElementById('heroOrbContainer').style.background =
                     'radial-gradient(ellipse at center, rgba(0,153,204,0.15) 0%, rgba(120,80,255,0.1) 50%, transparent 70%)';
             }
+        }
+
+        // ── Shuffle Text Animation ────────────────────────────────
+        function shuffleAnimate(el, options = {}) {
+            if (!el) return;
+            const {
+                duration = 350,
+                stagger = 30,
+                ease = 'power3',
+                onComplete = null,
+                shuffleTimes = 2,
+            } = options;
+
+            const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const originalText = el.textContent.trim();
+            el.textContent = '';
+            el.style.visibility = 'visible';
+
+            // Split into char spans
+            const chars = [];
+            [...originalText].forEach((ch) => {
+                if (ch === ' ') {
+                    const sp = document.createElement('span');
+                    sp.textContent = '\u00A0';
+                    sp.style.display = 'inline-block';
+                    el.appendChild(sp);
+                    chars.push(null);
+                    return;
+                }
+                const wrap = document.createElement('span');
+                wrap.className = 'shuffle-char-wrap';
+                const inner = document.createElement('span');
+                inner.className = 'shuffle-char-inner';
+                inner.textContent = ch;
+                wrap.appendChild(inner);
+                el.appendChild(wrap);
+                chars.push({ wrap, inner, original: ch });
+            });
+
+            // Animate each char with stagger
+            let completedCount = 0;
+            const animatableChars = chars.filter(Boolean);
+
+            animatableChars.forEach((charObj, i) => {
+                const delay = i * stagger;
+                const totalCycles = shuffleTimes * 6;
+                let cycle = 0;
+
+                setTimeout(() => {
+                    const interval = setInterval(() => {
+                        if (cycle < totalCycles) {
+                            charObj.inner.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+                            cycle++;
+                        } else {
+                            clearInterval(interval);
+                            charObj.inner.textContent = charObj.original;
+                            completedCount++;
+                            if (completedCount === animatableChars.length && onComplete) {
+                                onComplete();
+                            }
+                        }
+                    }, duration / totalCycles);
+                }, delay);
+            });
         }
 
         // ── Blur Text Animation ───────────────────────────────────
@@ -1050,24 +1157,111 @@ void main() {
         initHeroOrb();
         initCircularGallery();
 
-        // Start blur text after short delay
-        setTimeout(() => {
-            const titleEl = document.getElementById('heroTitle');
-            const titleText = 'SuperIntelligence Tools for Every Task';
-            const words = titleText.split(' ').length;
-            const totalTitleDuration = words * 150 + 500;
+        // ── Lanyard Physics ───────────────────────────────────────
+        (function initLanyard() {
+            const scene = document.querySelector('.lanyard-scene');
+            const card = document.getElementById('lanyardCard');
+            if (!scene || !card) return;
 
-            blurTextAnimate(titleEl, titleText, {
-                delay: 150,
-                animateBy: 'words',
-                direction: 'top',
+            let currentAngle = 0;
+            let velocity = 0;
+            let isDown = false;
+            let lastX = 0;
+            let animFrame;
+            let mouseX = 0, mouseY = 0;
+            let sceneRect = scene.getBoundingClientRect();
+
+            // Physics constants
+            const GRAVITY = 0.008;
+            const DAMPING = 0.96;
+            const MAX_ANGLE = 35;
+
+            function physicsLoop() {
+                if (!isDown) {
+                    // Spring back to center + gravity
+                    velocity += -currentAngle * GRAVITY;
+                    velocity *= DAMPING;
+                    currentAngle += velocity;
+
+                    // Clamp
+                    if (Math.abs(currentAngle) < 0.01 && Math.abs(velocity) < 0.01) {
+                        currentAngle = 0;
+                        velocity = 0;
+                    }
+                }
+
+                const clampedAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, currentAngle));
+
+                // 3D tilt based on mouse position
+                const centerX = sceneRect.left + sceneRect.width / 2;
+                const centerY = sceneRect.top + sceneRect.height / 2;
+                const relX = (mouseX - centerX) / (sceneRect.width / 2);
+                const relY = (mouseY - centerY) / (sceneRect.height / 2);
+                const tiltX = relY * -8;
+                const tiltY = relX * 8;
+
+                card.style.transform = `rotate(${clampedAngle}deg) perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                card.style.animationPlayState = 'paused';
+
+                animFrame = requestAnimationFrame(physicsLoop);
+            }
+
+            // Mouse / Touch events
+            const onDown = (e) => {
+                isDown = true;
+                lastX = e.touches ? e.touches[0].clientX : e.clientX;
+                velocity = 0;
+                scene.style.cursor = 'grabbing';
+            };
+
+            const onMove = (e) => {
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const y = e.touches ? e.touches[0].clientY : e.clientY;
+                mouseX = x;
+                mouseY = y;
+
+                if (isDown) {
+                    const dx = x - lastX;
+                    currentAngle += dx * 0.3;
+                    lastX = x;
+                }
+            };
+
+            const onUp = () => {
+                isDown = false;
+                scene.style.cursor = 'grab';
+                // Give a little velocity from current position
+                velocity = currentAngle * 0.05;
+            };
+
+            scene.addEventListener('mousedown', onDown);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onUp);
+            scene.addEventListener('touchstart', onDown, { passive: true });
+            window.addEventListener('touchmove', onMove, { passive: true });
+            window.addEventListener('touchend', onUp);
+
+            // Update scene rect on resize
+            window.addEventListener('resize', () => {
+                sceneRect = scene.getBoundingClientRect();
+            });
+
+            physicsLoop();
+        })();
+
+        // ── Start Shuffle Title ───────────────────────────────────
+        setTimeout(() => {
+            const shuffleEl = document.getElementById('shuffleTitle');
+            shuffleAnimate(shuffleEl, {
+                duration: 400,
+                stagger: 25,
+                shuffleTimes: 2,
                 onComplete: () => {
                     fadeInElement(document.getElementById('heroDesc'), 0);
                     fadeInElement(document.getElementById('heroActions'), 200);
-                    fadeInElement(document.getElementById('heroStats'), 400);
                 }
             });
-        }, 300);
+        }, 400);
     </script>
 </body>
 
