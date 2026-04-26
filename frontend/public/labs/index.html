@@ -180,8 +180,8 @@
                             <!-- Hook -->
                             <div class="lanyard-hook">
                                 <svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <ellipse cx="8" cy="8" rx="5" ry="5" stroke="#999" stroke-width="1.5" fill="none"/>
-                                    <rect x="6.5" y="12" width="3" height="6" rx="1.5" fill="#999"/>
+                                    <ellipse cx="8" cy="8" rx="5" ry="5" stroke="#999" stroke-width="1.5" fill="none" />
+                                    <rect x="6.5" y="12" width="3" height="6" rx="1.5" fill="#999" />
                                 </svg>
                             </div>
                             <!-- Card -->
@@ -189,7 +189,8 @@
                                 <div class="lanyard-card-inner">
                                     <div class="lanyard-card-front">
                                         <div class="lanyard-card-logo-wrap">
-                                            <img src="/assets/images/logo/logo.png" alt="ZORA" class="lanyard-card-logo">
+                                            <img src="/assets/images/logo/logo.png" alt="ZORA"
+                                                class="lanyard-card-logo">
                                         </div>
                                         <div class="lanyard-card-info">
                                             <div class="lanyard-card-name">ZORA AI</div>
@@ -1155,6 +1156,15 @@ void main() {
                 console.warn('Magic rings failed:', err);
             }
         }
+
+        // ── Sticky Navbar ─────────────────────────────────────────
+        (function initStickyNav() {
+            const container = document.getElementById('cardNavContainer');
+            if (!container) return;
+            window.addEventListener('scroll', () => {
+                container.classList.toggle('scrolled', window.scrollY > 50);
+            }, { passive: true });
+        })();
 
         // ── Boot ──────────────────────────────────────────────────
         initHeroRings();
