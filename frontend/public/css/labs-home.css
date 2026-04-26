@@ -221,6 +221,8 @@ img {
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.3s ease, transform 0.3s ease;
+    overflow: hidden;
+    isolation: isolate;
 }
 
 .cn-nav.open .cn-card:nth-child(1) {
