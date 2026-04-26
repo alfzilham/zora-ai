@@ -312,8 +312,12 @@
             hamburger.addEventListener('click', () => {
                 isOpen = !isOpen;
                 nav.classList.toggle('open', isOpen);
+                nav.classList.toggle('closing', !isOpen);
                 hamburger.classList.toggle('open', isOpen);
                 hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+                if (!isOpen) {
+                    setTimeout(() => nav.classList.remove('closing'), 400);
+                }
             });
 
             // Close on outside click
@@ -321,7 +325,9 @@
                 if (isOpen && !nav.closest('.cn-container').contains(e.target)) {
                     isOpen = false;
                     nav.classList.remove('open');
+                    nav.classList.add('closing');
                     hamburger.classList.remove('open');
+                    setTimeout(() => nav.classList.remove('closing'), 400);
                 }
             });
 
@@ -1257,7 +1263,7 @@ void main() {
                         updatePos(li);
 
                         filterEl.querySelectorAll('.cn-gooey-particle').forEach(p => {
-                            try { filterEl.removeChild(p); } catch {}
+                            try { filterEl.removeChild(p); } catch { }
                         });
                         textEl.classList.remove('active');
                         void textEl.offsetWidth;

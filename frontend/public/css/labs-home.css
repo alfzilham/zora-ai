@@ -209,6 +209,13 @@ img {
     padding: 0 16px 16px;
 }
 
+.cn-nav.closing .cn-content {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 16px 0;
+    pointer-events: none;
+}
+
 .cn-nav.open .cn-content {
     visibility: visible;
     pointer-events: auto;
@@ -380,9 +387,9 @@ img {
 .cn-gooey-filter::before {
     content: '';
     position: absolute;
-    inset: -75px;
+    inset: -20px;
     z-index: -2;
-    background: black;
+    background: transparent;
 }
 
 .cn-gooey-filter::after {
