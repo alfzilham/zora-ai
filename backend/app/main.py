@@ -24,7 +24,8 @@ except ModuleNotFoundError:
 from app.config import settings
 from app.database import engine, Base
 from app.middleware.cors import SecurityHeadersMiddleware
-from app.routers import auth, onboarding, chat, settings, labs, dashboard, feedback
+from app.routers import auth, onboarding, chat, labs, dashboard, feedback
+from app.routers import settings as settings_router
 from app.utils.rate_limit import limiter
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static"
