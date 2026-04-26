@@ -16,9 +16,100 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/feedback-admin.css">
+    <style>
+        /* ── PAGE TRANSITION LOADER ──────────────────────────── */
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0d0d12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.35s ease;
+            pointer-events: all;
+        }
+
+        #pageLoader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #pageLoader.hidden {
+            display: none;
+        }
+
+        .zora-spinner {
+            position: relative;
+            border-radius: 50%;
+            height: 80px;
+            width: 80px;
+            animation: rotate_3922 1.2s linear infinite;
+            background-color: #00D4FF;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span {
+            position: absolute;
+            border-radius: 50%;
+            height: 100%;
+            width: 100%;
+            background-color: #00D4FF;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span:nth-of-type(1) {
+            filter: blur(5px);
+        }
+
+        .zora-spinner span:nth-of-type(2) {
+            filter: blur(10px);
+        }
+
+        .zora-spinner span:nth-of-type(3) {
+            filter: blur(25px);
+        }
+
+        .zora-spinner span:nth-of-type(4) {
+            filter: blur(50px);
+        }
+
+        .zora-spinner::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background-color: #0d0d12;
+            border: solid 4px #0d0d12;
+            border-radius: 50%;
+        }
+
+        @keyframes rotate_3922 {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
+
+    <!-- Page Loader -->
+    <div id="pageLoader">
+        <div class="zora-spinner">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
 
     <!-- ── APP SHELL ──────────────────────────────────────── -->
     <div class="db-app" id="adminShell">
@@ -192,6 +283,44 @@
     <script defer src="/js/utils/helpers.js"></script>
     <script defer src="/js/utils/api.js"></script>
     <script defer src="/js/feedback-admin.js"></script>
+
+    <script>
+        (function () {
+            const loader = document.getElementById('pageLoader');
+
+            // Fade out saat halaman selesai load
+            window.addEventListener('load', () => {
+                if (!loader) return;
+                loader.classList.add('fade-out');
+                setTimeout(() => loader.classList.add('hidden'), 380);
+            });
+
+            // Fade in saat klik link internal dashboard
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+
+                // Hanya trigger untuk halaman dashboard
+                const dashboardPages = [
+                    '/dashboard/index.html',
+                    '/dashboard/feedback.html',
+                    '/dashboard/notifications.html',
+                ];
+
+                const isDashboardLink = dashboardPages.some(p => href.includes(p));
+                if (!isDashboardLink) return;
+
+                e.preventDefault();
+                if (!loader) { window.location.href = href; return; }
+
+                loader.classList.remove('hidden', 'fade-out');
+                setTimeout(() => { window.location.href = href; }, 400);
+            });
+        })();
+    </script>
 
 </body>
 
