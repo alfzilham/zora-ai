@@ -1,10 +1,10 @@
 # File Tree: zora-ai
 
-**Generated:** 4/26/2026, 12:38:45 PM
+**Generated:** 4/26/2026, 5:21:44 PM
 **Root Path:** `d:\2026\Workspace\Website\.AI\zora-ai`
 
 ```
-zora-ai/
+zora-ai
 ├── api
 │   ├── index.py
 │   └── requirements.txt
@@ -72,7 +72,7 @@ zora-ai/
 │   └── schema.sql
 ├── docs
 │   ├── ARCHITECTURE.md
-│   ├── CODEX_SKILL.md
+│   ├── FILE_STRUCTURE.md
 │   ├── PROMPTS.md
 │   └── ROADMAP.md
 ├── frontend
@@ -88,8 +88,8 @@ zora-ai/
 │       │   │   └── favicon.png
 │       │   └── images
 │       │       ├── labs
-│       │       │   ├── feature.png
-│       │       │   └── hero.png
+│       │       │   ├── labs.png
+│       │       │   └── navigate.png
 │       │       └── logo
 │       │           ├── logo-white.png
 │       │           └── logo.png
@@ -110,17 +110,20 @@ zora-ai/
 │       │   ├── global.css
 │       │   ├── incognito.css
 │       │   ├── labs-home.css
-│       │   ├── labs.css
 │       │   ├── notifications.css
 │       │   ├── onboarding.css
 │       │   ├── settings.css
 │       │   └── variables.css
 │       ├── dashboard
+│       │   ├── analytics.html
+│       │   ├── earnings.html
 │       │   ├── feedback-admin.html
 │       │   ├── index.html
 │       │   ├── notifications.html
 │       │   ├── trade-history.html
 │       │   └── users.html
+│       ├── docs
+│       │   └── index.html
 │       ├── feedback
 │       │   └── index.html
 │       ├── js
@@ -135,17 +138,11 @@ zora-ai/
 │       │   ├── feedback-admin.js
 │       │   ├── feedback.js
 │       │   ├── incognito.js
-│       │   ├── labs.js
 │       │   ├── notifications.js
 │       │   ├── onboarding.js
 │       │   └── settings.js
 │       ├── labs
-│       │   ├── code.html
-│       │   ├── design.html
-│       │   ├── image.html
-│       │   ├── index.html
-│       │   ├── research.html
-│       │   └── vid.html
+│       │   └── index.html
 │       ├── onboarding
 │       │   ├── hello.html
 │       │   ├── name.html
