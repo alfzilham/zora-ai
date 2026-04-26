@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel='stylesheet'
         href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
@@ -56,7 +56,7 @@
         body {
             background: var(--bg-main);
             color: var(--text-primary);
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
             font-size: 14px;
             line-height: 1.6;
         }
@@ -761,6 +761,14 @@
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .model-name i {
+            color: var(--accent);
+            font-size: 14px;
         }
 
         .model-role {
@@ -1111,27 +1119,27 @@
 
                     <div class="model-grid">
                         <div class="model-card">
-                            <div class="model-name">🧠 AI Orchestration</div>
+                            <div class="model-name"><i class="fi fi-rr-brain-circuit"></i> AI Orchestration</div>
                             <div class="model-role">Automatically routes to the best model per task type.</div>
                         </div>
                         <div class="model-card">
-                            <div class="model-name">💬 Multi-turn Chat</div>
+                            <div class="model-name"><i class="fi fi-rr-comments"></i> Multi-turn Chat</div>
                             <div class="model-role">Persistent conversations with user memory injection.</div>
                         </div>
                         <div class="model-card">
-                            <div class="model-name">🔒 Incognito Mode</div>
+                            <div class="model-name"><i class="fi fi-rr-incognito"></i> Incognito Mode</div>
                             <div class="model-role">Chat privately with zero history or data saved.</div>
                         </div>
                         <div class="model-card">
-                            <div class="model-name">⚡ Extended Thinking</div>
+                            <div class="model-name"><i class="fi fi-rr-bolt"></i> Extended Thinking</div>
                             <div class="model-role">Deep reasoning layer before generating answers.</div>
                         </div>
                         <div class="model-card">
-                            <div class="model-name">🌐 11 Languages</div>
+                            <div class="model-name"><i class="fi fi-rs-world"></i> 11 Languages</div>
                             <div class="model-role">EN, ID, FR, DE, JA, IT, KO, PT, ES, ZH + more.</div>
                         </div>
                         <div class="model-card">
-                            <div class="model-name">🔬 Zora Labs</div>
+                            <div class="model-name"><i class="fi fi-rr-flask"></i> Zora Labs</div>
                             <div class="model-role">Specialized tools: Code, Design, Image, Research.</div>
                         </div>
                     </div>
