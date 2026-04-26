@@ -236,28 +236,213 @@ img {
     font-weight: 600;
     letter-spacing: -0.02em;
     opacity: 0.9;
+    margin-bottom: 8px;
 }
 
-.cn-card-links {
+/* Merged card takes more width */
+.cn-card--merged {
+    flex: 2;
+}
+
+/* ── GOOEY NAV (inside cards) ─────────────────────────── */
+.cn-gooey-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.cn-gooey-container {
+    position: relative;
+}
+
+.cn-gooey-container nav ul {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    z-index: 3;
 }
 
-.cn-card-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+.cn-gooey-container nav ul li {
+    border-radius: 100vw;
+    position: relative;
+    cursor: pointer;
+}
+
+.cn-gooey-container nav ul li a {
+    display: inline-block;
+    padding: 0.45em 0.9em;
     font-size: 0.88rem;
-    color: inherit;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
     text-decoration: none;
-    opacity: 0.75;
-    transition: opacity 0.15s;
+    transition: color 0.3s ease;
+    border-radius: 100vw;
 }
 
-.cn-card-link:hover {
+.cn-gooey-container nav ul li.active a {
+    color: #000;
+}
+
+.cn-gooey-container nav ul li::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 100vw;
+    background: white;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.cn-gooey-container nav ul li.active::after {
     opacity: 1;
+    transform: scale(1);
+}
+
+/* Gooey effect spans */
+.cn-gooey-effect {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+}
+
+.cn-gooey-text {
+    z-index: 4;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+
+.cn-gooey-text.active {
+    color: #000;
+}
+
+.cn-gooey-filter {
+    filter: blur(7px) contrast(100) blur(0);
+    mix-blend-mode: lighten;
+    z-index: 1;
+}
+
+.cn-gooey-filter::before {
+    content: '';
+    position: absolute;
+    inset: -75px;
+    z-index: -2;
+    background: black;
+}
+
+.cn-gooey-filter::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: white;
+    transform: scale(0);
+    opacity: 0;
+    z-index: -1;
+    border-radius: 100vw;
+}
+
+.cn-gooey-filter.active::after {
+    animation: cn-gooey-pill 0.3s ease both;
+}
+
+@keyframes cn-gooey-pill {
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Particles */
+.cn-gooey-particle,
+.cn-gooey-point {
+    display: block;
+    opacity: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    transform-origin: center;
+}
+
+.cn-gooey-particle {
+    --time: 5s;
+    position: absolute;
+    top: calc(50% - 7px);
+    left: calc(50% - 7px);
+    animation: cn-gooey-particle-anim calc(var(--time)) ease 1 -350ms;
+}
+
+.cn-gooey-point {
+    background: var(--color);
+    opacity: 1;
+    animation: cn-gooey-point-anim calc(var(--time)) ease 1 -350ms;
+}
+
+@keyframes cn-gooey-particle-anim {
+    0% {
+        transform: rotate(0deg) translate(var(--start-x), var(--start-y));
+        opacity: 1;
+        animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    70% {
+        transform: rotate(calc(var(--rotate)*0.5)) translate(calc(var(--end-x)*1.2), calc(var(--end-y)*1.2));
+        opacity: 1;
+        animation-timing-function: ease;
+    }
+
+    85% {
+        transform: rotate(calc(var(--rotate)*0.66)) translate(var(--end-x), var(--end-y));
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(calc(var(--rotate)*1.2)) translate(calc(var(--end-x)*0.5), calc(var(--end-y)*0.5));
+        opacity: 1;
+    }
+}
+
+@keyframes cn-gooey-point-anim {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+        animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    25% {
+        transform: scale(calc(var(--scale)*0.25));
+    }
+
+    38% {
+        opacity: 1;
+    }
+
+    65% {
+        transform: scale(var(--scale));
+        opacity: 1;
+        animation-timing-function: ease;
+    }
+
+    85% {
+        transform: scale(var(--scale));
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
 }
 
 /* ── STAGGERED MENU (Mobile) ──────────────────────────── */
