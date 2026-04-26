@@ -1157,64 +1157,114 @@ void main() {
         initHeroOrb();
         initCircularGallery();
 
-        // ── Lanyard Physics ───────────────────────────────────────
+        // ── Lanyard Physics (Spring/Elastic) ──────────────────────
         (function initLanyard() {
             const scene = document.querySelector('.lanyard-scene');
             const card = document.getElementById('lanyardCard');
             if (!scene || !card) return;
 
-            let currentAngle = 0;
-            let velocity = 0;
+            // Stop CSS idle animation — physics handles everything
+            card.style.animation = 'none';
+
+            // ── State ──────────────────────────────────────────────
+            let angle = 0;          // current rotation angle (deg)
+            let omega = 0;          // angular velocity (deg/frame)
             let isDown = false;
             let lastX = 0;
-            let animFrame;
+            let lastTime = performance.now();
+
+            // Velocity tracking for release impulse
+            const velHistory = [];  // [{dx, t}]
+            const VEL_WINDOW = 80;  // ms window to average release velocity
+
+            // Mouse 3D tilt state
             let mouseX = 0, mouseY = 0;
+            let tiltX = 0, tiltY = 0;
             let sceneRect = scene.getBoundingClientRect();
 
-            // Physics constants
-            const GRAVITY = 0.008;
-            const DAMPING = 0.96;
-            const MAX_ANGLE = 35;
+            // ── Physics constants ──────────────────────────────────
+            const STIFFNESS = 0.045;   // spring pull-back strength
+            const DAMPING = 0.982;   // energy retention (higher = bouncier)
+            const DRAG_SENS = 0.55;    // drag sensitivity (deg per px)
+            const MAX_ANGLE = 45;      // max rotation clamp
+            const IDLE_AMP = 3;       // idle swing amplitude (deg)
+            const IDLE_SPEED = 0.0008;  // idle swing speed
 
-            function physicsLoop() {
+            // ── Idle swing (when fully settled) ───────────────────
+            let idleT = 0;
+            let settled = false;
+
+            function getReleasedVelocity() {
+                const now = performance.now();
+                const recent = velHistory.filter(v => now - v.t < VEL_WINDOW);
+                if (!recent.length) return 0;
+                const avg = recent.reduce((s, v) => s + v.dx, 0) / recent.length;
+                return avg * DRAG_SENS * 1.8; // amplify release impulse
+            }
+
+            // ── Main physics loop ──────────────────────────────────
+            function loop(now) {
+                const dt = Math.min((now - lastTime) / 16.67, 3); // normalize to 60fps
+                lastTime = now;
+
                 if (!isDown) {
-                    // Spring back to center + gravity
-                    velocity += -currentAngle * GRAVITY;
-                    velocity *= DAMPING;
-                    currentAngle += velocity;
+                    // Spring force: pulls angle back to 0
+                    const springForce = -STIFFNESS * angle;
+                    omega += springForce * dt;
+                    omega *= Math.pow(DAMPING, dt);
+                    angle += omega * dt;
 
-                    // Clamp
-                    if (Math.abs(currentAngle) < 0.01 && Math.abs(velocity) < 0.01) {
-                        currentAngle = 0;
-                        velocity = 0;
+                    // Detect settled
+                    const isSettled = Math.abs(angle) < 0.15 && Math.abs(omega) < 0.15;
+                    if (isSettled) {
+                        angle = 0;
+                        omega = 0;
+                        settled = true;
+                    } else {
+                        settled = false;
+                        idleT = 0;
+                    }
+
+                    // Idle gentle swing when settled
+                    if (settled) {
+                        idleT += dt;
+                        angle = Math.sin(performance.now() * IDLE_SPEED) * IDLE_AMP;
                     }
                 }
 
-                const clampedAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, currentAngle));
+                // Clamp angle
+                const displayAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, angle));
 
-                // 3D tilt based on mouse position
+                // Smooth 3D tilt toward mouse (lerp)
                 const centerX = sceneRect.left + sceneRect.width / 2;
                 const centerY = sceneRect.top + sceneRect.height / 2;
-                const relX = (mouseX - centerX) / (sceneRect.width / 2);
-                const relY = (mouseY - centerY) / (sceneRect.height / 2);
-                const tiltX = relY * -8;
-                const tiltY = relX * 8;
+                const targetTiltY = ((mouseX - centerX) / (sceneRect.width / 2)) * 10;
+                const targetTiltX = ((mouseY - centerY) / (sceneRect.height / 2)) * -8;
+                tiltX += (targetTiltX - tiltX) * 0.08 * dt;
+                tiltY += (targetTiltY - tiltY) * 0.08 * dt;
 
-                card.style.transform = `rotate(${clampedAngle}deg) perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-                card.style.animationPlayState = 'paused';
+                card.style.transform = [
+                    `rotate(${displayAngle}deg)`,
+                    `perspective(700px)`,
+                    `rotateX(${tiltX}deg)`,
+                    `rotateY(${tiltY}deg)`,
+                ].join(' ');
 
-                animFrame = requestAnimationFrame(physicsLoop);
+                requestAnimationFrame(loop);
             }
 
-            // Mouse / Touch events
-            const onDown = (e) => {
+            // ── Input events ───────────────────────────────────────
+            function onDown(e) {
                 isDown = true;
+                settled = false;
                 lastX = e.touches ? e.touches[0].clientX : e.clientX;
-                velocity = 0;
+                omega = 0;
+                velHistory.length = 0;
                 scene.style.cursor = 'grabbing';
-            };
+                e.preventDefault();
+            }
 
-            const onMove = (e) => {
+            function onMove(e) {
                 const x = e.touches ? e.touches[0].clientX : e.clientX;
                 const y = e.touches ? e.touches[0].clientY : e.clientY;
                 mouseX = x;
@@ -1222,31 +1272,37 @@ void main() {
 
                 if (isDown) {
                     const dx = x - lastX;
-                    currentAngle += dx * 0.3;
+                    angle += dx * DRAG_SENS;
                     lastX = x;
-                }
-            };
 
-            const onUp = () => {
+                    // Track velocity history
+                    velHistory.push({ dx, t: performance.now() });
+                    if (velHistory.length > 20) velHistory.shift();
+                }
+            }
+
+            function onUp() {
+                if (!isDown) return;
                 isDown = false;
                 scene.style.cursor = 'grab';
-                // Give a little velocity from current position
-                velocity = currentAngle * 0.05;
-            };
 
+                // Transfer drag velocity → angular velocity for elastic bounce
+                omega = getReleasedVelocity();
+                velHistory.length = 0;
+            }
+
+            // Attach events
             scene.addEventListener('mousedown', onDown);
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onUp);
-            scene.addEventListener('touchstart', onDown, { passive: true });
+            scene.addEventListener('touchstart', onDown, { passive: false });
             window.addEventListener('touchmove', onMove, { passive: true });
             window.addEventListener('touchend', onUp);
-
-            // Update scene rect on resize
             window.addEventListener('resize', () => {
                 sceneRect = scene.getBoundingClientRect();
             });
 
-            physicsLoop();
+            requestAnimationFrame(loop);
         })();
 
         // ── Start Shuffle Title ───────────────────────────────────
