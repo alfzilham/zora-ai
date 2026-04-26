@@ -192,18 +192,21 @@ img {
     padding: 0 16px 0;
     display: flex;
     gap: 12px;
-    visibility: hidden;
     pointer-events: none;
     z-index: 1;
-    height: 0;
+    max-height: 0;
     overflow: hidden;
-    transition: height 0s;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                padding 0.3s ease;
 }
 
 .cn-nav.open .cn-content {
-    visibility: visible;
     pointer-events: auto;
-    height: auto;
+    max-height: 300px;
+    opacity: 1;
+    padding: 0 16px 16px;
 }
 
 .cn-nav.open .cn-content {
@@ -231,12 +234,25 @@ img {
 
 .cn-card--labs {
     background-image: url('/assets/images/labs/labs.png');
-    background: rgba(0, 0, 0, 0.2);
+}
+
+.cn-card--labs::before,
+.cn-card--navigate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 0;
+    border-radius: 14px;
 }
 
 .cn-card--navigate {
     background-image: url('/assets/images/labs/navigate.png');
-    background: rgba(0, 0, 0, 0.2);
+}
+
+.cn-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .cn-nav.open .cn-card:nth-child(1) {
