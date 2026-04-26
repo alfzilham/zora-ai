@@ -48,6 +48,9 @@ class User(Base):
     def __repr__(self) -> str:
         return f"User(id={self.id}, email={self.email}, name={self.name})"
 
+    # Relationship
+    feedbacks = relationship("Feedback", back_populates="user", lazy="select")
+
     def to_dict(self) -> dict:
         """Convert user model to dictionary (excludes sensitive data)."""
         return {
@@ -96,40 +99,4 @@ class UserProfile(Base):
             "topics": self.topics or [],
             "language": self.language,
             "onboarding_done": self.onboarding_done,
-        }
-
-
-class Feedback(Base):
-    """User-submitted product feedback."""
-
-    __tablename__ = "feedback"
-
-    id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        unique=True,
-        nullable=False
-    )
-    user_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
-    )
-    message = Column(Text, nullable=False)
-    rating = Column(Integer, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-
-    __table_args__ = (
-        Index("idx_feedback_user_created", "user_id", "created_at"),
-    )
-
-    def to_dict(self) -> dict:
-        return {
-            "id": str(self.id),
-            "user_id": str(self.user_id),
-            "message": self.message,
-            "rating": self.rating,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
