@@ -1248,7 +1248,7 @@ void main() {
                 }
 
                 listEl.querySelectorAll('li').forEach((li, index) => {
-                    li.addEventListener('click', () => {
+                    li.addEventListener('mouseenter', () => {
                         if (activeIndex === index) return;
                         activeIndex = index;
 
@@ -1256,7 +1256,9 @@ void main() {
                         li.classList.add('active');
                         updatePos(li);
 
-                        filterEl.querySelectorAll('.cn-gooey-particle').forEach(p => filterEl.removeChild(p));
+                        filterEl.querySelectorAll('.cn-gooey-particle').forEach(p => {
+                            try { filterEl.removeChild(p); } catch {}
+                        });
                         textEl.classList.remove('active');
                         void textEl.offsetWidth;
                         textEl.classList.add('active');

@@ -257,12 +257,13 @@ img {
 .cn-gooey-container nav ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 0;
+    gap: 6px 4px;
     list-style: none;
     padding: 0;
     margin: 0;
     position: relative;
     z-index: 3;
+    justify-content: center;
 }
 
 .cn-gooey-container nav ul li {
@@ -273,10 +274,10 @@ img {
 
 .cn-gooey-container nav ul li a {
     display: inline-block;
-    padding: 0.45em 0.9em;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.65);
+    padding: 0.6em 1.2em;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
     text-decoration: none;
     transition: color 0.3s ease;
     border-radius: 100vw;
