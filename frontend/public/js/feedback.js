@@ -85,8 +85,11 @@ function buildListItem(fbData) {
     el.dataset.id = fbData.id;
 
     const initial = fb.user?.name?.[0]?.toUpperCase() || 'U';
+    const avatarHtml = fb.user?.avatar_url
+        ? `<img src="${fb.user.avatar_url}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+        : initial;
     el.innerHTML = `
-        <div class="fli-avatar fli-avatar--user">${initial}</div>
+    <div class="fli-avatar fli-avatar--user">${avatarHtml}</div>
         <div class="fli-content">
             <div class="fli-top">
                 <span class="fli-name">You</span>
@@ -128,6 +131,9 @@ function appendUserBubble(data) {
 
     const stars = data.rating > 0 ? '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating) : '';
     const initial = fb.user?.name?.[0]?.toUpperCase() || 'U';
+    const avatarEl = fb.user?.avatar_url
+        ? `<img src="${fb.user.avatar_url}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+        : initial;
     const shotHtml = data.screenshotBase64
         ? `<div class="bubble-screenshot"><img src="${data.screenshotBase64}" alt="Screenshot"></div>`
         : '';
@@ -150,7 +156,7 @@ function appendUserBubble(data) {
                 ${data.rating > 0 ? `<div class="bubble-stars" style="color:rgba(255,255,255,0.9)">${stars} <span style="font-size:.72rem;opacity:.8">${starLabels[data.rating]}</span></div>` : ''}
             </div>
         </div>
-        <div class="bubble-avatar bubble-avatar--user">${initial}</div>
+        <div class="bubble-avatar bubble-avatar--user">${avatarEl}</div>
     `;
 
     list.appendChild(div);
@@ -427,7 +433,10 @@ async function loadHistory() {
     const container = qs('feedbackListItems');
     const leftEmpty = qs('leftEmpty');
 
-    if (!data?.data?.length) {
+    // Handle berbagai format response
+    const items = data?.data || data?.feedbacks || (Array.isArray(data) ? data : []);
+
+    if (!items.length) {
         leftEmpty?.classList.add('show');
         return;
     }
@@ -435,7 +444,7 @@ async function loadHistory() {
     leftEmpty?.classList.remove('show');
     qs('stageHint')?.classList.add('hidden');
 
-    data.data.forEach(item => {
+    items.forEach(item => {
         const fbData = {
             id: item.id || `fb_${Date.now()}_${Math.random()}`,
             category: item.category || 'suggestion',

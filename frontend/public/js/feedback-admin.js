@@ -13,26 +13,26 @@ const fa = {
 
 const catLabels = {
     suggestion: 'Suggestion',
-    bug:        'Bug Report',
-    praise:     'Praise',
-    question:   'Question',
+    bug: 'Bug Report',
+    praise: 'Praise',
+    question: 'Question',
 };
 
 const catColors = {
     suggestion: 'cat-suggestion',
-    bug:        'cat-bug',
-    praise:     'cat-praise',
-    question:   'cat-question',
+    bug: 'cat-bug',
+    praise: 'cat-praise',
+    question: 'cat-question',
 };
 
 // ── UTILS ─────────────────────────────────────────────
-const qs  = id => document.getElementById(id);
+const qs = id => document.getElementById(id);
 const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 function esc(str) {
     return String(str || '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function formatTime(iso) {
@@ -66,7 +66,7 @@ async function apiSafe(endpoint, method = 'GET', body = null) {
     try {
         if (typeof apiCall === 'function') return await apiCall(endpoint, method, body, true);
         const token = localStorage.getItem('zora_token');
-        const opts  = {
+        const opts = {
             method,
             headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         };
@@ -95,7 +95,7 @@ function buildImgLightbox() {
 }
 
 function openImgLightbox(src) {
-    const lb  = qs('faImgLightbox');
+    const lb = qs('faImgLightbox');
     const img = qs('faImgLbImg');
     if (!lb || !img) return;
     img.src = src;
@@ -112,18 +112,18 @@ function buildUserItem(userData) {
     el.className = `fa-user-item${userData.unread ? ' unread' : ''}`;
     el.dataset.uid = userData.user_id;
 
-    const initial  = userData.name?.[0]?.toUpperCase() || 'U';
-    const lastFb   = userData.feedbacks?.[userData.feedbacks.length - 1];
-    const preview  = lastFb?.message?.slice(0, 44) + (lastFb?.message?.length > 44 ? '…' : '') || '—';
-    const timeStr  = lastFb?.created_at ? formatTime(lastFb.created_at) : '';
-    const cat      = lastFb?.category || '';
+    const initial = userData.name?.[0]?.toUpperCase() || 'U';
+    const lastFb = userData.feedbacks?.[userData.feedbacks.length - 1];
+    const preview = lastFb?.message?.slice(0, 44) + (lastFb?.message?.length > 44 ? '…' : '') || '—';
+    const timeStr = lastFb?.created_at ? formatTime(lastFb.created_at) : '';
+    const cat = lastFb?.category || '';
     const catClass = catColors[cat] || '';
 
     el.innerHTML = `
         <div class="fa-item-avatar">
             ${userData.avatar_url
-                ? `<img src="${esc(userData.avatar_url)}" alt="${esc(userData.name)}">`
-                : initial}
+            ? `<img src="${esc(userData.avatar_url)}" alt="${esc(userData.name)}">`
+            : initial}
         </div>
         <div class="fa-item-body">
             <div class="fa-item-top">
@@ -145,7 +145,7 @@ function buildUserItem(userData) {
 
 function renderUserList(users) {
     const container = qs('faUserList');
-    const empty     = qs('faListEmpty');
+    const empty = qs('faListEmpty');
     if (!container) return;
 
     container.querySelectorAll('.fa-user-item').forEach(el => el.remove());
@@ -164,7 +164,7 @@ function renderUserList(users) {
 
     // Update counts
     const totalFb = filtered.reduce((acc, u) => acc + (u.feedbacks?.length || 0), 0);
-    const unread  = filtered.filter(u => u.unread).length;
+    const unread = filtered.filter(u => u.unread).length;
     const siBadge = qs('sidebarUnreadBadge');
     const totalEl = qs('totalFeedbackCount');
     const unreadEl = qs('unreadFeedbackCount');
@@ -179,7 +179,7 @@ function renderUserList(users) {
 
 // ── OPEN USER CHAT ────────────────────────────────────
 function openUserChat(userData) {
-    fa.activeUserId   = userData.user_id;
+    fa.activeUserId = userData.user_id;
     fa.activeUserData = userData;
 
     // Active state in list
@@ -203,7 +203,7 @@ function openUserChat(userData) {
         ? `<img src="${esc(userData.avatar_url)}" alt="avatar">`
         : initial;
 
-    const nameEl  = qs('faChatName');  if (nameEl)  nameEl.textContent  = userData.name  || 'User';
+    const nameEl = qs('faChatName'); if (nameEl) nameEl.textContent = userData.name || 'User';
     const emailEl = qs('faChatEmail'); if (emailEl) emailEl.textContent = userData.email || '—';
     const countEl = qs('faChatCount'); if (countEl) countEl.textContent = `${userData.feedbacks?.length || 0} feedback`;
 
@@ -232,8 +232,8 @@ function renderChatMessages(userData) {
 }
 
 function buildFeedbackCard(fb, userData) {
-    const initial  = userData.name?.[0]?.toUpperCase() || 'U';
-    const stars    = fb.rating > 0 ? '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating) : '';
+    const initial = userData.name?.[0]?.toUpperCase() || 'U';
+    const stars = fb.rating > 0 ? '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating) : '';
     const catClass = catColors[fb.category] || '';
     const shotHtml = fb.screenshot_url
         ? `<div class="fa-card-screenshot" data-src="${esc(fb.screenshot_url)}">
@@ -289,7 +289,7 @@ async function sendReply() {
     if (fa.isSending || !fa.activeUserId) return;
 
     const input = qs('faReplyInput');
-    const text  = input?.value?.trim();
+    const text = input?.value?.trim();
     if (!text) { toast('Please write a reply', 'error'); return; }
 
     fa.isSending = true;
@@ -327,29 +327,42 @@ async function sendReply() {
 
 // ── LOAD ALL FEEDBACKS ────────────────────────────────
 async function loadAllFeedbacks() {
-    const data = await apiSafe('/feedback/all', 'GET');
-
+    // Coba endpoint all dulu, fallback ke my
+    let data = await apiSafe('/feedback/all', 'GET');
     if (!data?.data?.length) {
+        data = await apiSafe('/feedback', 'GET');
+    }
+
+    const items = data?.data || data?.feedbacks || (Array.isArray(data) ? data : []);
+
+    if (!items.length) {
         qs('faListEmpty')?.classList.remove('hidden');
         return;
     }
 
     // Group by user
     const userMap = {};
-    data.data.forEach(item => {
+    items.forEach(item => {
         const uid = item.user_id || item.id;
         if (!userMap[uid]) {
             userMap[uid] = {
-                user_id:    uid,
-                name:       item.user_name  || item.name  || 'User',
-                email:      item.user_email || item.email || '—',
+                user_id: uid,
+                name: item.user_name || item.name || 'User',
+                email: item.user_email || item.email || '—',
                 avatar_url: item.avatar_url || null,
-                feedbacks:  [],
-                unread:     false,
+                feedbacks: [],
+                unread: false,
             };
         }
         userMap[uid].feedbacks.push(item);
         if (!item.read_by_admin) userMap[uid].unread = true;
+        // Normalize field names dari berbagai format API
+        item.message = item.message || item.content || '';
+        item.category = item.category || 'suggestion';
+        item.screenshot_url = item.screenshot_url || item.screenshot || null;
+        item.user_name = item.user_name || item.name || 'User';
+        item.user_email = item.user_email || item.email || '—';
+        item.avatar_url = item.avatar_url || item.user?.avatar_url || null;
     });
 
     fa.users = Object.values(userMap);
@@ -381,7 +394,7 @@ function bindSearch() {
     qs('faSearch')?.addEventListener('input', e => {
         const q = e.target.value.toLowerCase();
         document.querySelectorAll('.fa-user-item').forEach(el => {
-            const name    = el.querySelector('.fa-item-name')?.textContent?.toLowerCase()    || '';
+            const name = el.querySelector('.fa-item-name')?.textContent?.toLowerCase() || '';
             const preview = el.querySelector('.fa-item-preview')?.textContent?.toLowerCase() || '';
             el.style.display = (name.includes(q) || preview.includes(q)) ? '' : 'none';
         });
