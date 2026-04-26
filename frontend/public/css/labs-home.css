@@ -223,6 +223,18 @@ img {
     transition: opacity 0.3s ease, transform 0.3s ease;
     overflow: hidden;
     isolation: isolate;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.cn-card--labs {
+    background-image: url('/assets/images/labs/labs.png');
+}
+
+.cn-card--navigate {
+    background-image: url('/assets/images/labs/navigate.png');
 }
 
 .cn-nav.open .cn-card:nth-child(1) {
@@ -298,7 +310,7 @@ img {
     padding: 0.7em 1.4em;
     font-size: 1rem;
     font-weight: 600;
-    color: rgba(255,255,255,0.65);
+    color: rgba(255, 255, 255, 0.65);
     text-decoration: none;
     transition: color 0.3s ease;
     border-radius: 100vw;
