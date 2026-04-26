@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Admin — ZORA AI</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/feedback-admin.css">
+</head>
+
+<body>
+
+    <!-- ── APP SHELL ──────────────────────────────────────── -->
+    <div class="db-app" id="adminShell">
+
+        <!-- SIDEBAR -->
+        <aside class="db-sidebar">
+            <div class="db-sidebar-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
+                <span class="db-sidebar-name">ZORA AI</span>
+            </div>
+            <nav class="db-sidebar-nav">
+                <a href="/dashboard/index.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-pie-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-users"></i>
+                    <span>Users</span>
+                </div>
+                <div class="db-nav-item active">
+                    <i class="fi fi-rr-comment-alt"></i>
+                    <span>Feedback</span>
+                    <span class="fa-unread-badge hidden" id="sidebarUnreadBadge">0</span>
+                </div>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-chart-line-up"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-wallet"></i>
+                    <span>Earnings</span>
+                </div>
+            </nav>
+            <div class="db-sidebar-footer">
+                <a href="/chat/index.html" class="db-back-chat">
+                    <i class="fi fi-rr-arrow-left"></i>
+                    <span>Back to Chat</span>
+                </a>
+                <button id="adminLogoutBtn" class="db-logout-btn" type="button">
+                    <i class="fi fi-rr-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="fa-main">
+
+            <!-- TOPBAR -->
+            <header class="fa-topbar">
+                <div class="fa-topbar-left">
+                    <h1 class="fa-page-title">Feedback</h1>
+                    <p class="fa-page-sub">Manage and reply to user feedback</p>
+                </div>
+                <div class="fa-topbar-right">
+                    <div class="fa-filter-group">
+                        <button class="fa-filter-btn active" data-filter="all">All</button>
+                        <button class="fa-filter-btn" data-filter="suggestion">Suggestion</button>
+                        <button class="fa-filter-btn" data-filter="bug">Bug</button>
+                        <button class="fa-filter-btn" data-filter="praise">Praise</button>
+                        <button class="fa-filter-btn" data-filter="question">Question</button>
+                    </div>
+                    <div class="fa-stat-chip">
+                        <i class="fi fi-rr-comment-alt"></i>
+                        <span id="totalFeedbackCount">0</span> total
+                    </div>
+                    <div class="fa-stat-chip fa-stat-chip--unread">
+                        <i class="fi fi-rr-bell"></i>
+                        <span id="unreadFeedbackCount">0</span> unread
+                    </div>
+                </div>
+            </header>
+
+            <!-- BODY SPLIT -->
+            <div class="fa-split">
+
+                <!-- LEFT: user list -->
+                <aside class="fa-left">
+                    <div class="fa-left-search">
+                        <i class="fi fi-rr-search fa-search-icon"></i>
+                        <input type="text" id="faSearch" class="fa-search-input" placeholder="Search users...">
+                    </div>
+                    <div class="fa-user-list" id="faUserList">
+                        <div class="fa-list-empty" id="faListEmpty">
+                            <i class="fi fi-rr-comment-alt"></i>
+                            <p>No feedback yet</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- RIGHT: chat -->
+                <section class="fa-right" id="faRight">
+
+                    <!-- Empty state -->
+                    <div class="fa-empty-state" id="faEmptyState">
+                        <div class="fa-empty-icon">
+                            <i class="fi fi-rr-comment-alt"></i>
+                        </div>
+                        <h3>Select a conversation</h3>
+                        <p>Choose a user from the list to view their feedback and reply.</p>
+                    </div>
+
+                    <!-- Active chat -->
+                    <div class="fa-chat-wrap hidden" id="faChatWrap">
+
+                        <!-- Chat header -->
+                        <div class="fa-chat-header" id="faChatHeader">
+                            <div class="fa-chat-user">
+                                <div class="fa-chat-avatar" id="faChatAvatar">U</div>
+                                <div>
+                                    <p class="fa-chat-name" id="faChatName">User</p>
+                                    <p class="fa-chat-email" id="faChatEmail">—</p>
+                                </div>
+                            </div>
+                            <div class="fa-chat-header-right">
+                                <span class="fa-chat-count" id="faChatCount">0 feedback</span>
+                                <button class="fa-mark-read-btn" id="faMarkReadBtn" title="Mark all as read">
+                                    <i class="fi fi-rr-check-circle"></i>
+                                    Mark read
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+                        <div class="fa-messages" id="faMessages">
+                            <div class="fa-date-divider"><span>Feedback Thread</span></div>
+                            <div id="faMessageList"></div>
+                            <div class="fa-typing hidden" id="faTyping">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+
+                        <!-- Reply composer -->
+                        <div class="fa-composer">
+                            <div class="fa-composer-inner">
+                                <div class="fa-composer-avatar">
+                                    <img src="/assets/images/logo/logo.png" alt="Dev"
+                                        onerror="this.style.display='none';this.parentNode.innerHTML='Z'">
+                                </div>
+                                <div class="fa-composer-right">
+                                    <textarea id="faReplyInput" class="fa-reply-input" rows="1"
+                                        placeholder="Reply to this user..."></textarea>
+                                    <div class="fa-composer-actions">
+                                        <span class="fa-composer-hint">Shift+Enter for new line</span>
+                                        <button class="fa-send-btn" id="faSendBtn">
+                                            <i class="fi fi-rs-paper-plane"></i>
+                                            Send Reply
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST -->
+    <div class="fa-toast hidden" id="faToast"></div>
+
+    <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/feedback-admin.js"></script>
+
+</body>
+
+</html>

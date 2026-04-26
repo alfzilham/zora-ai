@@ -475,7 +475,7 @@ img {
     border-radius: 30px;
     margin-top: 10px;
     position: relative;
-    background: rgba(255, 255, 255, 0);
+    background: rgba(0, 153, 204, 0.05);
 }
 
 .lh-circular-gallery:active {
