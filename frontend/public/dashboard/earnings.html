@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings - ZORA AI</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+
+    <style>
+        /* ── PAGE LOADER ─────────────────────────────────────── */
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0d0d12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.35s ease;
+            pointer-events: all;
+        }
+
+        #pageLoader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #pageLoader.hidden {
+            display: none;
+        }
+
+        .zora-spinner {
+            position: relative;
+            border-radius: 50%;
+            height: 80px;
+            width: 80px;
+            animation: rotate_3922 1.2s linear infinite;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span {
+            position: absolute;
+            border-radius: 50%;
+            height: 100%;
+            width: 100%;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span:nth-of-type(1) {
+            filter: blur(5px);
+        }
+
+        .zora-spinner span:nth-of-type(2) {
+            filter: blur(10px);
+        }
+
+        .zora-spinner span:nth-of-type(3) {
+            filter: blur(25px);
+        }
+
+        .zora-spinner span:nth-of-type(4) {
+            filter: blur(50px);
+        }
+
+        .zora-spinner::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background-color: #0d0d12;
+            border: solid 4px #0d0d12;
+            border-radius: 50%;
+        }
+
+        @keyframes rotate_3922 {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── TOPBAR ──────────────────────────────────────────── */
+        .earn-topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 24px 28px 0;
+            flex-shrink: 0;
+        }
+
+        .earn-topbar-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .earn-subtitle {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 0;
+        }
+
+        /* ── BALANCE HERO ────────────────────────────────────── */
+        .earn-hero {
+            margin: 20px 28px 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(0, 136, 255, 0.06));
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .earn-hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .earn-hero-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(0, 212, 255, 0.6);
+        }
+
+        .earn-hero-value {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #00D4FF;
+            line-height: 1;
+        }
+
+        .earn-hero-sub {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .earn-hero-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: right;
+        }
+
+        .earn-hero-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .earn-hero-stat-label {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .earn-hero-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .earn-hero-stat-value.green {
+            color: #00e5a0;
+        }
+
+        .earn-hero-stat-value.red {
+            color: #ff4d4d;
+        }
+
+        /* ── SUMMARY CARDS ───────────────────────────────────── */
+        .earn-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            padding: 14px 28px 0;
+        }
+
+        .earn-stat {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .earn-stat-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .earn-stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .earn-stat-value.green {
+            color: #00e5a0;
+        }
+
+        .earn-stat-value.amber {
+            color: #fbbf24;
+        }
+
+        .earn-stat-value.purple {
+            color: #a78bfa;
+        }
+
+        .earn-stat-sub {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── CONTENT ─────────────────────────────────────────── */
+        .earn-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .earn-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .earn-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+        }
+
+        /* ── PANELS ──────────────────────────────────────────── */
+        .earn-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px 22px;
+        }
+
+        .earn-panel-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .earn-panel-kicker {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 3px;
+        }
+
+        .earn-panel-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        /* ── GRID ────────────────────────────────────────────── */
+        .earn-grid-2 {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+            gap: 14px;
+        }
+
+        /* ── CHART ───────────────────────────────────────────── */
+        .earn-chart-wrap {
+            height: 220px;
+            position: relative;
+        }
+
+        /* ── PROGRESS BAR ────────────────────────────────────── */
+        .earn-progress-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .earn-progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .earn-progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .earn-progress-label {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .earn-progress-val {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .earn-track {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .earn-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .earn-fill.cyan {
+            background: linear-gradient(90deg, #00D4FF, #0088ff);
+        }
+
+        .earn-fill.green {
+            background: linear-gradient(90deg, #00e5a0, #00a86b);
+        }
+
+        .earn-fill.red {
+            background: linear-gradient(90deg, #ff4d4d, #cc0000);
+        }
+
+        /* ── TRANSACTION LIST ────────────────────────────────── */
+        .earn-tx-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .earn-tx-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            transition: background 0.15s;
+        }
+
+        .earn-tx-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .earn-tx-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+        }
+
+        .earn-tx-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .earn-tx-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 2px;
+        }
+
+        .earn-tx-sub {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .earn-tx-amount {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #ff4d4d;
+            white-space: nowrap;
+        }
+
+        .earn-tx-date {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+        }
+
+        .earn-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px 24px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        .earn-empty i {
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        .earn-empty p {
+            font-size: 0.82rem;
+            margin: 0;
+        }
+
+        /* ── LOADING ─────────────────────────────────────────── */
+        .earn-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.85rem;
+            padding: 40px 28px;
+            justify-content: center;
+        }
+
+        .spin {
+            animation: spinAnim 1s linear infinite;
+        }
+
+        @keyframes spinAnim {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────────── */
+        @media (max-width: 1100px) {
+            .earn-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .db-sidebar {
+                display: none;
+            }
+
+            .earn-summary {
+                grid-template-columns: 1fr;
+                padding: 14px 16px 0;
+            }
+
+            .earn-topbar {
+                padding: 16px 16px 0;
+                flex-direction: column;
+            }
+
+            .earn-content {
+                padding: 14px 16px 24px;
+            }
+
+            .earn-hero {
+                margin: 14px 16px 0;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .earn-hero-right {
+                text-align: center;
+                flex-direction: row;
+                justify-content: center;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Page Loader -->
+    <div id="pageLoader">
+        <div class="zora-spinner">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <div class="db-app">
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="db-sidebar">
+            <div class="db-sidebar-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
+                <span class="db-sidebar-name">ZORA AI</span>
+            </div>
+            <nav class="db-sidebar-nav">
+                <a href="/dashboard/index.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-pie-alt"></i><span>Dashboard</span>
+                </a>
+                <a href="/dashboard/users.html" class="db-nav-item">
+                    <i class="fi fi-rr-users"></i><span>Users</span>
+                </a>
+                <a href="/dashboard/feedback-admin.html" class="db-nav-item">
+                    <i class="fi fi-rr-comment-alt"></i><span>Feedback</span>
+                </a>
+                <a href="/dashboard/analytics.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-line-up"></i><span>Analytics</span>
+                </a>
+                <div class="db-nav-item active">
+                    <i class="fi fi-rr-wallet"></i><span>Earnings</span>
+                </div>
+                <a href="/dashboard/trade-history.html" class="db-nav-item">
+                    <i class="fi fi-rr-coins"></i><span>Trade History</span>
+                </a>
+                <a href="/dashboard/notifications.html" class="db-nav-item">
+                    <i class="fi fi-rr-bell"></i><span>Notifications</span>
+                </a>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-settings"></i><span>Settings</span>
+                </div>
+            </nav>
+            <div class="db-sidebar-footer">
+                <a href="/chat/index.html" class="db-back-chat">
+                    <i class="fi fi-rr-arrow-left"></i><span>Back to Chat</span>
+                </a>
+                <button id="logoutBtn" class="db-logout-btn" type="button">
+                    <i class="fi fi-rr-sign-out-alt"></i><span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ── MAIN ── -->
+        <main class="db-main">
+
+            <!-- Topbar -->
+            <header class="earn-topbar">
+                <div class="earn-topbar-left">
+                    <h1 class="db-page-title">Earnings</h1>
+                    <p class="earn-subtitle">Revenue overview and withdrawal summary</p>
+                </div>
+            </header>
+
+            <!-- Loading -->
+            <div class="earn-loading" id="earnLoading">
+                <i class="fi fi-rr-spinner spin"></i>
+                Loading earnings...
+            </div>
+
+            <!-- Hero Balance -->
+            <div class="earn-hero" id="earnHero" style="display:none">
+                <div class="earn-hero-left">
+                    <p class="earn-hero-label">Available Balance</p>
+                    <p class="earn-hero-value" id="heroBalance">Rp0</p>
+                    <p class="earn-hero-sub">Total earned minus total withdrawn</p>
+                </div>
+                <div class="earn-hero-right">
+                    <div class="earn-hero-stat">
+                        <span class="earn-hero-stat-label">Total Earned</span>
+                        <span class="earn-hero-stat-value green" id="heroEarned">Rp0</span>
+                    </div>
+                    <div class="earn-hero-stat">
+                        <span class="earn-hero-stat-label">Total Withdrawn</span>
+                        <span class="earn-hero-stat-value red" id="heroWithdrawn">Rp0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="earn-summary" id="earnSummary" style="display:none">
+                <div class="earn-stat">
+                    <p class="earn-stat-label">Earning per User</p>
+                    <p class="earn-stat-value green">Rp1.000.000</p>
+                    <p class="earn-stat-sub">Fixed rate per signup</p>
+                </div>
+                <div class="earn-stat">
+                    <p class="earn-stat-label">Total Transactions</p>
+                    <p class="earn-stat-value amber" id="statTxCount">0</p>
+                    <p class="earn-stat-sub">Withdrawal requests made</p>
+                </div>
+                <div class="earn-stat">
+                    <p class="earn-stat-label">Avg. Withdrawal</p>
+                    <p class="earn-stat-value purple" id="statAvgTx">Rp0</p>
+                    <p class="earn-stat-sub">Per transaction average</p>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="earn-content" id="earnContent" style="display:none">
+
+                <!-- Row: Chart + Breakdown -->
+                <div class="earn-grid-2">
+
+                    <!-- Earnings Chart -->
+                    <div class="earn-panel">
+                        <div class="earn-panel-header">
+                            <div>
+                                <p class="earn-panel-kicker">Revenue</p>
+                                <h2 class="earn-panel-title">Earnings Growth — Last 6 Months</h2>
+                            </div>
+                        </div>
+                        <div class="earn-chart-wrap">
+                            <canvas id="earningsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Balance Breakdown -->
+                    <div class="earn-panel">
+                        <div class="earn-panel-header">
+                            <div>
+                                <p class="earn-panel-kicker">Breakdown</p>
+                                <h2 class="earn-panel-title">Balance Overview</h2>
+                            </div>
+                        </div>
+                        <div class="earn-progress-wrap" id="breakdownList"></div>
+                    </div>
+
+                </div>
+
+                <!-- Recent Withdrawals -->
+                <div class="earn-panel">
+                    <div class="earn-panel-header">
+                        <div>
+                            <p class="earn-panel-kicker">History</p>
+                            <h2 class="earn-panel-title">Recent Withdrawals</h2>
+                        </div>
+                        <a href="/dashboard/trade-history.html" class="db-pill-btn"
+                            style="text-decoration:none;display:flex;align-items:center;gap:5px">
+                            <i class="fi fi-rr-arrow-right"></i> View All
+                        </a>
+                    </div>
+                    <div class="earn-tx-list" id="txList"></div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/auth.js"></script>
+    <script>
+        // ── PAGE LOADER ────────────────────────────────────────────────────────────
+        (function () {
+            const loader = document.getElementById('pageLoader');
+            window.addEventListener('load', () => {
+                if (!loader) return;
+                loader.classList.add('fade-out');
+                setTimeout(() => loader.classList.add('hidden'), 380);
+            });
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+                const dashPages = ['/dashboard/', '/chat/'];
+                if (!dashPages.some(p => href.includes(p))) return;
+                e.preventDefault();
+                if (!loader) { window.location.href = href; return; }
+                loader.classList.remove('hidden', 'fade-out');
+                setTimeout(() => { window.location.href = href; }, 350);
+            });
+        })();
+
+        // ── EARNINGS ───────────────────────────────────────────────────────────────
+        (function () {
+            const TRADE_KEY = 'zora_trade_history';
+
+            function formatRp(v) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
+                }).format(v || 0);
+            }
+
+            function formatDate(iso) {
+                if (!iso) return '-';
+                return new Date(iso).toLocaleDateString('id-ID', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+            }
+
+            function loadTrades() {
+                try { return JSON.parse(localStorage.getItem(TRADE_KEY) || '[]'); } catch { return []; }
+            }
+
+            function buildEarningsChart(usersByMonth) {
+                const dataMap = {};
+                usersByMonth.forEach(item => {
+                    const key = `${item.year}-${String(item.month).padStart(2, '0')}`;
+                    dataMap[key] = item.count * 1_000_000;
+                });
+
+                const labels = [], values = [];
+                const now = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    labels.push(`${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`);
+                    values.push(dataMap[key] || 0);
+                }
+
+                new Chart(document.getElementById('earningsChart'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Earnings (Rp)',
+                            data: values,
+                            backgroundColor: 'rgba(0,229,160,0.08)',
+                            fill: true, tension: 0.4,
+                            pointBackgroundColor: '#00e5a0',
+                            pointRadius: 5, pointHoverRadius: 7,
+                            borderColor: '#00e5a0', borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => formatRp(ctx.raw)
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { ticks: { color: '#A0A0B0', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#A0A0B0',
+                                    callback: v => v >= 1_000_000 ? `${v / 1_000_000}M` : v
+                                },
+                                grid: { color: 'rgba(255,255,255,0.04)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function buildBreakdown(totalEarned, totalWithdrawn) {
+                const balance = Math.max(0, totalEarned - totalWithdrawn);
+                const earnedPct = totalEarned > 0 ? 100 : 0;
+                const withdrawnPct = totalEarned > 0 ? Math.round((totalWithdrawn / totalEarned) * 100) : 0;
+                const balancePct = totalEarned > 0 ? Math.round((balance / totalEarned) * 100) : 0;
+
+                document.getElementById('breakdownList').innerHTML = `
+            <div class="earn-progress-item">
+                <div class="earn-progress-row">
+                    <span class="earn-progress-label">💰 Total Earned</span>
+                    <span class="earn-progress-val">${formatRp(totalEarned)}</span>
+                </div>
+                <div class="earn-track">
+                    <div class="earn-fill cyan" style="width:${earnedPct}%"></div>
+                </div>
+            </div>
+            <div class="earn-progress-item">
+                <div class="earn-progress-row">
+                    <span class="earn-progress-label">📤 Total Withdrawn</span>
+                    <span class="earn-progress-val">${formatRp(totalWithdrawn)}</span>
+                </div>
+                <div class="earn-track">
+                    <div class="earn-fill red" style="width:${withdrawnPct}%"></div>
+                </div>
+            </div>
+            <div class="earn-progress-item">
+                <div class="earn-progress-row">
+                    <span class="earn-progress-label">✅ Available Balance</span>
+                    <span class="earn-progress-val">${formatRp(balance)}</span>
+                </div>
+                <div class="earn-track">
+                    <div class="earn-fill green" style="width:${balancePct}%"></div>
+                </div>
+            </div>
+        `;
+            }
+
+            function buildTxList(trades) {
+                const txList = document.getElementById('txList');
+                const recent = trades.slice(0, 5);
+
+                if (!recent.length) {
+                    txList.innerHTML = `
+                <div class="earn-empty">
+                    <i class="fi fi-rr-wallet"></i>
+                    <p>No withdrawals yet.</p>
+                </div>
+            `;
+                    return;
+                }
+
+                txList.innerHTML = recent.map(t => `
+            <div class="earn-tx-item">
+                <div class="earn-tx-icon">
+                    <i class="fi fi-rr-arrow-up-right"></i>
+                </div>
+                <div class="earn-tx-body">
+                    <p class="earn-tx-title">Withdrawal · ${t.bank_code || '-'}</p>
+                    <p class="earn-tx-sub">${t.account_holder_name || '-'} · ${t.account_number || '-'}</p>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+                    <span class="earn-tx-amount">-${formatRp(t.amount)}</span>
+                    <span class="earn-tx-date">${formatDate(t.date)}</span>
+                </div>
+            </div>
+        `).join('');
+            }
+
+            async function init() {
+                const token = localStorage.getItem('zora_token');
+                if (!token) { window.location.href = '/auth/login.html'; return; }
+
+                document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                    localStorage.removeItem('zora_token');
+                    window.location.href = '/auth/login.html';
+                });
+
+                try {
+                    const res = await apiCall('/dashboard/stats', 'GET', null, true);
+                    const data = res?.data || {};
+
+                    const totalEarned = data.total_earnings || 0;
+                    const trades = loadTrades();
+                    const totalWithdrawn = trades.reduce((s, t) => s + (t.amount || 0), 0);
+                    const balance = Math.max(0, totalEarned - totalWithdrawn);
+                    const txCount = trades.length;
+                    const avgTx = txCount > 0 ? Math.round(totalWithdrawn / txCount) : 0;
+
+                    // Hero
+                    document.getElementById('heroBalance').textContent = formatRp(balance);
+                    document.getElementById('heroEarned').textContent = formatRp(totalEarned);
+                    document.getElementById('heroWithdrawn').textContent = formatRp(totalWithdrawn);
+
+                    // Summary
+                    document.getElementById('statTxCount').textContent = txCount;
+                    document.getElementById('statAvgTx').textContent = formatRp(avgTx);
+
+                    // Hide loading, show all
+                    document.getElementById('earnLoading').style.display = 'none';
+                    document.getElementById('earnHero').style.display = '';
+                    document.getElementById('earnSummary').style.display = '';
+                    document.getElementById('earnContent').style.display = '';
+
+                    // Build visuals
+                    buildEarningsChart(data.users_by_month || []);
+                    buildBreakdown(totalEarned, totalWithdrawn);
+                    buildTxList(trades);
+
+                } catch (err) {
+                    document.getElementById('earnLoading').innerHTML =
+                        `<span style="color:#ff4d4d;padding:28px">${err.message || 'Failed to load earnings.'}</span>`;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+
+</html>
