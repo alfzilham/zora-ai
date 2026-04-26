@@ -481,6 +481,11 @@ function bindEvents() {
         e.preventDefault();
         openSearchPalette();
     });
+
+    document.querySelector('[title="History"]')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        openHistoryLightbox();
+    });
     qs('chatTitleEditBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
         renameCurrentChat();
@@ -553,6 +558,7 @@ function bindEvents() {
     bindSettingsFeatures();
     bindSearchPalette();
     bindRenameLightbox();
+    bindHistoryLightbox();
 }
 
 async function bootstrapChat() {
@@ -1424,6 +1430,91 @@ function applyInterfaceSetting(key, value) {
         applyInterfaceSetting(key, val);
     });
 })();
+
+// ─── HISTORY LIGHTBOX ────────────────────────────────────────────────────────
+
+function openHistoryLightbox() {
+    const lb = qs('historyLightbox');
+    if (!lb) return;
+    lb.classList.remove('hidden');
+    renderHistoryLightbox('');
+    setTimeout(() => qs('historyLightboxSearch')?.focus(), 80);
+}
+
+function closeHistoryLightbox() {
+    qs('historyLightbox')?.classList.add('hidden');
+    const search = qs('historyLightboxSearch');
+    if (search) search.value = '';
+}
+
+function renderHistoryLightbox(query) {
+    const container = qs('historyLightboxList');
+    if (!container) return;
+
+    const q = query.toLowerCase().trim();
+    const results = q
+        ? chatState.conversations.filter((c) =>
+            (c.title || '').toLowerCase().includes(q))
+        : chatState.conversations;
+
+    if (!results.length) {
+        container.innerHTML = `<p class="history-lightbox-empty">${q ? `No results for "${query}"` : 'No chats yet.'}</p>`;
+        return;
+    }
+
+    const groups = {};
+    results.forEach((conv) => {
+        const label = getHistoryGroupLabel(conv.created_at || conv.updated_at);
+        if (!groups[label]) groups[label] = [];
+        groups[label].push(conv);
+    });
+
+    container.innerHTML = Object.entries(groups).map(([label, items]) => `
+        <div class="history-lightbox-group-label">${label}</div>
+        ${items.map((conv) => {
+        const title = conv.title || 'New Chat';
+        const highlighted = q
+            ? title.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<mark>$1</mark>')
+            : title;
+        return `
+                <div class="history-lightbox-item" data-conv-id="${conv.id}">
+                    <div class="history-lightbox-item-icon">
+                        <i class="fi fi-rr-comment"></i>
+                    </div>
+                    <div class="history-lightbox-item-text">
+                        <div class="history-lightbox-item-title">${highlighted}</div>
+                        <div class="history-lightbox-item-date">${getHistoryGroupLabel(conv.created_at || conv.updated_at)}</div>
+                    </div>
+                </div>
+            `;
+    }).join('')}
+    `).join('');
+
+    container.querySelectorAll('.history-lightbox-item').forEach((item) => {
+        item.addEventListener('click', () => {
+            selectConversation(item.dataset.convId);
+            closeHistoryLightbox();
+        });
+    });
+}
+
+function bindHistoryLightbox() {
+    qs('historyLightboxClose')?.addEventListener('click', closeHistoryLightbox);
+
+    qs('historyLightbox')?.addEventListener('click', (e) => {
+        if (e.target === qs('historyLightbox')) closeHistoryLightbox();
+    });
+
+    qs('historyLightboxSearch')?.addEventListener('input', (e) => {
+        renderHistoryLightbox(e.target.value);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !qs('historyLightbox')?.classList.contains('hidden')) {
+            closeHistoryLightbox();
+        }
+    });
+}
 
 // ─── SEARCH COMMAND PALETTE ───────────────────────────────────────────────────
 

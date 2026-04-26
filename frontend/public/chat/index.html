@@ -243,6 +243,31 @@
         </main>
     </div>
 
+    <!-- History Lightbox -->
+    <div id="historyLightbox" class="lightbox-overlay hidden">
+        <div class="lightbox-card history-lightbox-card">
+            <div class="history-lightbox-header">
+                <div>
+                    <h3 class="lightbox-title" style="margin:0;">Chat History</h3>
+                    <p class="history-lightbox-sub">All your past conversations</p>
+                </div>
+                <button id="historyLightboxClose" class="history-lightbox-close" type="button" aria-label="Close">
+                    <i class="fi fi-rr-cross"></i>
+                </button>
+            </div>
+
+            <div class="history-lightbox-search-wrap">
+                <i class="fi fi-rr-search history-lightbox-search-icon"></i>
+                <input id="historyLightboxSearch" type="text" class="history-lightbox-search"
+                    placeholder="Search history...">
+            </div>
+
+            <div id="historyLightboxList" class="history-lightbox-list">
+                <p class="history-lightbox-empty">No chats yet.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Archive Confirmation Lightbox -->
     <div id="archiveLightbox" class="lightbox-overlay hidden">
         <div class="lightbox-card">
