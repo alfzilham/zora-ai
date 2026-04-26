@@ -24,7 +24,7 @@ const autoReplies = {
 
 // ── UTILS ────────────────────────────────────────────
 const qs = id => document.getElementById(id);
-const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+const now = () => new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
 
 function esc(str) {
     return String(str || '')
@@ -462,7 +462,7 @@ async function loadHistory() {
             message: item.message || '',
             screenshotBase64: item.screenshot_url || null,
             time: item.created_at
-                ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                ? new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })
                 : now(),
         };
 
