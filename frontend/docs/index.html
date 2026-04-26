@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZORA AI — Docs</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+    <style>
+        :root {
+            --bg-main: #0A0A0A;
+            --bg-sidebar: #111111;
+            --bg-card: #1A1A1A;
+            --bg-input: #1A1A1A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #00D4FF;
+            --accent-dim: rgba(0, 212, 255, 0.12);
+            --accent-border: rgba(0, 212, 255, 0.25);
+            --border: #2A2A2A;
+            --border-hover: #3A3A3A;
+            --hover: #1A1A1A;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --transition: 0.18s ease;
+            --sidebar-w: 272px;
+            --topbar-h: 52px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            color-scheme: dark;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ── Scrollbar ── */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #2A2A2A transparent;
+        }
+
+        *::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: #2A2A2A;
+            border-radius: 99px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: #3A3A3A;
+        }
+
+        /* ── Layout Shell ── */
+        .docs-shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ══════════════════════════════════════
+           TOPBAR
+        ══════════════════════════════════════ */
+        .docs-topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--topbar-h);
+            background: rgba(10, 10, 10, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            gap: 16px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .topbar-brand img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .topbar-brand-name {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: var(--accent);
+        }
+
+        .topbar-divider {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+        }
+
+        .topbar-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .topbar-breadcrumb span {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .topbar-center {
+            flex: 1;
+            max-width: 360px;
+        }
+
+        .topbar-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 7px 12px;
+            cursor: pointer;
+            transition: border-color var(--transition);
+            width: 100%;
+        }
+
+        .topbar-search:hover {
+            border-color: var(--border-hover);
+        }
+
+        .topbar-search i {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .topbar-search input {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 13px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .topbar-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-kbd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 5px;
+            white-space: nowrap;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .topbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--transition);
+        }
+
+        .topbar-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+        }
+
+        .topbar-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+
+        .topbar-btn.primary:hover {
+            opacity: 0.88;
+        }
+
+        /* ══════════════════════════════════════
+           LEFT SIDEBAR
+        ══════════════════════════════════════ */
+        .docs-sidebar {
+            position: fixed;
+            top: var(--topbar-h);
+            left: 0;
+            width: var(--sidebar-w);
+            height: calc(100vh - var(--topbar-h));
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 20px 0 40px;
+            z-index: 90;
+        }
+
+        .sidebar-section {
+            padding: 0 12px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 12px 8px 6px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 450;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link i {
+            font-size: 13px;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-link:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-link.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-weight: 500;
+            border: 1px solid var(--accent-border);
+        }
+
+        .sidebar-link.active i {
+            color: var(--accent);
+        }
+
+        .sidebar-sep {
+            height: 1px;
+            background: var(--border);
+            margin: 10px 20px;
+        }
+
+        /* ══════════════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════════════ */
+        .docs-main {
+            margin-left: var(--sidebar-w);
+            margin-top: var(--topbar-h);
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .docs-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 48px 60px 80px;
+            max-width: 860px;
+        }
+
+        .docs-content-inner {
+            max-width: 720px;
+        }
+
+        /* ── Right TOC ── */
+        .docs-toc {
+            width: 220px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - var(--topbar-h));
+            overflow-y: auto;
+            padding: 48px 20px 40px 0;
+            border-left: 1px solid var(--border);
+        }
+
+        .toc-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 5px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: all var(--transition);
+        }
+
+        .toc-link:hover {
+            color: var(--text-primary);
+            border-left-color: var(--border-hover);
+        }
+
+        .toc-link.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .toc-link.toc-h3 {
+            padding-left: 24px;
+            font-size: 11.5px;
+        }
+
+        /* ══════════════════════════════════════
+           CONTENT TYPOGRAPHY
+        ══════════════════════════════════════ */
+        .doc-section {
+            display: none;
+        }
+
+        .doc-section.active {
+            display: block;
+        }
+
+        .doc-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .doc-h1 {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .doc-lead {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 32px;
+        }
+
+        .doc-h2 {
+            font-size: 20px;
+            font-weight: 650;
+            color: var(--text-primary);
+            margin: 36px 0 12px;
+            letter-spacing: -0.01em;
+            scroll-margin-top: 72px;
+        }
+
+        .doc-h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 24px 0 8px;
+            scroll-margin-top: 72px;
+        }
+
+        .doc-p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.75;
+            font-size: 14px;
+        }
+
+        .doc-p a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-border);
+            transition: border-color var(--transition);
+        }
+
+        .doc-p a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        /* ── Callout ── */
+        .callout {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            border: 1px solid;
+        }
+
+        .callout-info {
+            background: rgba(0, 212, 255, 0.06);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+
+        .callout-warn {
+            background: rgba(255, 165, 0, 0.06);
+            border-color: rgba(255, 165, 0, 0.2);
+        }
+
+        .callout-tip {
+            background: rgba(23, 201, 100, 0.06);
+            border-color: rgba(23, 201, 100, 0.2);
+        }
+
+        .callout i {
+            font-size: 15px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .callout-info i {
+            color: var(--accent);
+        }
+
+        .callout-warn i {
+            color: #FFA500;
+        }
+
+        .callout-tip i {
+            color: #17C964;
+        }
+
+        .callout-body {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .callout-body strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Block ── */
+        .code-block {
+            background: #0D0D0D;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            background: #0A0A0A;
+        }
+
+        .code-lang {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .code-copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 3px 8px;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+
+        .code-copy-btn:hover {
+            border-color: var(--border-hover);
+            color: var(--text-secondary);
+        }
+
+        .code-copy-btn.copied {
+            color: #17C964;
+            border-color: rgba(23, 201, 100, 0.4);
+        }
+
+        .code-block pre {
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #E0E0E0;
+        }
+
+        /* Syntax colors */
+        .tok-kw {
+            color: #00D4FF;
+        }
+
+        .tok-str {
+            color: #98C379;
+        }
+
+        .tok-num {
+            color: #D19A66;
+        }
+
+        .tok-cmt {
+            color: #5C6370;
+            font-style: italic;
+        }
+
+        .tok-fn {
+            color: #61AFEF;
+        }
+
+        .tok-key {
+            color: #E06C75;
+        }
+
+        /* ── Table ── */
+        .doc-table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .doc-table thead {
+            background: #0D0D0D;
+        }
+
+        .doc-table th {
+            padding: 11px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            letter-spacing: 0.03em;
+        }
+
+        .doc-table td {
+            padding: 11px 16px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .doc-table tr:hover td {
+            background: var(--hover);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: rgba(23, 201, 100, 0.12);
+            color: #17C964;
+            border: 1px solid rgba(23, 201, 100, 0.25);
+        }
+
+        .badge-soon {
+            background: rgba(255, 165, 0, 0.12);
+            color: #FFA500;
+            border: 1px solid rgba(255, 165, 0, 0.25);
+        }
+
+        .badge-cyan {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent-border);
+        }
+
+        .inline-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 6px;
+            color: var(--accent);
+        }
+
+        /* ── Step List ── */
+        .step-list {
+            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-body {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── Model Grid ── */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        .model-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            transition: border-color var(--transition);
+        }
+
+        .model-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .model-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .model-role {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .model-provider {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        /* ── Flow Diagram ── */
+        .flow-diagram {
+            background: #0D0D0D;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .flow-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 20px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .flow-node.accent {
+            background: var(--accent-dim);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        .flow-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 4px 0;
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .flow-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+        }
+
+        /* ── Endpoint List ── */
+        .endpoint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .endpoint-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 13px;
+            transition: border-color var(--transition);
+        }
+
+        .endpoint-item:hover {
+            border-color: var(--border-hover);
+        }
+
+        .method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .method-get {
+            background: rgba(23, 201, 100, 0.12);
+            color: #17C964;
+        }
+
+        .method-post {
+            background: rgba(0, 212, 255, 0.12);
+            color: #00D4FF;
+        }
+
+        .method-put {
+            background: rgba(255, 165, 0, 0.12);
+            color: #FFA500;
+        }
+
+        .method-delete {
+            background: rgba(255, 77, 103, 0.12);
+            color: #FF4D67;
+        }
+
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .endpoint-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ── Page Nav ── */
+        .doc-page-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-nav-btn {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--transition);
+            flex: 1;
+            max-width: 240px;
+        }
+
+        .page-nav-btn:hover {
+            border-color: var(--accent-border);
+            background: var(--accent-dim);
+        }
+
+        .page-nav-btn.next {
+            align-items: flex-end;
+            margin-left: auto;
+        }
+
+        .page-nav-dir {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .page-nav-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1100px) {
+            .docs-toc {
+                display: none;
+            }
+
+            .docs-content {
+                max-width: 100%;
+                padding: 40px 40px 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-w: 0px;
+            }
+
+            .docs-sidebar {
+                transform: translateX(-272px);
+            }
+
+            .docs-sidebar.open {
+                transform: translateX(0);
+                --sidebar-w: 272px;
+            }
+
+            .docs-content {
+                padding: 32px 24px 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══ TOPBAR ══ -->
+    <header class="docs-topbar">
+        <div class="topbar-left">
+            <a class="topbar-brand" href="/chat/index.html">
+                <img src="/assets/images/logo/logo.png" alt="ZORA">
+                <span class="topbar-brand-name">ZORA AI</span>
+            </a>
+            <div class="topbar-divider"></div>
+            <div class="topbar-breadcrumb">
+                <i class="fi fi-rr-document-signed" style="font-size:13px;color:var(--text-muted)"></i>
+                <span>Docs</span>
+            </div>
+        </div>
+
+        <div class="topbar-center">
+            <div class="topbar-search">
+                <i class="fi fi-rr-search"></i>
+                <input type="text" placeholder="Search docs..." id="docsSearchInput">
+                <span class="search-kbd">⌘K</span>
+            </div>
+        </div>
+
+        <div class="topbar-right">
+            <a href="/chat/index.html" class="topbar-btn">
+                <i class="fi fi-rr-arrow-left"></i>
+                Back to Chat
+            </a>
+            <a href="/labs/index.html" class="topbar-btn primary">
+                <i class="fi fi-rr-flask-potion"></i>
+                Labs
+            </a>
+        </div>
+    </header>
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="docs-sidebar" id="docsSidebar">
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Getting Started</div>
+            <a class="sidebar-link active" data-section="intro" href="#intro">
+                <i class="fi fi-rr-house-chimney"></i> Introduction
+            </a>
+            <a class="sidebar-link" data-section="quickstart" href="#quickstart">
+                <i class="fi fi-rr-rocket-lunch"></i> Quickstart
+            </a>
+            <a class="sidebar-link" data-section="architecture" href="#architecture">
+                <i class="fi fi-rr-blueprint"></i> Architecture
+            </a>
+        </div>
+
+        <div class="sidebar-sep"></div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">AI Models</div>
+            <a class="sidebar-link" data-section="models" href="#models">
+                <i class="fi fi-rr-brain"></i> Model Overview
+            </a>
+            <a class="sidebar-link" data-section="routing" href="#routing">
+                <i class="fi fi-rr-route"></i> Routing Logic
+            </a>
+        </div>
+
+        <div class="sidebar-sep"></div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Features</div>
+            <a class="sidebar-link" data-section="chat" href="#chat">
+                <i class="fi fi-rr-comment-alt"></i> Chat System
+            </a>
+            <a class="sidebar-link" data-section="labs" href="#labs">
+                <i class="fi fi-rr-flask-potion"></i> Zora Labs
+            </a>
+            <a class="sidebar-link" data-section="memory" href="#memory">
+                <i class="fi fi-rr-database"></i> Memory System
+            </a>
+        </div>
+
+        <div class="sidebar-sep"></div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">API Reference</div>
+            <a class="sidebar-link" data-section="api-auth" href="#api-auth">
+                <i class="fi fi-rr-lock"></i> Auth Endpoints
+            </a>
+            <a class="sidebar-link" data-section="api-chat" href="#api-chat">
+                <i class="fi fi-rr-paper-plane"></i> Chat Endpoints
+            </a>
+            <a class="sidebar-link" data-section="api-labs" href="#api-labs">
+                <i class="fi fi-rr-test-tube"></i> Labs Endpoints
+            </a>
+        </div>
+
+        <div class="sidebar-sep"></div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Deployment</div>
+            <a class="sidebar-link" data-section="env" href="#env">
+                <i class="fi fi-rr-settings"></i> Environment Vars
+            </a>
+            <a class="sidebar-link" data-section="deploy" href="#deploy">
+                <i class="fi fi-rr-cloud-upload"></i> Deploy to Vercel
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- ══ MAIN ══ -->
+    <div class="docs-main">
+        <div class="docs-content" id="docsContent">
+            <div class="docs-content-inner">
+
+                <!-- ── INTRO ── -->
+                <section class="doc-section active" id="section-intro">
+                    <div class="doc-eyebrow">Getting Started</div>
+                    <h1 class="doc-h1">Introduction to ZORA AI</h1>
+                    <p class="doc-lead">ZORA is a SuperIntelligence Autonomous AI platform that orchestrates multiple AI
+                        models to handle user requests. Users interact with a single unified identity — <strong
+                            style="color:var(--text-primary)">ZORA</strong> — while the system routes each request to
+                        the most capable model available.</p>
+
+                    <div class="callout callout-info">
+                        <i class="fi fi-rr-info"></i>
+                        <div class="callout-body"><strong>What makes ZORA different?</strong> Unlike single-model AI
+                            assistants, ZORA silently delegates every request to the best-suited model — Qwen for code,
+                            Gemini for research, Minimax for creative writing — all under one unified identity.</div>
+                    </div>
+
+                    <h2 class="doc-h2" id="intro-what">What is ZORA?</h2>
+                    <p class="doc-p">ZORA is an AI orchestration layer built on FastAPI (Python) with a vanilla
+                        HTML/CSS/JS frontend. It classifies user intent via Groq, then routes to the optimal model from
+                        its pool of NVIDIA, Google, and Groq-hosted models.</p>
+
+                    <h2 class="doc-h2" id="intro-features">Core Features</h2>
+
+                    <div class="model-grid">
+                        <div class="model-card">
+                            <div class="model-name">🧠 AI Orchestration</div>
+                            <div class="model-role">Automatically routes to the best model per task type.</div>
+                        </div>
+                        <div class="model-card">
+                            <div class="model-name">💬 Multi-turn Chat</div>
+                            <div class="model-role">Persistent conversations with user memory injection.</div>
+                        </div>
+                        <div class="model-card">
+                            <div class="model-name">🔒 Incognito Mode</div>
+                            <div class="model-role">Chat privately with zero history or data saved.</div>
+                        </div>
+                        <div class="model-card">
+                            <div class="model-name">⚡ Extended Thinking</div>
+                            <div class="model-role">Deep reasoning layer before generating answers.</div>
+                        </div>
+                        <div class="model-card">
+                            <div class="model-name">🌐 11 Languages</div>
+                            <div class="model-role">EN, ID, FR, DE, JA, IT, KO, PT, ES, ZH + more.</div>
+                        </div>
+                        <div class="model-card">
+                            <div class="model-name">🔬 Zora Labs</div>
+                            <div class="model-role">Specialized tools: Code, Design, Image, Research.</div>
+                        </div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <div></div>
+                        <a class="page-nav-btn next" data-section="quickstart" href="#quickstart">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Quickstart</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── QUICKSTART ── -->
+                <section class="doc-section" id="section-quickstart">
+                    <div class="doc-eyebrow">Getting Started</div>
+                    <h1 class="doc-h1">Quickstart</h1>
+                    <p class="doc-lead">Get ZORA AI running locally in under 5 minutes.</p>
+
+                    <h2 class="doc-h2" id="qs-prereq">Prerequisites</h2>
+                    <p class="doc-p">Make sure you have the following installed before proceeding:</p>
+                    <div class="step-list">
+                        <div class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-body">
+                                <div class="step-title">Python 3.11+</div>
+                                <div class="step-desc">Required for the FastAPI backend and all AI service integrations.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-body">
+                                <div class="step-title">Node.js 18+</div>
+                                <div class="step-desc">Needed for the live-server dev environment and Vercel CLI.</div>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-body">
+                                <div class="step-title">PostgreSQL (via Neon)</div>
+                                <div class="step-desc">Production database. Get a free connection string at <a
+                                        href="https://neon.tech" target="_blank">neon.tech</a>.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="doc-h2" id="qs-setup">Setup</h2>
+
+                    <div class="code-block">
+                        <div class="code-block-header">
+                            <span class="code-lang">bash</span>
+                            <button class="code-copy-btn" onclick="copyCode(this)"><i class="fi fi-rr-copy"></i>
+                                Copy</button>
+                        </div>
+                        <pre><code><span class="tok-cmt"># 1. Clone the repo</span>
+git clone https://github.com/USERNAME/zora-ai.git
+<span class="tok-kw">cd</span> zora-ai
+
+<span class="tok-cmt"># 2. Copy environment file</span>
+cp .env.example backend/.env
+
+<span class="tok-cmt"># 3. Install backend dependencies</span>
+<span class="tok-kw">cd</span> backend && pip install -r requirements.txt
+
+<span class="tok-cmt"># 4. Start the backend</span>
+uvicorn app.main:app --reload --port 8000
+
+<span class="tok-cmt"># 5. Serve the frontend (new terminal)</span>
+npm install -g live-server
+live-server frontend --port=3000</code></pre>
+                    </div>
+
+                    <div class="callout callout-tip">
+                        <i class="fi fi-rr-check"></i>
+                        <div class="callout-body"><strong>Verify it's running:</strong> Open <span
+                                class="inline-code">http://127.0.0.1:8000/docs</span> for the Swagger UI and <span
+                                class="inline-code">http://localhost:3000</span> for the frontend.</div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="intro" href="#intro">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Introduction</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="architecture" href="#architecture">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Architecture</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── ARCHITECTURE ── -->
+                <section class="doc-section" id="section-architecture">
+                    <div class="doc-eyebrow">Getting Started</div>
+                    <h1 class="doc-h1">Architecture</h1>
+                    <p class="doc-lead">ZORA is built as a modular orchestration platform. The frontend communicates
+                        exclusively with the FastAPI backend, which handles all AI routing, authentication, and database
+                        operations.</p>
+
+                    <h2 class="doc-h2" id="arch-stack">Tech Stack</h2>
+                    <div class="doc-table-wrap">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Layer</th>
+                                    <th>Technology</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Frontend</td>
+                                    <td>HTML, CSS, JavaScript (Vanilla)</td>
+                                    <td>UI, no frameworks</td>
+                                </tr>
+                                <tr>
+                                    <td>Backend</td>
+                                    <td>Python + FastAPI</td>
+                                    <td>API, AI routing, auth</td>
+                                </tr>
+                                <tr>
+                                    <td>Database</td>
+                                    <td>PostgreSQL (Neon)</td>
+                                    <td>Users, chats, memory</td>
+                                </tr>
+                                <tr>
+                                    <td>Deploy</td>
+                                    <td>Vercel</td>
+                                    <td>Serverless hosting</td>
+                                </tr>
+                                <tr>
+                                    <td>Auth</td>
+                                    <td>JWT + Google OAuth</td>
+                                    <td>Session management</td>
+                                </tr>
+                                <tr>
+                                    <td>Payment</td>
+                                    <td>Xendit</td>
+                                    <td>Developer withdrawals</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2 class="doc-h2" id="arch-flow">Request Flow</h2>
+                    <div class="flow-diagram">
+                        <div class="flow-node accent">User Message</div>
+                        <div class="flow-arrow"><i class="fi fi-rr-arrow-down"></i></div>
+                        <div class="flow-node">Intent Detector (Groq)</div>
+                        <div class="flow-arrow"><i class="fi fi-rr-arrow-down"></i><span class="flow-label">Returns JSON
+                                routing decision</span></div>
+                        <div class="flow-node">Orchestrator</div>
+                        <div class="flow-arrow"><i class="fi fi-rr-arrow-down"></i><span class="flow-label">pre_think =
+                                true → Groq reasons first</span></div>
+                        <div class="flow-node">Primary Model (NVIDIA / Gemini / Groq)</div>
+                        <div class="flow-arrow"><i class="fi fi-rr-arrow-down"></i><span class="flow-label">Fallback key
+                                on rate limit</span></div>
+                        <div class="flow-node accent">Response as "ZORA"</div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="quickstart" href="#quickstart">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Quickstart</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="models" href="#models">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Model Overview</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── MODELS ── -->
+                <section class="doc-section" id="section-models">
+                    <div class="doc-eyebrow">AI Models</div>
+                    <h1 class="doc-h1">Model Overview</h1>
+                    <p class="doc-lead">ZORA orchestrates 10+ AI models across NVIDIA, Google, and Groq providers. Each
+                        model is specialized for a specific task domain.</p>
+
+                    <div class="doc-table-wrap">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Provider</th>
+                                    <th>Model ID</th>
+                                    <th>Primary Duty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Nemotron</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">nemotron-3-super-120b</span></td>
+                                    <td>General chat, Q&amp;A</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Deepseek</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">deepseek-v3.2</span></td>
+                                    <td>Math, logic, analytics</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Qwen</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">qwen3.5-122b-a10b</span></td>
+                                    <td>Coding, debugging</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Kimi</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">kimi-k2.5</span></td>
+                                    <td>Long documents, PDF</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Minimax</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">minimax-m2.7</span></td>
+                                    <td>Creative writing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">GLM</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">glm-5.1</span></td>
+                                    <td>Multilingual, Chinese</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Gemma</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">gemma-4-31b-it</span></td>
+                                    <td>Instruction following</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Mistral</strong></td>
+                                    <td><span class="badge badge-cyan">NVIDIA</span></td>
+                                    <td><span class="inline-code">mistral-small-4-119b</span></td>
+                                    <td>Fast multilingual</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Gemini</strong></td>
+                                    <td><span class="badge badge-active">Google</span></td>
+                                    <td><span class="inline-code">gemini-2.0-flash</span></td>
+                                    <td>Research, image analysis</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Groq</strong></td>
+                                    <td><span class="badge badge-soon">Groq</span></td>
+                                    <td><span class="inline-code">llama-3.3-70b-versatile</span></td>
+                                    <td>Pre-thinking layer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="architecture" href="#architecture">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Architecture</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="routing" href="#routing">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Routing Logic</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── ROUTING ── -->
+                <section class="doc-section" id="section-routing">
+                    <div class="doc-eyebrow">AI Models</div>
+                    <h1 class="doc-h1">Routing Logic</h1>
+                    <p class="doc-lead">The Intent Detector analyzes every message and returns a JSON routing decision.
+                        This happens invisibly — users only ever see ZORA.</p>
+
+                    <h2 class="doc-h2" id="rt-rules">Routing Rules</h2>
+                    <div class="doc-table-wrap">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Condition</th>
+                                    <th>Routed To</th>
+                                    <th>Pre-think</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Code, programming, debug</td>
+                                    <td><strong style="color:var(--text-primary)">Qwen</strong></td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Math, logic, data analysis</td>
+                                    <td><strong style="color:var(--text-primary)">Deepseek</strong></td>
+                                    <td>Optional</td>
+                                </tr>
+                                <tr>
+                                    <td>Long document, PDF, large text</td>
+                                    <td><strong style="color:var(--text-primary)">Kimi</strong></td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Creative writing, story, ads</td>
+                                    <td><strong style="color:var(--text-primary)">Minimax</strong></td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Research, news, facts, citations</td>
+                                    <td><strong style="color:var(--text-primary)">Gemini</strong></td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Chinese language, multilingual</td>
+                                    <td><strong style="color:var(--text-primary)">GLM</strong></td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Complex multi-step reasoning</td>
+                                    <td><strong style="color:var(--text-primary)">Groq → Best Model</strong></td>
+                                    <td>✓ Always</td>
+                                </tr>
+                                <tr>
+                                    <td>General chat, everyday Q&amp;A</td>
+                                    <td><strong style="color:var(--text-primary)">Nemotron</strong></td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Any model rate limited</td>
+                                    <td><strong style="color:var(--text-primary)">Fallback Key</strong></td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2 class="doc-h2" id="rt-response">Classifier Response Format</h2>
+                    <div class="code-block">
+                        <div class="code-block-header">
+                            <span class="code-lang">json</span>
+                            <button class="code-copy-btn" onclick="copyCode(this)"><i class="fi fi-rr-copy"></i>
+                                Copy</button>
+                        </div>
+                        <pre><code>{
+  <span class="tok-key">"primary_model"</span>: <span class="tok-str">"qwen"</span>,
+  <span class="tok-key">"pre_think"</span>: <span class="tok-kw">false</span>,
+  <span class="tok-key">"confidence"</span>: <span class="tok-num">0.97</span>,
+  <span class="tok-key">"reason"</span>: <span class="tok-str">"Code debugging task."</span>
+}</code></pre>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="models" href="#models">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Model Overview</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="chat" href="#chat">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Chat System</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── CHAT ── -->
+                <section class="doc-section" id="section-chat">
+                    <div class="doc-eyebrow">Features</div>
+                    <h1 class="doc-h1">Chat System</h1>
+                    <p class="doc-lead">The ZORA chat system supports streaming responses, multi-turn context, incognito
+                        mode, extended thinking, and conversation history management.</p>
+
+                    <h2 class="doc-h2" id="chat-modes">Chat Modes</h2>
+                    <div class="step-list">
+                        <div class="step-item">
+                            <div class="step-num"><i class="fi fi-rr-comment-alt" style="font-size:11px"></i></div>
+                            <div class="step-body">
+                                <div class="step-title">Standard Chat</div>
+                                <div class="step-desc">Full history saved to PostgreSQL. AI memory injected into system
+                                    prompt. Conversations auto-titled from the first message.</div>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num"><i class="fi fi-rr-incognito" style="font-size:11px"></i></div>
+                            <div class="step-body">
+                                <div class="step-title">Incognito Mode</div>
+                                <div class="step-desc">No history saved. No memory injected. No user data stored during
+                                    session. Routes to the same model pool.</div>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-num"><i class="fi fi-rr-brain" style="font-size:11px"></i></div>
+                            <div class="step-body">
+                                <div class="step-title">Extended Thinking</div>
+                                <div class="step-desc">Activates the Groq pre-thinking layer. Groq reasons through the
+                                    problem first, then passes enriched context to the primary model.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="routing" href="#routing">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Routing Logic</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="labs" href="#labs">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Zora Labs</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── LABS ── -->
+                <section class="doc-section" id="section-labs">
+                    <div class="doc-eyebrow">Features</div>
+                    <h1 class="doc-h1">Zora Labs</h1>
+                    <p class="doc-lead">Specialized AI tools, each powered by the best model for that specific task
+                        domain.</p>
+
+                    <div class="doc-table-wrap">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Lab</th>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Zora Code</strong></td>
+                                    <td><span class="inline-code">qwen3.5-122b</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>Generate, debug, explain code</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Zora Design</strong></td>
+                                    <td><span class="inline-code">minimax-m2.7</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>UI briefs, copywriting, brand</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Zora Image</strong></td>
+                                    <td><span class="inline-code">Nano Banana</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>AI image generation</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Zora Research</strong></td>
+                                    <td><span class="inline-code">gemini-2.0-flash</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>Deep research with citations</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color:var(--text-primary)">Zora Vid</strong></td>
+                                    <td><span class="inline-code">Nano Banana</span></td>
+                                    <td><span class="badge badge-soon">Coming Soon</span></td>
+                                    <td>AI video generation</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="chat" href="#chat">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Chat System</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="memory" href="#memory">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Memory System</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── MEMORY ── -->
+                <section class="doc-section" id="section-memory">
+                    <div class="doc-eyebrow">Features</div>
+                    <h1 class="doc-h1">Memory System</h1>
+                    <p class="doc-lead">ZORA injects user preferences, name, topics, and language into every system
+                        prompt — making each conversation feel personalized from the first message.</p>
+
+                    <h2 class="doc-h2" id="mem-schema">Database Schema</h2>
+                    <div class="doc-table-wrap">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Table</th>
+                                    <th>Key Columns</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="inline-code">users</span></td>
+                                    <td>id, name, email, password_hash</td>
+                                    <td>Authentication</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="inline-code">user_profiles</span></td>
+                                    <td>display_name, topics, language</td>
+                                    <td>Personalization</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="inline-code">conversations</span></td>
+                                    <td>id, user_id, title, is_incognito</td>
+                                    <td>Chat sessions</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="inline-code">messages</span></td>
+                                    <td>role, content, model_used</td>
+                                    <td>Message history</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="inline-code">memory</span></td>
+                                    <td>key, value</td>
+                                    <td>AI memory store</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="labs" href="#labs">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Zora Labs</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="api-auth" href="#api-auth">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Auth Endpoints</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── API AUTH ── -->
+                <section class="doc-section" id="section-api-auth">
+                    <div class="doc-eyebrow">API Reference</div>
+                    <h1 class="doc-h1">Auth Endpoints</h1>
+                    <p class="doc-lead">All auth endpoints are prefixed with <span class="inline-code">/auth</span>. JWT
+                        tokens expire after 1440 minutes (24h).</p>
+
+                    <div class="endpoint-list">
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/auth/register</span><span class="endpoint-desc">Create a new user
+                                account</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/auth/login</span><span class="endpoint-desc">Login and receive
+                                JWT token</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/auth/logout</span><span class="endpoint-desc">Invalidate current
+                                session</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/auth/google</span><span class="endpoint-desc">Google OAuth login
+                                flow</span></div>
+                        <div class="endpoint-item"><span class="method method-get">GET</span><span
+                                class="endpoint-path">/onboarding/status</span><span class="endpoint-desc">Check
+                                onboarding completion</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/onboarding/name</span><span class="endpoint-desc">Save display
+                                name</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/onboarding/topics</span><span class="endpoint-desc">Save topic
+                                preferences</span></div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="memory" href="#memory">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Memory System</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="api-chat" href="#api-chat">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Chat Endpoints</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── API CHAT ── -->
+                <section class="doc-section" id="section-api-chat">
+                    <div class="doc-eyebrow">API Reference</div>
+                    <h1 class="doc-h1">Chat Endpoints</h1>
+                    <p class="doc-lead">Chat endpoints handle message sending (SSE streaming), history retrieval, and
+                        conversation management.</p>
+
+                    <div class="endpoint-list">
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/chat/send</span><span class="endpoint-desc">Send message —
+                                returns SSE stream</span></div>
+                        <div class="endpoint-item"><span class="method method-get">GET</span><span
+                                class="endpoint-path">/chat/history</span><span class="endpoint-desc">Get all
+                                conversations for user</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/chat/new</span><span class="endpoint-desc">Create a new
+                                conversation</span></div>
+                        <div class="endpoint-item"><span class="method method-delete">DELETE</span><span
+                                class="endpoint-path">/chat/{id}</span><span class="endpoint-desc">Delete a conversation
+                                by ID</span></div>
+                        <div class="endpoint-item"><span class="method method-put">PUT</span><span
+                                class="endpoint-path">/chat/{id}/rename</span><span class="endpoint-desc">Rename a
+                                conversation</span></div>
+                        <div class="endpoint-item"><span class="method method-get">GET</span><span
+                                class="endpoint-path">/settings</span><span class="endpoint-desc">Get user
+                                preferences</span></div>
+                        <div class="endpoint-item"><span class="method method-put">PUT</span><span
+                                class="endpoint-path">/settings/language</span><span class="endpoint-desc">Update
+                                language preference</span></div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="api-auth" href="#api-auth">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Auth Endpoints</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="api-labs" href="#api-labs">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Labs Endpoints</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── API LABS ── -->
+                <section class="doc-section" id="section-api-labs">
+                    <div class="doc-eyebrow">API Reference</div>
+                    <h1 class="doc-h1">Labs Endpoints</h1>
+                    <p class="doc-lead">All Labs endpoints are prefixed with <span class="inline-code">/labs</span> and
+                        require a valid JWT token.</p>
+
+                    <div class="endpoint-list">
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/labs/code</span><span class="endpoint-desc">Zora Code — powered
+                                by Qwen</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/labs/design</span><span class="endpoint-desc">Zora Design —
+                                powered by Minimax</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/labs/image</span><span class="endpoint-desc">Zora Image — powered
+                                by Nano Banana</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/labs/research</span><span class="endpoint-desc">Zora Research —
+                                powered by Gemini</span></div>
+                        <div class="endpoint-item"><span class="method method-post">POST</span><span
+                                class="endpoint-path">/labs/vid</span><span class="endpoint-desc">Zora Vid — disabled
+                                (coming soon)</span></div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="api-chat" href="#api-chat">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Chat Endpoints</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="env" href="#env">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Environment Vars</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── ENV ── -->
+                <section class="doc-section" id="section-env">
+                    <div class="doc-eyebrow">Deployment</div>
+                    <h1 class="doc-h1">Environment Variables</h1>
+                    <p class="doc-lead">Copy <span class="inline-code">.env.example</span> to <span
+                            class="inline-code">backend/.env</span> and fill in all required values before running the
+                        server.</p>
+
+                    <div class="code-block">
+                        <div class="code-block-header">
+                            <span class="code-lang">.env</span>
+                            <button class="code-copy-btn" onclick="copyCode(this)"><i class="fi fi-rr-copy"></i>
+                                Copy</button>
+                        </div>
+                        <pre><code><span class="tok-cmt"># Database</span>
+DATABASE_URL=postgresql://...
+
+<span class="tok-cmt"># JWT</span>
+JWT_SECRET=your_secret_here
+JWT_ALGORITHM=HS256
+JWT_EXPIRE_MINUTES=1440
+
+<span class="tok-cmt"># Google OAuth</span>
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+<span class="tok-cmt"># NVIDIA — one key per model</span>
+NVIDIA_API_KEY_NEMOTRON=
+NVIDIA_API_KEY_DEEPSEEK=
+NVIDIA_API_KEY_QWEN=
+NVIDIA_API_KEY_KIMI=
+NVIDIA_API_KEY_MINIMAX=
+NVIDIA_API_KEY_GLM=
+NVIDIA_API_KEY_GEMMA=
+NVIDIA_API_KEY_MISTRAL=
+NVIDIA_API_KEY_FALLBACK=
+
+<span class="tok-cmt"># AI Services</span>
+GROQ_API_KEY=
+GEMINI_API_KEY=
+
+<span class="tok-cmt"># Payment</span>
+XENDIT_SECRET_KEY=
+XENDIT_WEBHOOK_TOKEN=
+
+<span class="tok-cmt"># App</span>
+APP_URL=http://localhost:3000
+BACKEND_URL=http://localhost:8000
+ENV=development</code></pre>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="api-labs" href="#api-labs">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Labs Endpoints</div>
+                        </a>
+                        <a class="page-nav-btn next" data-section="deploy" href="#deploy">
+                            <div class="page-nav-dir">Next <i class="fi fi-rr-arrow-right"></i></div>
+                            <div class="page-nav-title">Deploy to Vercel</div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- ── DEPLOY ── -->
+                <section class="doc-section" id="section-deploy">
+                    <div class="doc-eyebrow">Deployment</div>
+                    <h1 class="doc-h1">Deploy to Vercel</h1>
+                    <p class="doc-lead">ZORA deploys as a hybrid — FastAPI as Vercel Serverless Functions, frontend as
+                        static files. The <span class="inline-code">vercel.json</span> routes <span
+                            class="inline-code">/api/*</span> to FastAPI and everything else to the static frontend.</p>
+
+                    <div class="code-block">
+                        <div class="code-block-header">
+                            <span class="code-lang">bash</span>
+                            <button class="code-copy-btn" onclick="copyCode(this)"><i class="fi fi-rr-copy"></i>
+                                Copy</button>
+                        </div>
+                        <pre><code><span class="tok-cmt"># Install Vercel CLI</span>
+npm install -g vercel
+
+<span class="tok-cmt"># Deploy to production</span>
+vercel --prod</code></pre>
+                    </div>
+
+                    <div class="callout callout-warn">
+                        <i class="fi fi-rr-triangle-warning"></i>
+                        <div class="callout-body"><strong>Important:</strong> Add all environment variables in
+                            <strong>Vercel Dashboard → Settings → Environment Variables</strong> before deploying. The
+                            app will fail to start without <span class="inline-code">DATABASE_URL</span> and <span
+                                class="inline-code">JWT_SECRET</span>.</div>
+                    </div>
+
+                    <div class="doc-page-nav">
+                        <a class="page-nav-btn" data-section="env" href="#env">
+                            <div class="page-nav-dir"><i class="fi fi-rr-arrow-left"></i> Previous</div>
+                            <div class="page-nav-title">Environment Vars</div>
+                        </a>
+                        <div></div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- ── RIGHT TOC ── -->
+        <nav class="docs-toc" id="docsToc">
+            <div class="toc-label">On this page</div>
+            <div id="tocLinks"></div>
+        </nav>
+    </div>
+
+    <script>
+        // ── Navigation ──
+        const sidebarLinks = document.querySelectorAll('.sidebar-link[data-section]');
+        const sections = document.querySelectorAll('.doc-section');
+        const tocContainer = document.getElementById('tocLinks');
+
+        function navigateTo(sectionId) {
+            sections.forEach(s => s.classList.remove('active'));
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+
+            const target = document.getElementById('section-' + sectionId);
+            const activeLink = document.querySelector(`.sidebar-link[data-section="${sectionId}"]`);
+
+            if (target) target.classList.add('active');
+            if (activeLink) activeLink.classList.add('active');
+
+            document.getElementById('docsContent').scrollTop = 0;
+            buildToc(target);
+        }
+
+        function buildToc(section) {
+            if (!section) return;
+            const headings = section.querySelectorAll('.doc-h2, .doc-h3');
+            tocContainer.innerHTML = '';
+            headings.forEach(h => {
+                const a = document.createElement('a');
+                a.className = 'toc-link' + (h.classList.contains('doc-h3') ? ' toc-h3' : '');
+                a.textContent = h.textContent;
+                a.href = '#';
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+                    a.classList.add('active');
+                });
+                tocContainer.appendChild(a);
+            });
+        }
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                navigateTo(link.dataset.section);
+            });
+        });
+
+        // Page nav buttons inside sections
+        document.querySelectorAll('.page-nav-btn[data-section]').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                navigateTo(btn.dataset.section);
+            });
+        });
+
+        // Init TOC
+        buildToc(document.querySelector('.doc-section.active'));
+
+        // ── Copy Code ──
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('code');
+            const text = code.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fi fi-rr-check"></i> Copied';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fi fi-rr-copy"></i> Copy';
+                }, 2000);
+            });
+        }
+
+        // ── Search (basic filter) ──
+        document.getElementById('docsSearchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            if (!q) return;
+            const map = {
+                'intro': ['introduction', 'what is', 'zora', 'overview'],
+                'quickstart': ['quickstart', 'setup', 'install', 'start', 'run'],
+                'architecture': ['architecture', 'stack', 'flow', 'fastapi'],
+                'models': ['model', 'nvidia', 'gemini', 'groq', 'qwen'],
+                'routing': ['routing', 'intent', 'classifier', 'route'],
+                'chat': ['chat', 'incognito', 'extended', 'thinking'],
+                'labs': ['labs', 'code', 'design', 'image', 'research', 'video'],
+                'memory': ['memory', 'database', 'schema', 'profile'],
+                'api-auth': ['auth', 'login', 'register', 'jwt', 'oauth'],
+                'api-chat': ['chat endpoint', 'send', 'history', 'sse'],
+                'api-labs': ['labs endpoint', 'labs api'],
+                'env': ['environment', 'env', '.env', 'variable', 'key'],
+                'deploy': ['deploy', 'vercel', 'production', 'serverless'],
+            };
+            for (const [section, keywords] of Object.entries(map)) {
+                if (keywords.some(k => k.includes(q) || q.includes(k.split(' ')[0]))) {
+                    navigateTo(section);
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
