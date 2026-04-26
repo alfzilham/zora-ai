@@ -190,7 +190,7 @@ function appendDevBubble(text, time) {
             <div class="bubble-meta">
                 <span class="bubble-sender">ZORA Team</span>
                 <span class="bubble-badge">Developer</span>
-                <span class="bubble-time">${time || now()}</span>
+                <span class="bubble-time">${time || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</span>
             </div>
             <div class="bubble bubble--dev"><p>${esc(text)}</p></div>
         </div>
@@ -484,8 +484,12 @@ async function bootstrap() {
     if (!getToken()) return;
 
     // Set times
-    const wt = qs('welcomeTime'); if (wt) wt.textContent = now();
-    const dt = qs('devWelcomeTime'); if (dt) dt.textContent = now();
+    const localTime = new Date().toLocaleTimeString('id-ID', {
+        hour: '2-digit', minute: '2-digit', hour12: false,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+    const wt = qs('welcomeTime'); if (wt) wt.textContent = localTime;
+    const dt = qs('devWelcomeTime'); if (dt) dt.textContent = localTime;
 
     // Load user
     try {
