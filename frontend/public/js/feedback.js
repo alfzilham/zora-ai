@@ -24,7 +24,10 @@ const autoReplies = {
 
 // ── UTILS ────────────────────────────────────────────
 const qs = id => document.getElementById(id);
-const now = () => new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+const now = () => new Date().toLocaleTimeString('id-ID', {
+    hour: '2-digit', minute: '2-digit', hour12: false,
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+});
 
 function esc(str) {
     return String(str || '')
@@ -462,7 +465,10 @@ async function loadHistory() {
             message: item.message || '',
             screenshotBase64: item.screenshot_url || null,
             time: item.created_at
-                ? new Date(item.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false })
+                ? new Date(item.created_at).toLocaleTimeString('id-ID', {
+                    hour: '2-digit', minute: '2-digit', hour12: false,
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                })
                 : now(),
         };
 
