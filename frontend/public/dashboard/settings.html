@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - ZORA AI</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+
+    <style>
+        /* ── PAGE LOADER ─────────────────────────────────────── */
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0d0d12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.35s ease;
+            pointer-events: all;
+        }
+
+        #pageLoader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #pageLoader.hidden {
+            display: none;
+        }
+
+        .zora-spinner {
+            position: relative;
+            border-radius: 50%;
+            height: 80px;
+            width: 80px;
+            animation: rotate_3922 1.2s linear infinite;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span {
+            position: absolute;
+            border-radius: 50%;
+            height: 100%;
+            width: 100%;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span:nth-of-type(1) {
+            filter: blur(5px);
+        }
+
+        .zora-spinner span:nth-of-type(2) {
+            filter: blur(10px);
+        }
+
+        .zora-spinner span:nth-of-type(3) {
+            filter: blur(25px);
+        }
+
+        .zora-spinner span:nth-of-type(4) {
+            filter: blur(50px);
+        }
+
+        .zora-spinner::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background-color: #0d0d12;
+            border: solid 4px #0d0d12;
+            border-radius: 50%;
+        }
+
+        @keyframes rotate_3922 {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── LAYOUT ──────────────────────────────────────────── */
+        .set-topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 24px 28px 0;
+            flex-shrink: 0;
+        }
+
+        .set-subtitle {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 0;
+        }
+
+        .set-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 28px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .set-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .set-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+        }
+
+        /* ── SECTION ─────────────────────────────────────────── */
+        .set-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .set-section.danger {
+            border-color: rgba(255, 77, 77, 0.2);
+            background: rgba(255, 77, 77, 0.02);
+        }
+
+        .set-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .set-section.danger .set-section-header {
+            border-bottom-color: rgba(255, 77, 77, 0.1);
+        }
+
+        .set-section-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .set-section-icon.cyan {
+            background: rgba(0, 212, 255, 0.12);
+            color: #00D4FF;
+        }
+
+        .set-section-icon.green {
+            background: rgba(0, 229, 160, 0.12);
+            color: #00e5a0;
+        }
+
+        .set-section-icon.amber {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+        }
+
+        .set-section-icon.purple {
+            background: rgba(139, 92, 246, 0.12);
+            color: #a78bfa;
+        }
+
+        .set-section-icon.red {
+            background: rgba(255, 77, 77, 0.12);
+            color: #ff4d4d;
+        }
+
+        .set-section-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .set-section-desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 1px;
+        }
+
+        /* ── ROWS ────────────────────────────────────────────── */
+        .set-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .set-row:last-child {
+            border-bottom: none;
+        }
+
+        .set-section.danger .set-row {
+            border-bottom-color: rgba(255, 77, 77, 0.06);
+        }
+
+        .set-row-left {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .set-row-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .set-row-desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.28);
+            line-height: 1.5;
+        }
+
+        /* ── INPUTS ──────────────────────────────────────────── */
+        .set-input {
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font: inherit;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.15s;
+            min-width: 200px;
+        }
+
+        .set-input:focus {
+            border-color: rgba(0, 212, 255, 0.35);
+        }
+
+        .set-input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .set-input.readonly {
+            color: rgba(255, 255, 255, 0.4);
+            cursor: default;
+        }
+
+        /* ── TOGGLE ──────────────────────────────────────────── */
+        .set-toggle {
+            position: relative;
+            width: 42px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .set-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .set-toggle-track {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .set-toggle input:checked+.set-toggle-track {
+            background: #00D4FF;
+        }
+
+        .set-toggle-track::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            left: 3px;
+            top: 3px;
+            transition: transform 0.2s;
+        }
+
+        .set-toggle input:checked+.set-toggle-track::before {
+            transform: translateX(18px);
+        }
+
+        /* ── BUTTONS ─────────────────────────────────────────── */
+        .set-btn {
+            height: 34px;
+            padding: 0 16px;
+            border-radius: 9px;
+            border: none;
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .set-btn.primary {
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            color: #00D4FF;
+        }
+
+        .set-btn.primary:hover {
+            background: rgba(0, 212, 255, 0.25);
+        }
+
+        .set-btn.danger {
+            background: rgba(255, 77, 77, 0.1);
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            color: #ff4d4d;
+        }
+
+        .set-btn.danger:hover {
+            background: rgba(255, 77, 77, 0.2);
+        }
+
+        .set-btn.ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .set-btn.ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ── TOAST ───────────────────────────────────────────── */
+        #toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            background: #13131f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 0.82rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        #toast.success {
+            border-color: rgba(0, 229, 160, 0.3);
+        }
+
+        #toast.error {
+            border-color: rgba(255, 77, 77, 0.3);
+        }
+
+        #toastIcon {
+            font-size: 1rem;
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .db-sidebar {
+                display: none;
+            }
+
+            .set-topbar {
+                padding: 16px 16px 0;
+                flex-direction: column;
+            }
+
+            .set-content {
+                padding: 14px 16px 32px;
+            }
+
+            .set-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .set-input {
+                min-width: 100%;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Page Loader -->
+    <div id="pageLoader">
+        <div class="zora-spinner">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast">
+        <i id="toastIcon"></i>
+        <span id="toastMsg"></span>
+    </div>
+
+    <div class="db-app">
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="db-sidebar">
+            <div class="db-sidebar-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
+                <span class="db-sidebar-name">ZORA AI</span>
+            </div>
+            <nav class="db-sidebar-nav">
+                <a href="/dashboard/index.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-pie-alt"></i><span>Dashboard</span>
+                </a>
+                <a href="/dashboard/users.html" class="db-nav-item">
+                    <i class="fi fi-rr-users"></i><span>Users</span>
+                </a>
+                <a href="/dashboard/feedback-admin.html" class="db-nav-item">
+                    <i class="fi fi-rr-comment-alt"></i><span>Feedback</span>
+                </a>
+                <a href="/dashboard/analytics.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-line-up"></i><span>Analytics</span>
+                </a>
+                <a href="/dashboard/earnings.html" class="db-nav-item">
+                    <i class="fi fi-rr-wallet"></i><span>Earnings</span>
+                </a>
+                <a href="/dashboard/trade-history.html" class="db-nav-item">
+                    <i class="fi fi-rr-coins"></i><span>Trade History</span>
+                </a>
+                <a href="/dashboard/notifications.html" class="db-nav-item">
+                    <i class="fi fi-rr-bell"></i><span>Notifications</span>
+                </a>
+                <div class="db-nav-item active">
+                    <i class="fi fi-rr-settings"></i><span>Settings</span>
+                </div>
+            </nav>
+            <div class="db-sidebar-footer">
+                <a href="/chat/index.html" class="db-back-chat">
+                    <i class="fi fi-rr-arrow-left"></i><span>Back to Chat</span>
+                </a>
+                <button id="logoutBtn" class="db-logout-btn" type="button">
+                    <i class="fi fi-rr-sign-out-alt"></i><span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ── MAIN ── -->
+        <main class="db-main">
+
+            <!-- Topbar -->
+            <header class="set-topbar">
+                <div>
+                    <h1 class="db-page-title">Settings</h1>
+                    <p class="set-subtitle">Manage your dashboard preferences</p>
+                </div>
+            </header>
+
+            <div class="set-content">
+
+                <!-- 1. Developer Info -->
+                <div class="set-section">
+                    <div class="set-section-header">
+                        <div class="set-section-icon cyan"><i class="fi fi-rr-user"></i></div>
+                        <div>
+                            <p class="set-section-title">Developer Info</p>
+                            <p class="set-section-desc">Your identity as the platform owner</p>
+                        </div>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Full Name</p>
+                            <p class="set-row-desc">Your name displayed on the dashboard</p>
+                        </div>
+                        <input class="set-input readonly" type="text" value="Alfiz Ilham" readonly>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Email</p>
+                            <p class="set-row-desc">Developer account email</p>
+                        </div>
+                        <input class="set-input readonly" type="email" value="alfizilham@gmail.com" readonly>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Platform</p>
+                            <p class="set-row-desc">Production URL</p>
+                        </div>
+                        <input class="set-input readonly" type="text" value="zora-ai-zeta.vercel.app" readonly>
+                    </div>
+                </div>
+
+                <!-- 2. Security -->
+                <div class="set-section">
+                    <div class="set-section-header">
+                        <div class="set-section-icon amber"><i class="fi fi-rr-lock"></i></div>
+                        <div>
+                            <p class="set-section-title">Dashboard Security</p>
+                            <p class="set-section-desc">Manage your dashboard password gate</p>
+                        </div>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Current Password Hash</p>
+                            <p class="set-row-desc">SHA-256 hash stored in the frontend</p>
+                        </div>
+                        <input class="set-input readonly" type="text" value="e1c417b0...737b9" readonly
+                            style="font-family:monospace;font-size:0.75rem">
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Change Password</p>
+                            <p class="set-row-desc">Enter new password → copy the hash → update in all dashboard HTML
+                                files</p>
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input class="set-input" type="password" id="newPasswordInput"
+                                placeholder="New password...">
+                            <button class="set-btn primary" id="hashBtn">
+                                <i class="fi fi-rr-copy"></i> Generate Hash
+                            </button>
+                        </div>
+                    </div>
+                    <div class="set-row" id="hashResultRow" style="display:none">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Generated Hash</p>
+                            <p class="set-row-desc">Copy this hash and replace <code>CORRECT_HASH</code> in all
+                                dashboard HTML files</p>
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input class="set-input" type="text" id="hashOutput" readonly
+                                style="font-family:monospace;font-size:0.72rem;min-width:260px">
+                            <button class="set-btn ghost" id="copyHashBtn">
+                                <i class="fi fi-rr-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Earning Rate -->
+                <div class="set-section">
+                    <div class="set-section-header">
+                        <div class="set-section-icon green"><i class="fi fi-rr-wallet"></i></div>
+                        <div>
+                            <p class="set-section-title">Earning Rate</p>
+                            <p class="set-section-desc">Revenue calculation per registered user</p>
+                        </div>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Rate per User</p>
+                            <p class="set-row-desc">Fixed at Rp1.000.000 per signup (backend default)</p>
+                        </div>
+                        <input class="set-input readonly" type="text" value="Rp 1.000.000" readonly>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Total Users</p>
+                            <p class="set-row-desc">Live count from database</p>
+                        </div>
+                        <input class="set-input readonly" type="text" id="settingTotalUsers" value="Loading..."
+                            readonly>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Total Earnings</p>
+                            <p class="set-row-desc">Calculated automatically</p>
+                        </div>
+                        <input class="set-input readonly" type="text" id="settingTotalEarnings" value="Loading..."
+                            readonly>
+                    </div>
+                </div>
+
+                <!-- 4. Notification Preferences -->
+                <div class="set-section">
+                    <div class="set-section-header">
+                        <div class="set-section-icon purple"><i class="fi fi-rr-bell"></i></div>
+                        <div>
+                            <p class="set-section-title">Notification Preferences</p>
+                            <p class="set-section-desc">Control what events trigger notifications</p>
+                        </div>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">New User Signup</p>
+                            <p class="set-row-desc">Get notified when a new user registers</p>
+                        </div>
+                        <label class="set-toggle">
+                            <input type="checkbox" id="notifSignup" checked>
+                            <div class="set-toggle-track"></div>
+                        </label>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Withdrawal Success</p>
+                            <p class="set-row-desc">Get notified when a withdrawal is completed</p>
+                        </div>
+                        <label class="set-toggle">
+                            <input type="checkbox" id="notifWithdraw" checked>
+                            <div class="set-toggle-track"></div>
+                        </label>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Auto-refresh Dashboard</p>
+                            <p class="set-row-desc">Refresh stats every 60 seconds automatically</p>
+                        </div>
+                        <label class="set-toggle">
+                            <input type="checkbox" id="notifAutoRefresh" checked>
+                            <div class="set-toggle-track"></div>
+                        </label>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Show Earnings on Overview</p>
+                            <p class="set-row-desc">Display total earnings card on main dashboard</p>
+                        </div>
+                        <label class="set-toggle">
+                            <input type="checkbox" id="notifShowEarnings" checked>
+                            <div class="set-toggle-track"></div>
+                        </label>
+                    </div>
+                    <div class="set-row" style="border-bottom:none">
+                        <div class="set-row-left"></div>
+                        <button class="set-btn primary" id="saveNotifBtn">
+                            <i class="fi fi-rr-check"></i> Save Preferences
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. Danger Zone -->
+                <div class="set-section danger">
+                    <div class="set-section-header">
+                        <div class="set-section-icon red"><i class="fi fi-rr-triangle-warning"></i></div>
+                        <div>
+                            <p class="set-section-title" style="color:#ff4d4d">Danger Zone</p>
+                            <p class="set-section-desc">Irreversible actions — proceed with caution</p>
+                        </div>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Clear Notification History</p>
+                            <p class="set-row-desc">Remove all stored notifications from this browser</p>
+                        </div>
+                        <button class="set-btn danger" id="clearNotifBtn">
+                            <i class="fi fi-rr-trash"></i> Clear Notifications
+                        </button>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Clear Trade History</p>
+                            <p class="set-row-desc">Remove all withdrawal records from this browser</p>
+                        </div>
+                        <button class="set-btn danger" id="clearTradeBtn">
+                            <i class="fi fi-rr-trash"></i> Clear Trade History
+                        </button>
+                    </div>
+                    <div class="set-row">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Reset All Settings</p>
+                            <p class="set-row-desc">Clear all localStorage data for this dashboard</p>
+                        </div>
+                        <button class="set-btn danger" id="resetAllBtn">
+                            <i class="fi fi-rr-rotate-right"></i> Reset Everything
+                        </button>
+                    </div>
+                    <div class="set-row" style="border-bottom:none">
+                        <div class="set-row-left">
+                            <p class="set-row-label">Logout from Dashboard</p>
+                            <p class="set-row-desc">End your session and return to login</p>
+                        </div>
+                        <button class="set-btn danger" id="logoutDangerBtn">
+                            <i class="fi fi-rr-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/auth.js"></script>
+    <script>
+        // ── PAGE LOADER ────────────────────────────────────────────────────────────
+        (function () {
+            const loader = document.getElementById('pageLoader');
+            window.addEventListener('load', () => {
+                if (!loader) return;
+                loader.classList.add('fade-out');
+                setTimeout(() => loader.classList.add('hidden'), 380);
+            });
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+                const dashPages = ['/dashboard/', '/chat/'];
+                if (!dashPages.some(p => href.includes(p))) return;
+                e.preventDefault();
+                if (!loader) { window.location.href = href; return; }
+                loader.classList.remove('hidden', 'fade-out');
+                setTimeout(() => { window.location.href = href; }, 350);
+            });
+        })();
+
+        // ── SETTINGS ───────────────────────────────────────────────────────────────
+        (function () {
+            const SETTINGS_KEY = 'zora_dashboard_settings';
+            const NOTIF_KEY = 'zora_dashboard_notifications';
+            const TRADE_KEY = 'zora_trade_history';
+
+            // ── Toast ──
+            function showToast(msg, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMsg = document.getElementById('toastMsg');
+                const toastIcon = document.getElementById('toastIcon');
+                toast.className = `show ${type}`;
+                toastIcon.className = type === 'success' ? 'fi fi-rr-check' : 'fi fi-rr-cross-circle';
+                toastIcon.style.color = type === 'success' ? '#00e5a0' : '#ff4d4d';
+                toastMsg.textContent = msg;
+                clearTimeout(toast._timer);
+                toast._timer = setTimeout(() => { toast.className = ''; }, 3000);
+            }
+
+            function formatRp(v) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
+                }).format(v || 0);
+            }
+
+            // ── Load/Save settings ──
+            function loadSettings() {
+                try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; }
+            }
+            function saveSettings(data) {
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
+            }
+
+            // ── Apply saved notification toggles ──
+            function applyNotifSettings() {
+                const s = loadSettings();
+                document.getElementById('notifSignup').checked = s.notifSignup !== false;
+                document.getElementById('notifWithdraw').checked = s.notifWithdraw !== false;
+                document.getElementById('notifAutoRefresh').checked = s.notifAutoRefresh !== false;
+                document.getElementById('notifShowEarnings').checked = s.notifShowEarnings !== false;
+            }
+
+            // ── Hash password ──
+            async function hashText(text) {
+                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // ── Load live stats ──
+            async function loadStats() {
+                try {
+                    const res = await apiCall('/dashboard/stats', 'GET', null, true);
+                    const data = res?.data || {};
+                    document.getElementById('settingTotalUsers').value = data.total_users || 0;
+                    document.getElementById('settingTotalEarnings').value = formatRp(data.total_earnings || 0);
+                } catch {
+                    document.getElementById('settingTotalUsers').value = 'Error';
+                    document.getElementById('settingTotalEarnings').value = 'Error';
+                }
+            }
+
+            // ── Bind all events ──
+            function bindEvents() {
+                // Logout buttons
+                const logoutFn = () => {
+                    localStorage.removeItem('zora_token');
+                    window.location.href = '/auth/login.html';
+                };
+                document.getElementById('logoutBtn')?.addEventListener('click', logoutFn);
+                document.getElementById('logoutDangerBtn')?.addEventListener('click', logoutFn);
+
+                // Generate hash
+                document.getElementById('hashBtn').addEventListener('click', async () => {
+                    const pw = document.getElementById('newPasswordInput').value.trim();
+                    if (!pw) { showToast('Please enter a password first.', 'error'); return; }
+                    const hash = await hashText(pw);
+                    document.getElementById('hashOutput').value = hash;
+                    document.getElementById('hashResultRow').style.display = '';
+                    showToast('Hash generated! Copy and update all dashboard HTML files.');
+                });
+
+                // Copy hash
+                document.getElementById('copyHashBtn').addEventListener('click', () => {
+                    const val = document.getElementById('hashOutput').value;
+                    navigator.clipboard.writeText(val).then(() => showToast('Hash copied to clipboard!'));
+                });
+
+                // Save notification prefs
+                document.getElementById('saveNotifBtn').addEventListener('click', () => {
+                    const s = {
+                        notifSignup: document.getElementById('notifSignup').checked,
+                        notifWithdraw: document.getElementById('notifWithdraw').checked,
+                        notifAutoRefresh: document.getElementById('notifAutoRefresh').checked,
+                        notifShowEarnings: document.getElementById('notifShowEarnings').checked,
+                    };
+                    saveSettings(s);
+                    showToast('Notification preferences saved!');
+                });
+
+                // Clear notifications
+                document.getElementById('clearNotifBtn').addEventListener('click', () => {
+                    if (!confirm('Clear all notification history?')) return;
+                    localStorage.removeItem(NOTIF_KEY);
+                    showToast('Notifications cleared.');
+                });
+
+                // Clear trade history
+                document.getElementById('clearTradeBtn').addEventListener('click', () => {
+                    if (!confirm('Clear all trade history?')) return;
+                    localStorage.removeItem(TRADE_KEY);
+                    showToast('Trade history cleared.');
+                });
+
+                // Reset everything
+                document.getElementById('resetAllBtn').addEventListener('click', () => {
+                    if (!confirm('Reset ALL dashboard data? This cannot be undone.')) return;
+                    [NOTIF_KEY, TRADE_KEY, SETTINGS_KEY,
+                        'zora_dashboard_seen_signups', 'zora_notifications',
+                        'zora_seen_signups', 'zora_dashboard_unlocked'
+                    ].forEach(k => localStorage.removeItem(k));
+                    sessionStorage.removeItem('zora_dashboard_unlocked');
+                    showToast('All data reset. Redirecting...');
+                    setTimeout(() => { window.location.href = '/dashboard/index.html'; }, 1500);
+                });
+            }
+
+            async function init() {
+                const token = localStorage.getItem('zora_token');
+                if (!token) { window.location.href = '/auth/login.html'; return; }
+
+                applyNotifSettings();
+                bindEvents();
+                await loadStats();
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+
+</html>
