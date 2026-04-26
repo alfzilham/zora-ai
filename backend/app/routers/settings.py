@@ -16,7 +16,8 @@ from app.config import settings
 from app.database import get_db
 from app.middleware.auth_middleware import get_current_user
 from app.models.memory import Memory
-from app.models.user import Feedback, User, UserProfile
+from app.models.user import User, UserProfile
+from app.models.feedback import Feedback
 
 router = APIRouter()
 
