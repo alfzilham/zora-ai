@@ -40,11 +40,21 @@ function getToken() {
 
 async function apiSafe(endpoint, method = 'GET', body = null) {
     try {
-        if (typeof apiCall === 'function') return await apiCall(endpoint, method, body, true);
         const token = localStorage.getItem('zora_token');
-        const opts = { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) } };
+        if (!token) { window.location.href = '/auth/login.html'; return null; }
+
+        if (typeof apiCall === 'function') return await apiCall(endpoint, method, body, true);
+
+        const opts = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        };
         if (body) opts.body = JSON.stringify(body);
         const res = await fetch(`/api${endpoint}`, opts);
+        if (res.status === 401) { window.location.href = '/auth/login.html'; return null; }
         return await res.json();
     } catch (e) { console.warn('API:', endpoint, e); return null; }
 }
