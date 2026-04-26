@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - ZORA AI</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+
+    <style>
+        /* ── PAGE LOADER ─────────────────────────────────────── */
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #0d0d12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.35s ease;
+            pointer-events: all;
+        }
+
+        #pageLoader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #pageLoader.hidden {
+            display: none;
+        }
+
+        .zora-spinner {
+            position: relative;
+            border-radius: 50%;
+            height: 80px;
+            width: 80px;
+            animation: rotate_3922 1.2s linear infinite;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span {
+            position: absolute;
+            border-radius: 50%;
+            height: 100%;
+            width: 100%;
+            background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
+        }
+
+        .zora-spinner span:nth-of-type(1) {
+            filter: blur(5px);
+        }
+
+        .zora-spinner span:nth-of-type(2) {
+            filter: blur(10px);
+        }
+
+        .zora-spinner span:nth-of-type(3) {
+            filter: blur(25px);
+        }
+
+        .zora-spinner span:nth-of-type(4) {
+            filter: blur(50px);
+        }
+
+        .zora-spinner::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background-color: #0d0d12;
+            border: solid 4px #0d0d12;
+            border-radius: 50%;
+        }
+
+        @keyframes rotate_3922 {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── TOPBAR ──────────────────────────────────────────── */
+        .an-topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 24px 28px 0;
+            flex-shrink: 0;
+        }
+
+        .an-topbar-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .an-subtitle {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 0;
+        }
+
+        .an-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 6px;
+        }
+
+        /* ── SUMMARY CARDS ───────────────────────────────────── */
+        .an-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            padding: 20px 28px 0;
+        }
+
+        .an-stat {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .an-stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .an-stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+
+        .an-stat-icon.cyan {
+            background: rgba(0, 212, 255, 0.12);
+            color: #00D4FF;
+        }
+
+        .an-stat-icon.green {
+            background: rgba(0, 229, 160, 0.12);
+            color: #00e5a0;
+        }
+
+        .an-stat-icon.purple {
+            background: rgba(139, 92, 246, 0.12);
+            color: #a78bfa;
+        }
+
+        .an-stat-icon.amber {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+        }
+
+        .an-stat-badge {
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .an-stat-badge.up {
+            background: rgba(0, 229, 160, 0.12);
+            color: #00e5a0;
+        }
+
+        .an-stat-badge.flat {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .an-stat-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .an-stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .an-stat-value.cyan {
+            color: #00D4FF;
+        }
+
+        .an-stat-value.green {
+            color: #00e5a0;
+        }
+
+        .an-stat-value.purple {
+            color: #a78bfa;
+        }
+
+        .an-stat-value.amber {
+            color: #fbbf24;
+        }
+
+        .an-stat-sub {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── CONTENT ─────────────────────────────────────────── */
+        .an-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .an-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .an-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+        }
+
+        /* ── PANELS ──────────────────────────────────────────── */
+        .an-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px 22px;
+        }
+
+        .an-panel-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .an-panel-kicker {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 3px;
+        }
+
+        .an-panel-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        /* ── GRID ────────────────────────────────────────────── */
+        .an-grid-2 {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+            gap: 14px;
+        }
+
+        .an-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        /* ── CHART WRAP ──────────────────────────────────────── */
+        .an-chart-wrap {
+            height: 260px;
+            position: relative;
+        }
+
+        .an-chart-wrap-sm {
+            height: 200px;
+            position: relative;
+        }
+
+        /* ── COUNTRY LIST ────────────────────────────────────── */
+        .an-country-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .an-country-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .an-country-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .an-country-name {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .an-country-count {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .an-bar-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .an-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00D4FF, #0088ff);
+            border-radius: 999px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ── INSIGHTS ────────────────────────────────────────── */
+        .an-insights {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .an-insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+        }
+
+        .an-insight-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .an-insight-icon.cyan {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00D4FF;
+        }
+
+        .an-insight-icon.green {
+            background: rgba(0, 229, 160, 0.1);
+            color: #00e5a0;
+        }
+
+        .an-insight-icon.amber {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+        }
+
+        .an-insight-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .an-insight-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 2px;
+        }
+
+        .an-insight-desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.3);
+            line-height: 1.5;
+        }
+
+        /* ── LOADING ─────────────────────────────────────────── */
+        .an-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.85rem;
+            padding: 40px 0;
+            justify-content: center;
+        }
+
+        .spin {
+            animation: spinAnim 1s linear infinite;
+        }
+
+        @keyframes spinAnim {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────────── */
+        @media (max-width: 1100px) {
+            .an-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .an-grid-2,
+            .an-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .db-sidebar {
+                display: none;
+            }
+
+            .an-summary {
+                grid-template-columns: 1fr 1fr;
+                padding: 14px 16px 0;
+            }
+
+            .an-topbar {
+                padding: 16px 16px 0;
+                flex-direction: column;
+            }
+
+            .an-content {
+                padding: 14px 16px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Page Loader -->
+    <div id="pageLoader">
+        <div class="zora-spinner">
+            <span></span><span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <div class="db-app">
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="db-sidebar">
+            <div class="db-sidebar-brand">
+                <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
+                <span class="db-sidebar-name">ZORA AI</span>
+            </div>
+            <nav class="db-sidebar-nav">
+                <a href="/dashboard/index.html" class="db-nav-item">
+                    <i class="fi fi-rr-chart-pie-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dashboard/users.html" class="db-nav-item">
+                    <i class="fi fi-rr-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="/dashboard/feedback-admin.html" class="db-nav-item">
+                    <i class="fi fi-rr-comment-alt"></i>
+                    <span>Feedback</span>
+                </a>
+                <div class="db-nav-item active">
+                    <i class="fi fi-rr-chart-line-up"></i>
+                    <span>Analytics</span>
+                </div>
+                <a href="/dashboard/trade-history.html" class="db-nav-item">
+                    <i class="fi fi-rr-wallet"></i>
+                    <span>Trade History</span>
+                </a>
+                <a href="/dashboard/notifications.html" class="db-nav-item">
+                    <i class="fi fi-rr-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <div class="db-nav-item">
+                    <i class="fi fi-rr-settings"></i>
+                    <span>Settings</span>
+                </div>
+            </nav>
+            <div class="db-sidebar-footer">
+                <a href="/chat/index.html" class="db-back-chat">
+                    <i class="fi fi-rr-arrow-left"></i>
+                    <span>Back to Chat</span>
+                </a>
+                <button id="logoutBtn" class="db-logout-btn" type="button">
+                    <i class="fi fi-rr-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ── MAIN ── -->
+        <main class="db-main">
+
+            <!-- Topbar -->
+            <header class="an-topbar">
+                <div class="an-topbar-left">
+                    <h1 class="db-page-title">Analytics</h1>
+                    <p class="an-subtitle">User growth, geography, and platform insights</p>
+                </div>
+                <div class="an-topbar-right">
+                    <div class="db-date-badge">
+                        <i class="fi fi-rr-refresh"></i>
+                        <span id="lastUpdated">Loading...</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Summary Cards -->
+            <div class="an-summary">
+                <div class="an-stat">
+                    <div class="an-stat-top">
+                        <div class="an-stat-icon cyan"><i class="fi fi-ss-users"></i></div>
+                        <span class="an-stat-badge up" id="badgeTotal">↑ Live</span>
+                    </div>
+                    <p class="an-stat-label">Total Users</p>
+                    <strong class="an-stat-value cyan" id="statTotal">0</strong>
+                    <p class="an-stat-sub">All registered accounts</p>
+                </div>
+                <div class="an-stat">
+                    <div class="an-stat-top">
+                        <div class="an-stat-icon green"><i class="fi fi-ss-chart-line-up"></i></div>
+                        <span class="an-stat-badge up">↑ Month</span>
+                    </div>
+                    <p class="an-stat-label">This Month</p>
+                    <strong class="an-stat-value green" id="statMonth">0</strong>
+                    <p class="an-stat-sub">New signups this month</p>
+                </div>
+                <div class="an-stat">
+                    <div class="an-stat-top">
+                        <div class="an-stat-icon purple"><i class="fi fi-ss-calendar"></i></div>
+                        <span class="an-stat-badge flat">Year</span>
+                    </div>
+                    <p class="an-stat-label">This Year</p>
+                    <strong class="an-stat-value purple" id="statYear">0</strong>
+                    <p class="an-stat-sub">Total annual signups</p>
+                </div>
+                <div class="an-stat">
+                    <div class="an-stat-top">
+                        <div class="an-stat-icon amber"><i class="fi fi-ss-globe"></i></div>
+                        <span class="an-stat-badge flat">Geo</span>
+                    </div>
+                    <p class="an-stat-label">Countries</p>
+                    <strong class="an-stat-value amber" id="statCountries">0</strong>
+                    <p class="an-stat-sub">Unique countries reached</p>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="an-loading" id="anLoading">
+                <i class="fi fi-rr-spinner spin"></i>
+                Loading analytics...
+            </div>
+
+            <!-- Content -->
+            <div class="an-content" id="anContent" style="display:none">
+
+                <!-- Row 1: Growth Chart + Country Donut -->
+                <div class="an-grid-2">
+                    <div class="an-panel">
+                        <div class="an-panel-header">
+                            <div>
+                                <p class="an-panel-kicker">Growth</p>
+                                <h2 class="an-panel-title">User Growth — Last 6 Months</h2>
+                            </div>
+                        </div>
+                        <div class="an-chart-wrap">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="an-panel">
+                        <div class="an-panel-header">
+                            <div>
+                                <p class="an-panel-kicker">Geography</p>
+                                <h2 class="an-panel-title">Users by Country</h2>
+                            </div>
+                        </div>
+                        <div class="an-chart-wrap">
+                            <canvas id="countryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Country List + Insights + Monthly Bar -->
+                <div class="an-grid-3">
+
+                    <!-- Country breakdown -->
+                    <div class="an-panel">
+                        <div class="an-panel-header">
+                            <div>
+                                <p class="an-panel-kicker">Top Regions</p>
+                                <h2 class="an-panel-title">Session by Country</h2>
+                            </div>
+                        </div>
+                        <div class="an-country-list" id="countryList"></div>
+                    </div>
+
+                    <!-- Monthly bar -->
+                    <div class="an-panel">
+                        <div class="an-panel-header">
+                            <div>
+                                <p class="an-panel-kicker">Monthly</p>
+                                <h2 class="an-panel-title">Signups per Month</h2>
+                            </div>
+                        </div>
+                        <div class="an-chart-wrap-sm">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights -->
+                    <div class="an-panel">
+                        <div class="an-panel-header">
+                            <div>
+                                <p class="an-panel-kicker">Intelligence</p>
+                                <h2 class="an-panel-title">Key Insights</h2>
+                            </div>
+                        </div>
+                        <div class="an-insights" id="insightsList"></div>
+                    </div>
+
+                </div>
+
+            </div><!-- /an-content -->
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="/js/utils/helpers.js"></script>
+    <script defer src="/js/utils/api.js"></script>
+    <script defer src="/js/auth.js"></script>
+    <script>
+        // ── PAGE LOADER ────────────────────────────────────────────────────────────
+        (function () {
+            const loader = document.getElementById('pageLoader');
+            window.addEventListener('load', () => {
+                if (!loader) return;
+                loader.classList.add('fade-out');
+                setTimeout(() => loader.classList.add('hidden'), 380);
+            });
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+                const dashPages = ['/dashboard/', '/chat/'];
+                if (!dashPages.some(p => href.includes(p))) return;
+                e.preventDefault();
+                if (!loader) { window.location.href = href; return; }
+                loader.classList.remove('hidden', 'fade-out');
+                setTimeout(() => { window.location.href = href; }, 350);
+            });
+        })();
+
+        // ── ANALYTICS ──────────────────────────────────────────────────────────────
+        (function () {
+            const flagMap = {
+                'Indonesia': '🇮🇩', 'United States': '🇺🇸', 'Malaysia': '🇲🇾',
+                'Singapore': '🇸🇬', 'Japan': '🇯🇵', 'South Korea': '🇰🇷',
+                'Australia': '🇦🇺', 'Germany': '🇩🇪', 'United Kingdom': '🇬🇧',
+                'France': '🇫🇷', 'India': '🇮🇳', 'China': '🇨🇳', 'Unknown': '🌐'
+            };
+
+            const CHART_COLORS = [
+                '#00D4FF', '#00e5a0', '#a78bfa', '#fbbf24',
+                '#f472b6', '#fb923c', '#34d399', '#60a5fa'
+            ];
+
+            function buildGrowthChart(items) {
+                const dataMap = {};
+                items.forEach(item => {
+                    const key = `${item.year}-${String(item.month).padStart(2, '0')}`;
+                    dataMap[key] = item.count;
+                });
+
+                const labels = [], values = [];
+                const now = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    labels.push(`${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`);
+                    values.push(dataMap[key] || 0);
+                }
+
+                new Chart(document.getElementById('growthChart'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Users',
+                            data: values,
+                            backgroundColor: 'rgba(0,212,255,0.08)',
+                            fill: true, tension: 0.4,
+                            pointBackgroundColor: '#00D4FF',
+                            pointRadius: 5, pointHoverRadius: 7,
+                            borderColor: '#00D4FF', borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#A0A0B0', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                            y: { beginAtZero: true, ticks: { color: '#A0A0B0', precision: 0, stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' } }
+                        }
+                    }
+                });
+            }
+
+            function buildCountryDonut(items) {
+                const top = items.slice(0, 6);
+                new Chart(document.getElementById('countryChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: top.map(i => `${flagMap[i.country] || '🌐'} ${i.country}`),
+                        datasets: [{
+                            data: top.map(i => i.count),
+                            backgroundColor: CHART_COLORS.slice(0, top.length),
+                            borderWidth: 0,
+                            hoverOffset: 6,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        cutout: '68%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: 'rgba(255,255,255,0.45)',
+                                    font: { size: 11 },
+                                    padding: 12,
+                                    boxWidth: 10, boxHeight: 10,
+                                    borderRadius: 3,
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function buildBarChart(items) {
+                const dataMap = {};
+                items.forEach(item => {
+                    const key = `${item.year}-${String(item.month).padStart(2, '0')}`;
+                    dataMap[key] = item.count;
+                });
+                const labels = [], values = [];
+                const now = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    labels.push(String(d.getMonth() + 1).padStart(2, '0'));
+                    values.push(dataMap[key] || 0);
+                }
+
+                new Chart(document.getElementById('barChart'), {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Signups',
+                            data: values,
+                            backgroundColor: 'rgba(0,212,255,0.5)',
+                            borderColor: '#00D4FF',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#A0A0B0', font: { size: 10 } }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: '#A0A0B0', precision: 0, stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' } }
+                        }
+                    }
+                });
+            }
+
+            function buildCountryList(items) {
+                const list = document.getElementById('countryList');
+                const max = Math.max(...items.map(i => i.count), 1);
+                list.innerHTML = items.slice(0, 6).map(item => {
+                    const pct = Math.round((item.count / max) * 100);
+                    return `
+                <div class="an-country-item">
+                    <div class="an-country-row">
+                        <span class="an-country-name">
+                            ${flagMap[item.country] || '🌐'} ${item.country}
+                        </span>
+                        <span class="an-country-count">${item.count} users</span>
+                    </div>
+                    <div class="an-bar-track">
+                        <div class="an-bar-fill" style="width:${pct}%"></div>
+                    </div>
+                </div>
+            `;
+                }).join('');
+            }
+
+            function buildInsights(data) {
+                const insights = [];
+                const total = data.total_users || 0;
+                const month = data.users_this_month || 0;
+                const year = data.users_this_year || 0;
+                const countries = (data.users_by_country || []).filter(c => c.country !== 'Unknown');
+                const topCountry = countries[0];
+                const months = data.users_by_month || [];
+
+                // Growth rate
+                if (total > 0 && month > 0) {
+                    const rate = Math.round((month / total) * 100);
+                    insights.push({
+                        icon: 'cyan', iconClass: 'fi-rr-chart-line-up',
+                        title: `${rate}% of users joined this month`,
+                        desc: `${month} out of ${total} total users signed up in the current month.`
+                    });
+                }
+
+                // Top country
+                if (topCountry) {
+                    const pct = Math.round((topCountry.count / total) * 100);
+                    insights.push({
+                        icon: 'green', iconClass: 'fi-rr-globe',
+                        title: `${topCountry.country} is your top market`,
+                        desc: `${pct}% of all users come from ${topCountry.country} (${topCountry.count} users).`
+                    });
+                }
+
+                // Peak month
+                if (months.length) {
+                    const peak = months.reduce((a, b) => a.count > b.count ? a : b);
+                    insights.push({
+                        icon: 'amber', iconClass: 'fi-rr-star',
+                        title: `Best month: ${String(peak.month).padStart(2, '0')}/${peak.year}`,
+                        desc: `Your highest signup month had ${peak.count} new users.`
+                    });
+                }
+
+                const el = document.getElementById('insightsList');
+                if (!insights.length) {
+                    el.innerHTML = '<p style="color:rgba(255,255,255,0.2);font-size:0.82rem">Not enough data yet.</p>';
+                    return;
+                }
+                el.innerHTML = insights.map(ins => `
+            <div class="an-insight-item">
+                <div class="an-insight-icon ${ins.icon}">
+                    <i class="fi ${ins.iconClass}"></i>
+                </div>
+                <div class="an-insight-body">
+                    <p class="an-insight-title">${ins.title}</p>
+                    <p class="an-insight-desc">${ins.desc}</p>
+                </div>
+            </div>
+        `).join('');
+            }
+
+            async function init() {
+                const token = localStorage.getItem('zora_token');
+                if (!token) { window.location.href = '/auth/login.html'; return; }
+
+                document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                    localStorage.removeItem('zora_token');
+                    window.location.href = '/auth/login.html';
+                });
+
+                try {
+                    const res = await apiCall('/dashboard/stats', 'GET', null, true);
+                    const data = res?.data || {};
+
+                    // Summary
+                    document.getElementById('statTotal').textContent = data.total_users || 0;
+                    document.getElementById('statMonth').textContent = data.users_this_month || 0;
+                    document.getElementById('statYear').textContent = data.users_this_year || 0;
+                    document.getElementById('statCountries').textContent = (data.users_by_country || []).length;
+                    document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('id-ID', {
+                        hour: '2-digit', minute: '2-digit'
+                    });
+
+                    // Hide loading, show content
+                    document.getElementById('anLoading').style.display = 'none';
+                    document.getElementById('anContent').style.display = '';
+
+                    // Build charts
+                    buildGrowthChart(data.users_by_month || []);
+                    buildCountryDonut(data.users_by_country || []);
+                    buildBarChart(data.users_by_month || []);
+                    buildCountryList(data.users_by_country || []);
+                    buildInsights(data);
+
+                } catch (err) {
+                    document.getElementById('anLoading').innerHTML =
+                        `<span style="color:#ff4d4d">${err.message || 'Failed to load analytics.'}</span>`;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+
+</html>
