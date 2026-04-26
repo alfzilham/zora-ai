@@ -57,7 +57,10 @@
     <!-- ── HERO SECTION ───────────────────────────────────── -->
     <section class="lh-hero" id="hero">
 
-        <!-- WebGL Orb Background -->
+        <!-- Magic Rings Background (layer 1 - paling belakang) -->
+        <div id="heroRingsContainer" class="lh-hero-rings"></div>
+
+        <!-- WebGL Orb (layer 2 - tengah) -->
         <div id="heroOrbContainer" class="lh-hero-orb"></div>
 
         <!-- Light overlay -->
@@ -690,7 +693,168 @@
             }
         }
 
+        // ── Magic Rings Background ────────────────────────────────
+        async function initHeroRings() {
+            const container = document.getElementById('heroRingsContainer');
+            if (!container) return;
+
+            try {
+                const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+
+                const vertexShader = `
+void main() {
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`;
+
+                const fragmentShader = `
+precision highp float;
+uniform float uTime, uAttenuation, uLineThickness;
+uniform float uBaseRadius, uRadiusStep, uScaleRate;
+uniform float uOpacity, uNoiseAmount, uRotation, uRingGap;
+uniform float uFadeIn, uFadeOut;
+uniform float uMouseInfluence, uHoverAmount, uHoverScale, uParallax, uBurst;
+uniform vec2 uResolution, uMouse;
+uniform vec3 uColor, uColorTwo;
+uniform int uRingCount;
+
+const float HP = 1.5707963;
+const float CYCLE = 3.45;
+
+float fade(float t) {
+    return t < uFadeIn ? smoothstep(0.0, uFadeIn, t) : 1.0 - smoothstep(uFadeOut, CYCLE - 0.2, t);
+}
+
+float ring(vec2 p, float ri, float cut, float t0, float px) {
+    float t = mod(uTime + t0, CYCLE);
+    float r = ri + t / CYCLE * uScaleRate;
+    float d = abs(length(p) - r);
+    float a = atan(abs(p.y), abs(p.x)) / HP;
+    float th = max(1.0 - a, 0.5) * px * uLineThickness;
+    float h = (1.0 - smoothstep(th, th * 1.5, d)) + 1.0;
+    d += pow(cut * a, 3.0) * r;
+    return h * exp(-uAttenuation * d) * fade(t);
+}
+
+void main() {
+    float px = 1.0 / min(uResolution.x, uResolution.y);
+    vec2 p = (gl_FragCoord.xy - 0.5 * uResolution.xy) * px;
+    float cr = cos(uRotation), sr = sin(uRotation);
+    p = mat2(cr, -sr, sr, cr) * p;
+    p -= uMouse * uMouseInfluence;
+    float sc = mix(1.0, uHoverScale, uHoverAmount) + uBurst * 0.3;
+    p /= sc;
+    vec3 c = vec3(0.0);
+    float rcf = max(float(uRingCount) - 1.0, 1.0);
+    for (int i = 0; i < 10; i++) {
+        if (i >= uRingCount) break;
+        float fi = float(i);
+        vec2 pr = p - fi * uParallax * uMouse;
+        vec3 rc = mix(uColor, uColorTwo, fi / rcf);
+        c = mix(c, rc, vec3(ring(pr, uBaseRadius + fi * uRadiusStep, pow(uRingGap, fi), i == 0 ? 0.0 : 2.95 * fi, px)));
+    }
+    c *= 1.0 + uBurst * 2.0;
+    float n = fract(sin(dot(gl_FragCoord.xy + uTime * 100.0, vec2(12.9898, 78.233))) * 43758.5453);
+    c += (n - 0.5) * uNoiseAmount;
+    gl_FragColor = vec4(c, max(c.r, max(c.g, c.b)) * uOpacity);
+}`;
+
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renderer.setClearColor(0x000000, 0);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
+
+                const scene = new THREE.Scene();
+                const camera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0.1, 10);
+                camera.position.z = 1;
+
+                const uniforms = {
+                    uTime: { value: 0 },
+                    uAttenuation: { value: 12 },
+                    uResolution: { value: new THREE.Vector2() },
+                    uColor: { value: new THREE.Color('#00D4FF') },
+                    uColorTwo: { value: new THREE.Color('#0066FF') },
+                    uLineThickness: { value: 2.5 },
+                    uBaseRadius: { value: 0.32 },
+                    uRadiusStep: { value: 0.09 },
+                    uScaleRate: { value: 0.08 },
+                    uRingCount: { value: 6 },
+                    uOpacity: { value: 0.55 },
+                    uNoiseAmount: { value: 0.04 },
+                    uRotation: { value: 0 },
+                    uRingGap: { value: 1.5 },
+                    uFadeIn: { value: 0.7 },
+                    uFadeOut: { value: 0.5 },
+                    uMouse: { value: new THREE.Vector2() },
+                    uMouseInfluence: { value: 0.18 },
+                    uHoverAmount: { value: 0 },
+                    uHoverScale: { value: 1.15 },
+                    uParallax: { value: 0.04 },
+                    uBurst: { value: 0 },
+                };
+
+                const material = new THREE.ShaderMaterial({
+                    vertexShader, fragmentShader, uniforms, transparent: true
+                });
+                const quad = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+                scene.add(quad);
+
+                const resize = () => {
+                    const w = container.clientWidth;
+                    const h = container.clientHeight;
+                    const dpr = Math.min(window.devicePixelRatio, 2);
+                    renderer.setSize(w, h);
+                    uniforms.uResolution.value.set(w * dpr, h * dpr);
+                };
+                resize();
+                window.addEventListener('resize', resize);
+
+                // Mouse tracking
+                let smoothMX = 0, smoothMY = 0;
+                let targetMX = 0, targetMY = 0;
+                let isHovered = false;
+                let hoverAmount = 0;
+                let burst = 0;
+
+                window.addEventListener('mousemove', (e) => {
+                    const rect = container.getBoundingClientRect();
+                    targetMX = (e.clientX - rect.left) / rect.width - 0.5;
+                    targetMY = -((e.clientY - rect.top) / rect.height - 0.5);
+                    isHovered = true;
+                });
+
+                window.addEventListener('mouseleave', () => {
+                    isHovered = false;
+                    targetMX = 0;
+                    targetMY = 0;
+                });
+
+                container.addEventListener('click', () => { burst = 1; });
+
+                // Animate
+                let lastT = 0;
+                (function loop(t) {
+                    requestAnimationFrame(loop);
+                    smoothMX += (targetMX - smoothMX) * 0.06;
+                    smoothMY += (targetMY - smoothMY) * 0.06;
+                    hoverAmount += ((isHovered ? 1 : 0) - hoverAmount) * 0.06;
+                    burst *= 0.94;
+                    if (burst < 0.001) burst = 0;
+
+                    uniforms.uTime.value = t * 0.001;
+                    uniforms.uMouse.value.set(smoothMX, smoothMY);
+                    uniforms.uHoverAmount.value = hoverAmount;
+                    uniforms.uBurst.value = burst;
+
+                    renderer.render(scene, camera);
+                })(0);
+
+            } catch (err) {
+                console.warn('Magic rings failed:', err);
+            }
+        }
+
         // ── Boot ──────────────────────────────────────────────────
+        initHeroRings();
         initHeroOrb();
         initCircularGallery();
 
