@@ -791,7 +791,7 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: clip;
     background: #f8f8ff;
 }
 

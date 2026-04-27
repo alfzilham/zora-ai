@@ -1269,7 +1269,7 @@ void main() {
             const DAMPING = 0.972;
             const STIFFNESS = 0.38;
             const SEGMENTS = 22;
-            const SEG_LEN = 13;
+            const SEG_LEN = 15;
             const CARD_W = 200;
             const CARD_H = 270;
             const LOGO_URL = '/assets/images/logo/logo.png';
@@ -1302,7 +1302,7 @@ void main() {
             /* ── init rope points ────────────────────── */
             function initPoints() {
                 anchorX = W * 0.5;
-                anchorY = 10;
+                anchorY = 40;
                 points = [];
                 for (let i = 0; i <= SEGMENTS; i++) {
                     const t = i / SEGMENTS;
@@ -1368,30 +1368,32 @@ void main() {
                     const a = points[i], b = points[i + 1];
                     const t = i / (points.length - 1);
 
-                    // rope shadow
+                    // shadow
                     ctx.beginPath();
-                    ctx.moveTo(a.x + 1, a.y + 1);
-                    ctx.lineTo(b.x + 1, b.y + 1);
-                    ctx.strokeStyle = `rgba(0,0,0,${0.06 + t * 0.06})`;
-                    ctx.lineWidth = 3.5;
+                    ctx.moveTo(a.x + 1.5, a.y + 1.5);
+                    ctx.lineTo(b.x + 1.5, b.y + 1.5);
+                    ctx.strokeStyle = `rgba(0,0,0,${0.08 + t * 0.07})`;
+                    ctx.lineWidth = 7;
                     ctx.lineCap = 'round';
                     ctx.stroke();
 
-                    // rope body — gradient from dark navy to cyan
-                    const r1 = Math.round(26 + t * 0), g1 = Math.round(35 + t * 165), b1 = Math.round(60 + t * 195);
+                    // rope body
+                    const g = Math.round(35 + t * 165);
+                    const bl = Math.round(60 + t * 195);
                     ctx.beginPath();
                     ctx.moveTo(a.x, a.y);
                     ctx.lineTo(b.x, b.y);
-                    ctx.strokeStyle = `rgb(${r1},${g1},${b1})`;
-                    ctx.lineWidth = 3 - t * 0.6;
+                    ctx.strokeStyle = `rgb(26,${g},${bl})`;
+                    ctx.lineWidth = 5.5 - t * 1;
+                    ctx.lineCap = 'round';
                     ctx.stroke();
 
                     // shine highlight
                     ctx.beginPath();
-                    ctx.moveTo(a.x - 0.5, a.y);
-                    ctx.lineTo(b.x - 0.5, b.y);
-                    ctx.strokeStyle = `rgba(255,255,255,${0.12 + t * 0.08})`;
-                    ctx.lineWidth = 1;
+                    ctx.moveTo(a.x - 1, a.y);
+                    ctx.lineTo(b.x - 1, b.y);
+                    ctx.strokeStyle = `rgba(255,255,255,${0.2 + t * 0.1})`;
+                    ctx.lineWidth = 1.5;
                     ctx.stroke();
                 }
             }
