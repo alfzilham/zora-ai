@@ -1356,7 +1356,7 @@ img {
 /* ── FLYING POSTERS ──────────────────────────────────── */
 .lf-flying-section {
     position: relative;
-    height: 600vh;
+    height: 100vh;
     background: #ffffff;
     overflow: hidden;
 }
