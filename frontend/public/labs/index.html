@@ -1272,6 +1272,7 @@ void main() {
             const SEG_LEN = 15;
             const CARD_W = 200;
             const CARD_H = 270;
+            const STRAP_W = 24;
             const LOGO_URL = '/assets/images/logo/logo.png';
 
             let W, H, anchorX, anchorY;
@@ -1281,12 +1282,10 @@ void main() {
             let mouseX = 0, mouseY = 0;
             let logoImg = null;
 
-            /* ── preload logo ───────────────────────── */
             const img = new Image();
             img.src = LOGO_URL;
             img.onload = () => { logoImg = img; };
 
-            /* ── resize ─────────────────────────────── */
             function resize() {
                 const dpr = window.devicePixelRatio || 1;
                 W = container.offsetWidth;
@@ -1299,10 +1298,9 @@ void main() {
                 initPoints();
             }
 
-            /* ── init rope points ────────────────────── */
             function initPoints() {
                 anchorX = W * 0.5;
-                anchorY = 40;
+                anchorY = -10; // tersembunyi di atas tepi canvas
                 points = [];
                 for (let i = 0; i <= SEGMENTS; i++) {
                     const t = i / SEGMENTS;
@@ -1314,7 +1312,6 @@ void main() {
             resize();
             window.addEventListener('resize', resize);
 
-            /* ── physics update ──────────────────────── */
             function update() {
                 for (let i = 0; i < points.length; i++) {
                     const p = points[i];
@@ -1331,7 +1328,6 @@ void main() {
                     p.x += vx;
                     p.y += vy + GRAVITY;
                 }
-                // constraints
                 for (let iter = 0; iter < 10; iter++) {
                     points[0].x = anchorX;
                     points[0].y = anchorY;
@@ -1346,98 +1342,111 @@ void main() {
                 }
             }
 
-            /* ── draw anchor bar ─────────────────────── */
-            function drawAnchor() {
-                const bw = 56, bh = 7;
-                ctx.beginPath();
-                ctx.roundRect(anchorX - bw / 2, 0, bw, bh, 3.5);
-                ctx.fillStyle = 'rgba(160,170,195,0.75)';
-                ctx.fill();
-
-                for (let i = 0; i < 4; i++) {
-                    ctx.beginPath();
-                    ctx.roundRect(anchorX - bw / 2 + 6 + i * 11, 1.5, 7, 3.5, 1);
-                    ctx.fillStyle = 'rgba(100,115,150,0.45)';
-                    ctx.fill();
-                }
-            }
-
-            /* ── draw rope ───────────────────────────── */
             function drawRope() {
                 for (let i = 0; i < points.length - 1; i++) {
                     const a = points[i], b = points[i + 1];
-                    const t = i / (points.length - 1);
+                    const dx = b.x - a.x, dy = b.y - a.y;
+                    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                    const nx = -dy / len, ny = dx / len;
+                    const hw = STRAP_W * 0.5;
+
+                    const x0 = a.x + nx * hw, y0 = a.y + ny * hw;
+                    const x1 = a.x - nx * hw, y1 = a.y - ny * hw;
+                    const x2 = b.x - nx * hw, y2 = b.y - ny * hw;
+                    const x3 = b.x + nx * hw, y3 = b.y + ny * hw;
 
                     // shadow
                     ctx.beginPath();
-                    ctx.moveTo(a.x + 1.5, a.y + 1.5);
-                    ctx.lineTo(b.x + 1.5, b.y + 1.5);
-                    ctx.strokeStyle = `rgba(0,0,0,${0.08 + t * 0.07})`;
-                    ctx.lineWidth = 7;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
+                    ctx.moveTo(x0 + 2, y0 + 2);
+                    ctx.lineTo(x3 + 2, y3 + 2);
+                    ctx.lineTo(x2 + 2, y2 + 2);
+                    ctx.lineTo(x1 + 2, y1 + 2);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(0,0,0,0.13)';
+                    ctx.fill();
 
-                    // rope body
-                    const g = Math.round(35 + t * 165);
-                    const bl = Math.round(60 + t * 195);
+                    // strap body
                     ctx.beginPath();
-                    ctx.moveTo(a.x, a.y);
-                    ctx.lineTo(b.x, b.y);
-                    ctx.strokeStyle = `rgb(26,${g},${bl})`;
-                    ctx.lineWidth = 5.5 - t * 1;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
+                    ctx.moveTo(x0, y0);
+                    ctx.lineTo(x3, y3);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineTo(x1, y1);
+                    ctx.closePath();
+                    ctx.fillStyle = '#1a1a2e';
+                    ctx.fill();
 
-                    // shine highlight
+                    // left highlight
                     ctx.beginPath();
-                    ctx.moveTo(a.x - 1, a.y);
-                    ctx.lineTo(b.x - 1, b.y);
-                    ctx.strokeStyle = `rgba(255,255,255,${0.2 + t * 0.1})`;
+                    ctx.moveTo(x0, y0);
+                    ctx.lineTo(x3, y3);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
+
+                    // right shadow
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // pattern dots
+                    if (i % 3 === 1) {
+                        const mx = (a.x + b.x) * 0.5;
+                        const my = (a.y + b.y) * 0.5;
+                        ctx.beginPath();
+                        ctx.arc(mx, my, 3.5, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(mx, my, 2, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255,255,255,0.28)';
+                        ctx.fill();
+                    }
                 }
             }
 
-            /* ── draw hook ───────────────────────────── */
-            function drawHook(x, y, angle) {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-                // ring
+            function drawHook(cx, cy) {
                 ctx.beginPath();
-                ctx.arc(0, 0, 5.5, 0, Math.PI * 2);
-                ctx.strokeStyle = '#888';
-                ctx.lineWidth = 1.5;
+                ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 2.5;
                 ctx.stroke();
-                // pin
                 ctx.beginPath();
-                ctx.roundRect(-1.5, 4, 3, 6, 1.5);
-                ctx.fillStyle = '#999';
+                ctx.roundRect(cx - 3, cy + 6, 6, 10, 3);
+                ctx.fillStyle = '#666';
                 ctx.fill();
-                ctx.restore();
             }
 
-            /* ── draw card ───────────────────────────── */
             function drawCard() {
                 const tip = points[points.length - 1];
                 const ref = points[points.length - 5];
                 const angle = Math.atan2(tip.y - ref.y, tip.x - ref.x) - Math.PI / 2;
 
+                const hookCX = tip.x;
+                const hookCY = tip.y + 14;
                 const cx = tip.x;
-                const cy = tip.y + CARD_H * 0.5 + 12;
+                const cy = tip.y + 14 + CARD_H * 0.5 + 6;
 
+                // draw hook
+                ctx.save();
+                ctx.translate(hookCX, hookCY);
+                ctx.rotate(angle);
+                drawHook(0, 0);
+                ctx.restore();
+
+                // draw card
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.rotate(angle);
 
                 const x = -CARD_W / 2, y = -CARD_H / 2, r = 16;
 
-                // card shadow
                 ctx.shadowColor = 'rgba(0,60,150,0.18)';
                 ctx.shadowBlur = 32;
                 ctx.shadowOffsetY = 10;
 
-                // card body
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
                 ctx.lineTo(x + CARD_W - r, y);
@@ -1450,17 +1459,14 @@ void main() {
                 ctx.quadraticCurveTo(x, y, x + r, y);
                 ctx.closePath();
 
-                // gradient fill
                 const grd = ctx.createLinearGradient(x, y, x + CARD_W, y + CARD_H);
                 grd.addColorStop(0, '#f4f6ff');
                 grd.addColorStop(0.5, '#ffffff');
                 grd.addColorStop(1, '#eef1f8');
                 ctx.fillStyle = grd;
                 ctx.fill();
-
                 ctx.shadowColor = 'transparent';
 
-                // border
                 ctx.strokeStyle = 'rgba(0,153,204,0.18)';
                 ctx.lineWidth = 1;
                 ctx.stroke();
@@ -1484,33 +1490,19 @@ void main() {
                 ctx.restore();
 
                 // hole
-                const holeY = y + 28;
                 ctx.beginPath();
-                ctx.arc(0, holeY, 5.5, 0, Math.PI * 2);
+                ctx.arc(0, y + 20, 5, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(200,210,230,0.5)';
                 ctx.fill();
                 ctx.strokeStyle = 'rgba(150,165,195,0.6)';
                 ctx.lineWidth = 1;
                 ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(0, holeY, 3.5, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(180,195,220,0.35)';
-                ctx.fill();
 
                 // logo box
-                const lbSize = 90, lbY = y + 65, lbR = 18;
+                const lbSize = 90, lbY = y + 55, lbR = 18;
                 ctx.beginPath();
                 ctx.roundRect(-lbSize / 2, lbY, lbSize, lbSize, lbR);
                 ctx.fillStyle = '#0a0a1a';
-                const lglow = ctx.createRadialGradient(0, lbY + lbSize / 2, 10, 0, lbY + lbSize / 2, 55);
-                lglow.addColorStop(0, 'rgba(0,180,255,0.15)');
-                lglow.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = '#0a0a1a';
-                ctx.fill();
-                // glow overlay
-                ctx.beginPath();
-                ctx.roundRect(-lbSize / 2, lbY, lbSize, lbSize, lbR);
-                ctx.fillStyle = lglow;
                 ctx.fill();
 
                 if (logoImg) {
@@ -1522,7 +1514,6 @@ void main() {
                     ctx.drawImage(logoImg, -lbSize / 2 + pad, lbY + pad, lbSize - pad * 2, lbSize - pad * 2);
                     ctx.restore();
                 } else {
-                    // fallback Z text
                     ctx.font = 'bold 32px monospace';
                     ctx.fillStyle = '#00c8e0';
                     ctx.textAlign = 'center';
@@ -1530,51 +1521,48 @@ void main() {
                     ctx.fillText('Z', 0, lbY + lbSize / 2);
                 }
 
-                // card name
-                ctx.font = '800 1.35rem "Inter", system-ui, sans-serif';
+                // name
+                ctx.font = '800 1.25rem "Inter", system-ui, sans-serif';
                 ctx.fillStyle = '#0a0a1a';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('ZORA AI', 0, y + 185);
+                ctx.fillText('ZORA AI', 0, y + 175);
 
                 // subtitle
-                ctx.font = '600 0.65rem "Inter", system-ui, sans-serif';
+                ctx.font = '600 0.62rem "Inter", system-ui, sans-serif';
                 ctx.fillStyle = '#0099CC';
-                ctx.letterSpacing = '0.1em';
-                ctx.fillText('SUPERINTELLIGENCE', 0, y + 205);
+                ctx.fillText('SUPERINTELLIGENCE', 0, y + 194);
 
                 // badge pill
-                const pillW = 80, pillH = 22, pillR = 11;
                 ctx.beginPath();
-                ctx.roundRect(-pillW / 2, y + 220, pillW, pillH, pillR);
+                ctx.roundRect(-40, y + 208, 80, 22, 11);
                 ctx.fillStyle = 'rgba(0,153,204,0.1)';
                 ctx.fill();
                 ctx.strokeStyle = 'rgba(0,153,204,0.28)';
                 ctx.lineWidth = 0.8;
                 ctx.stroke();
 
-                // badge dot (pulsing via time)
                 const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.003);
                 ctx.beginPath();
-                ctx.arc(-20, y + 231, 3 + pulse * 0.8, 0, Math.PI * 2);
+                ctx.arc(-16, y + 219, 3 + pulse * 0.8, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(0,212,255,${0.6 + pulse * 0.4})`;
                 ctx.fill();
 
-                ctx.font = '700 0.62rem "Inter", system-ui, sans-serif';
+                ctx.font = '700 0.6rem "Inter", system-ui, sans-serif';
                 ctx.fillStyle = '#0099CC';
                 ctx.textAlign = 'center';
-                ctx.fillText('LABS', 8, y + 232);
+                ctx.fillText('LABS', 8, y + 220);
 
                 // bottom stripe
                 ctx.save();
                 ctx.beginPath();
-                ctx.moveTo(x, y + CARD_H - 28);
-                ctx.lineTo(x + CARD_W, y + CARD_H - 28);
+                ctx.moveTo(x, y + CARD_H - 26);
+                ctx.lineTo(x + CARD_W, y + CARD_H - 26);
                 ctx.lineTo(x + CARD_W, y + CARD_H - r);
                 ctx.quadraticCurveTo(x + CARD_W, y + CARD_H, x + CARD_W - r, y + CARD_H);
                 ctx.lineTo(x + r, y + CARD_H);
                 ctx.quadraticCurveTo(x, y + CARD_H, x, y + CARD_H - r);
-                ctx.lineTo(x, y + CARD_H - 28);
+                ctx.lineTo(x, y + CARD_H - 26);
                 ctx.closePath();
                 const stripeGrd = ctx.createLinearGradient(x, 0, x + CARD_W, 0);
                 stripeGrd.addColorStop(0, 'rgba(0,212,255,0.18)');
@@ -1583,36 +1571,24 @@ void main() {
                 ctx.fill();
                 ctx.restore();
 
-                // hook at top of card
-                drawHook(0, y + 18, angle * -1);
-
                 ctx.restore();
             }
 
-            /* ── render loop ─────────────────────────── */
             function draw() {
                 ctx.clearRect(0, 0, W, H);
-                drawAnchor();
                 drawRope();
                 drawCard();
             }
 
-            function loop() {
-                update();
-                draw();
-                requestAnimationFrame(loop);
-            }
+            function loop() { update(); draw(); requestAnimationFrame(loop); }
             requestAnimationFrame(loop);
 
-            /* ── pointer helpers ─────────────────────── */
             function getPos(e) {
                 const rect = canvas.getBoundingClientRect();
-                const scaleX = W / rect.width;
-                const scaleY = H / rect.height;
                 const src = e.touches ? e.touches[0] : e;
                 return {
-                    x: (src.clientX - rect.left) * scaleX,
-                    y: (src.clientY - rect.top) * scaleY
+                    x: (src.clientX - rect.left) * (W / rect.width),
+                    y: (src.clientY - rect.top) * (H / rect.height)
                 };
             }
 
@@ -1620,7 +1596,7 @@ void main() {
                 const tip = points[points.length - 1];
                 const ref = points[points.length - 5];
                 const angle = Math.atan2(tip.y - ref.y, tip.x - ref.x) - Math.PI / 2;
-                const cx = tip.x, cy = tip.y + CARD_H * 0.5 + 12;
+                const cx = tip.x, cy = tip.y + 14 + CARD_H * 0.5 + 6;
                 const cos = Math.cos(-angle), sin = Math.sin(-angle);
                 const dx = pos.x - cx, dy = pos.y - cy;
                 const lx = dx * cos - dy * sin;
@@ -1633,24 +1609,16 @@ void main() {
                 const pos = getPos(e);
                 mouseX = pos.x; mouseY = pos.y;
                 if (hitCard(pos)) {
-                    dragging = true;
-                    dragIdx = points.length - 1;
+                    dragging = true; dragIdx = points.length - 1;
                 } else {
                     for (let i = points.length - 1; i >= 1; i--) {
-                        const p = points[i];
-                        if (Math.hypot(pos.x - p.x, pos.y - p.y) < 16) {
+                        if (Math.hypot(pos.x - points[i].x, pos.y - points[i].y) < 20) {
                             dragging = true; dragIdx = i; break;
                         }
                     }
                 }
             }
-
-            function onMove(e) {
-                e.preventDefault();
-                const pos = getPos(e);
-                mouseX = pos.x; mouseY = pos.y;
-            }
-
+            function onMove(e) { e.preventDefault(); const pos = getPos(e); mouseX = pos.x; mouseY = pos.y; }
             function onUp() { dragging = false; dragIdx = -1; }
 
             canvas.addEventListener('mousedown', onDown);
