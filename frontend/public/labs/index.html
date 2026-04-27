@@ -140,31 +140,48 @@
         <div id="heroOrbContainer" class="lh-hero-orb"></div>
         <div class="lh-hero-orb-overlay"></div>
 
-        <div class="lh-hero-content">
-            <span class="lh-badge lh-badge--light" data-aos="fade-down" data-aos-duration="600">
-                <span class="lh-badge-dot"></span>
-                ZORA LABS
-            </span>
+        <div class="lh-hero-content lh-hero-two-col">
 
-            <h1 class="lh-hero-title" id="heroTitle" aria-label="SuperIntelligence Tools for Every Task">
-                <span class="shuffle-text" id="shuffleTitle">SuperIntelligence Tools for Every Task</span>
-            </h1>
+            <!-- LEFT: Text -->
+            <div class="lh-hero-left">
+                <span class="lh-badge lh-badge--light" data-aos="fade-down" data-aos-duration="600">
+                    <span class="lh-badge-dot"></span>
+                    ZORA LABS
+                </span>
 
-            <p class="lh-hero-desc" id="heroDesc" style="opacity:0; transform:translateY(20px);">
-                Six powerful AI labs — each powered by the best model for the job.
-                Code, design, create, research, and analyze like never before.
-            </p>
+                <h1 class="lh-hero-title" id="heroTitle" aria-label="SuperIntelligence Tools for Every Task">
+                    <span class="shuffle-text" id="shuffleTitle">SuperIntelligence Tools for Every Task</span>
+                </h1>
 
-            <div class="lh-hero-actions" id="heroActions" style="opacity:0; transform:translateY(20px);">
-                <a href="#labs-grid" class="lh-btn-hero-primary">
-                    Explore Labs
-                    <i class="fi fi-rr-arrow-down"></i>
-                </a>
-                <a href="#footer" class="lh-btn-hero-secondary">
-                    View Roadmap
-                    <i class="fi fi-rr-map"></i>
-                </a>
+                <p class="lh-hero-desc" id="heroDesc" style="opacity:0; transform:translateY(20px);">
+                    Six powerful AI labs — each powered by the best model for the job.
+                    Code, design, create, research, and analyze like never before.
+                </p>
+
+                <div class="lh-hero-actions" id="heroActions" style="opacity:0; transform:translateY(20px);">
+                    <a href="#labs-grid" class="lh-btn-hero-primary">
+                        Explore Labs
+                        <i class="fi fi-rr-arrow-down"></i>
+                    </a>
+                    <a href="#footer" class="lh-btn-hero-secondary">
+                        View Roadmap
+                        <i class="fi fi-rr-map"></i>
+                    </a>
+                </div>
             </div>
+
+            <!-- RIGHT: Infinite Menu -->
+            <div class="lh-hero-right">
+                <div class="lh-infinite-menu-wrap">
+                    <canvas id="infiniteMenuCanvas"></canvas>
+                    <div class="im-face-title inactive" id="imFaceTitle"></div>
+                    <div class="im-face-desc inactive" id="imFaceDesc"></div>
+                    <div class="im-action-btn inactive" id="imActionBtn">
+                        <span>&#x2197;</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -1295,9 +1312,420 @@ void main() {
             }, { passive: true });
         })();
 
+        // ── Infinite Menu (Hero Right) ────────────────────────────
+        async function initInfiniteMenu() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix-min.js';
+            document.head.appendChild(script);
+            await new Promise(r => script.onload = r);
+
+            const { mat4, quat, vec2, vec3 } = glMatrix;
+            const canvas = document.getElementById('infiniteMenuCanvas');
+            if (!canvas) return;
+
+            const faceTitle = document.getElementById('imFaceTitle');
+            const faceDesc = document.getElementById('imFaceDesc');
+            const actionBtn = document.getElementById('imActionBtn');
+
+            const ITEMS = [
+                { image: '/assets/images/labs/card-code.png', link: '/labs/code.html', title: 'Zora Code', description: 'Write & debug code in any language' },
+                { image: '/assets/images/labs/card-design.png', link: '/labs/design.html', title: 'Zora Design', description: 'Creative briefs & UI concepts' },
+                { image: '/assets/images/labs/card-image.png', link: '/labs/image.html', title: 'Zora Imagine', description: 'Generate stunning AI visuals' },
+                { image: '/assets/images/labs/card-video.png', link: '/labs/vid.html', title: 'Zora Dream', description: 'Generate AI videos from text' },
+                { image: '/assets/images/labs/card-research.png', link: '/labs/research.html', title: 'Zora Research', description: 'Deep research with sources' },
+                { image: '/assets/images/labs/card-analytic.png', link: '/labs/analytics.html', title: 'Zora Analytic', description: 'Market insights & analytics' },
+            ];
+
+            // ── Geometry helpers ──────────────────────────────────
+            class Face { constructor(a,b,c){this.a=a;this.b=b;this.c=c;} }
+            class Vertex { constructor(x,y,z){this.position=vec3.fromValues(x,y,z);this.normal=vec3.create();this.uv=vec2.create();} }
+            class Geometry {
+                constructor(){this.vertices=[];this.faces=[];}
+                addVertex(...a){for(let i=0;i<a.length;i+=3)this.vertices.push(new Vertex(a[i],a[i+1],a[i+2]));return this;}
+                addFace(...a){for(let i=0;i<a.length;i+=3)this.faces.push(new Face(a[i],a[i+1],a[i+2]));return this;}
+                get lastVertex(){return this.vertices[this.vertices.length-1];}
+                subdivide(d=1){
+                    const cache={};let f=this.faces;
+                    for(let div=0;div<d;div++){
+                        const nf=new Array(f.length*4);
+                        f.forEach((face,ndx)=>{
+                            const mAB=this.getMidPoint(face.a,face.b,cache);
+                            const mBC=this.getMidPoint(face.b,face.c,cache);
+                            const mCA=this.getMidPoint(face.c,face.a,cache);
+                            const i=ndx*4;
+                            nf[i]=new Face(face.a,mAB,mCA);nf[i+1]=new Face(face.b,mBC,mAB);
+                            nf[i+2]=new Face(face.c,mCA,mBC);nf[i+3]=new Face(mAB,mBC,mCA);
+                        });f=nf;
+                    }this.faces=f;return this;
+                }
+                spherize(r=1){this.vertices.forEach(v=>{vec3.normalize(v.normal,v.position);vec3.scale(v.position,v.normal,r);});return this;}
+                get vertexData(){return new Float32Array(this.vertices.flatMap(v=>Array.from(v.position)));}
+                get normalData(){return new Float32Array(this.vertices.flatMap(v=>Array.from(v.normal)));}
+                get uvData(){return new Float32Array(this.vertices.flatMap(v=>Array.from(v.uv)));}
+                get indexData(){return new Uint16Array(this.faces.flatMap(f=>[f.a,f.b,f.c]));}
+                getMidPoint(a,b,cache){
+                    const key=a<b?`k_${b}_${a}`:`k_${a}_${b}`;
+                    if(Object.prototype.hasOwnProperty.call(cache,key))return cache[key];
+                    const pa=this.vertices[a].position,pb=this.vertices[b].position;
+                    const ndx=this.vertices.length;cache[key]=ndx;
+                    this.addVertex((pa[0]+pb[0])*0.5,(pa[1]+pb[1])*0.5,(pa[2]+pb[2])*0.5);
+                    return ndx;
+                }
+            }
+            class IcosahedronGeometry extends Geometry {
+                constructor(){
+                    super();const t=Math.sqrt(5)*0.5+0.5;
+                    this.addVertex(-1,t,0,1,t,0,-1,-t,0,1,-t,0,0,-1,t,0,1,t,0,-1,-t,0,1,-t,t,0,-1,t,0,1,-t,0,-1,-t,0,1)
+                    .addFace(0,11,5,0,5,1,0,1,7,0,7,10,0,10,11,1,5,9,5,11,4,11,10,2,10,7,6,7,1,8,3,9,4,3,4,2,3,2,6,3,6,8,3,8,9,4,9,5,2,4,11,6,2,10,8,6,7,9,8,1);
+                }
+            }
+            class DiscGeometry extends Geometry {
+                constructor(steps=4,r=1){
+                    super();steps=Math.max(4,steps);const alpha=(2*Math.PI)/steps;
+                    this.addVertex(0,0,0);this.lastVertex.uv[0]=0.5;this.lastVertex.uv[1]=0.5;
+                    for(let i=0;i<steps;i++){
+                        const x=Math.cos(alpha*i),y=Math.sin(alpha*i);
+                        this.addVertex(r*x,r*y,0);this.lastVertex.uv[0]=x*0.5+0.5;this.lastVertex.uv[1]=y*0.5+0.5;
+                        if(i>0)this.addFace(0,i,i+1);
+                    }this.addFace(0,steps,1);
+                }
+            }
+
+            // ── WebGL helpers ─────────────────────────────────────
+            function createShader(gl,type,src){
+                const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);
+                if(gl.getShaderParameter(s,gl.COMPILE_STATUS))return s;
+                console.error(gl.getShaderInfoLog(s));gl.deleteShader(s);return null;
+            }
+            function createProgram(gl,srcs,attribLocs){
+                const p=gl.createProgram();
+                [gl.VERTEX_SHADER,gl.FRAGMENT_SHADER].forEach((type,i)=>{const s=createShader(gl,type,srcs[i]);if(s)gl.attachShader(p,s);});
+                if(attribLocs){for(const a in attribLocs)gl.bindAttribLocation(p,attribLocs[a],a);}
+                gl.linkProgram(p);
+                if(gl.getProgramParameter(p,gl.LINK_STATUS))return p;
+                console.error(gl.getProgramInfoLog(p));gl.deleteProgram(p);return null;
+            }
+            function makeBuffer(gl,data,usage){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,usage);gl.bindBuffer(gl.ARRAY_BUFFER,null);return b;}
+            function makeVAO(gl,pairs,indices){
+                const va=gl.createVertexArray();gl.bindVertexArray(va);
+                for(const[buf,loc,num]of pairs){if(loc===-1)continue;gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,num,gl.FLOAT,false,0,0);}
+                if(indices){const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(indices),gl.STATIC_DRAW);}
+                gl.bindVertexArray(null);return va;
+            }
+            function setupTexture(gl){
+                const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+                return t;
+            }
+
+            // ── Shaders ───────────────────────────────────────────
+            const VERT = `#version 300 es
+uniform mat4 uWorldMatrix,uViewMatrix,uProjectionMatrix;
+uniform vec3 uCameraPosition;
+uniform vec4 uRotationAxisVelocity;
+in vec3 aModelPosition,aModelNormal;in vec2 aModelUvs;in mat4 aInstanceMatrix;
+out vec2 vUvs;out float vAlpha;flat out int vInstanceId;
+#define PI 3.141593
+void main(){
+    vec4 worldPosition=uWorldMatrix*aInstanceMatrix*vec4(aModelPosition,1.);
+    vec3 centerPos=(uWorldMatrix*aInstanceMatrix*vec4(0.,0.,0.,1.)).xyz;
+    float radius=length(centerPos.xyz);
+    if(gl_VertexID>0){
+        vec3 rotationAxis=uRotationAxisVelocity.xyz;
+        float rotationVelocity=min(.15,uRotationAxisVelocity.w*15.);
+        vec3 stretchDir=normalize(cross(centerPos,rotationAxis));
+        vec3 relativeVertexPos=normalize(worldPosition.xyz-centerPos);
+        float strength=dot(stretchDir,relativeVertexPos);
+        float invAbsStrength=min(0.,abs(strength)-1.);
+        strength=rotationVelocity*sign(strength)*abs(invAbsStrength*invAbsStrength*invAbsStrength+1.);
+        worldPosition.xyz+=stretchDir*strength;
+    }
+    worldPosition.xyz=radius*normalize(worldPosition.xyz);
+    gl_Position=uProjectionMatrix*uViewMatrix*worldPosition;
+    vAlpha=smoothstep(0.5,1.,normalize(worldPosition.xyz).z)*.9+.1;
+    vUvs=aModelUvs;vInstanceId=gl_InstanceID;
+}`;
+            const FRAG = `#version 300 es
+precision highp float;
+uniform sampler2D uTex;uniform int uItemCount,uAtlasSize;
+out vec4 outColor;in vec2 vUvs;in float vAlpha;flat in int vInstanceId;
+void main(){
+    int itemIndex=vInstanceId%uItemCount;
+    int cellsPerRow=uAtlasSize;
+    int cellX=itemIndex%cellsPerRow;int cellY=itemIndex/cellsPerRow;
+    vec2 cellSize=vec2(1.0)/vec2(float(cellsPerRow));
+    vec2 cellOffset=vec2(float(cellX),float(cellY))*cellSize;
+    ivec2 texSize=textureSize(uTex,0);
+    float imageAspect=float(texSize.x)/float(texSize.y);
+    float scale=max(imageAspect/1.0,1.0/imageAspect);
+    vec2 st=vec2(vUvs.x,1.0-vUvs.y);
+    st=(st-0.5)*scale+0.5;st=clamp(st,0.0,1.0);
+    st=st*cellSize+cellOffset;
+    outColor=texture(uTex,st);outColor.a*=vAlpha;
+}`;
+
+            // ── ArcballControl ────────────────────────────────────
+            class ArcballControl {
+                constructor(canvas, cb) {
+                    this.canvas=canvas;this.updateCallback=cb||(() => {});
+                    this.isPointerDown=false;this.orientation=quat.create();
+                    this.pointerRotation=quat.create();this.rotationVelocity=0;
+                    this.rotationAxis=vec3.fromValues(1,0,0);
+                    this.snapDirection=vec3.fromValues(0,0,-1);
+                    this.snapTargetDirection=null;
+                    this.EPSILON=0.1;this.IDENTITY_QUAT=quat.create();
+                    this.pointerPos=vec2.create();this.previousPointerPos=vec2.create();
+                    this._rotationVelocity=0;this._combinedQuat=quat.create();
+                    canvas.addEventListener('pointerdown',e=>{vec2.set(this.pointerPos,e.clientX,e.clientY);vec2.copy(this.previousPointerPos,this.pointerPos);this.isPointerDown=true;});
+                    canvas.addEventListener('pointerup',()=>{this.isPointerDown=false;});
+                    canvas.addEventListener('pointerleave',()=>{this.isPointerDown=false;});
+                    canvas.addEventListener('pointermove',e=>{if(this.isPointerDown)vec2.set(this.pointerPos,e.clientX,e.clientY);});
+                    canvas.style.touchAction='none';
+                }
+                update(dt,targetFD=16){
+                    const ts=dt/targetFD+0.00001;let af=ts;let snapRot=quat.create();
+                    if(this.isPointerDown){
+                        const INT=0.3*ts,AMP=5/ts;
+                        const mid=vec2.sub(vec2.create(),this.pointerPos,this.previousPointerPos);
+                        vec2.scale(mid,mid,INT);
+                        if(vec2.sqrLen(mid)>this.EPSILON){
+                            vec2.add(mid,this.previousPointerPos,mid);
+                            const p=this._project(mid),q=this._project(this.previousPointerPos);
+                            const a=vec3.normalize(vec3.create(),p),b=vec3.normalize(vec3.create(),q);
+                            vec2.copy(this.previousPointerPos,mid);af*=AMP;
+                            this.quatFromVectors(a,b,this.pointerRotation,af);
+                        }else{quat.slerp(this.pointerRotation,this.pointerRotation,this.IDENTITY_QUAT,INT);}
+                    }else{
+                        quat.slerp(this.pointerRotation,this.pointerRotation,this.IDENTITY_QUAT,0.1*ts);
+                        if(this.snapTargetDirection){
+                            const SI=0.2,a=this.snapTargetDirection,b=this.snapDirection;
+                            const sq=vec3.squaredDistance(a,b),df=Math.max(0.1,1-sq*10);
+                            af*=SI*df;this.quatFromVectors(a,b,snapRot,af);
+                        }
+                    }
+                    const cq=quat.multiply(quat.create(),snapRot,this.pointerRotation);
+                    this.orientation=quat.multiply(quat.create(),cq,this.orientation);
+                    quat.normalize(this.orientation,this.orientation);
+                    const RA=0.8*ts;
+                    quat.slerp(this._combinedQuat,this._combinedQuat,cq,RA);
+                    quat.normalize(this._combinedQuat,this._combinedQuat);
+                    const rad=Math.acos(this._combinedQuat[3])*2.0,s=Math.sin(rad/2.0);
+                    let rv=0;
+                    if(s>0.000001){rv=rad/(2*Math.PI);this.rotationAxis[0]=this._combinedQuat[0]/s;this.rotationAxis[1]=this._combinedQuat[1]/s;this.rotationAxis[2]=this._combinedQuat[2]/s;}
+                    this._rotationVelocity+=(rv-this._rotationVelocity)*0.5*ts;
+                    this.rotationVelocity=this._rotationVelocity/ts;
+                    this.updateCallback(dt);
+                }
+                quatFromVectors(a,b,out,af=1){
+                    const axis=vec3.normalize(vec3.create(),vec3.cross(vec3.create(),a,b));
+                    const d=Math.max(-1,Math.min(1,vec3.dot(a,b)));
+                    quat.setAxisAngle(out,axis,Math.acos(d)*af);return out;
+                }
+                _project(pos){
+                    const r=2,w=this.canvas.clientWidth,h=this.canvas.clientHeight,s=Math.max(w,h)-1;
+                    const x=(2*pos[0]-w-1)/s,y=(2*pos[1]-h-1)/s;
+                    const xySq=x*x+y*y,rSq=r*r;
+                    const z=xySq<=rSq/2?Math.sqrt(rSq-xySq):rSq/Math.sqrt(xySq);
+                    return vec3.fromValues(-x,y,z);
+                }
+            }
+
+            // ── InfiniteGridMenu ──────────────────────────────────
+            const SPHERE_R=2,TARGET_FD=1000/60;
+            const gl=canvas.getContext('webgl2',{antialias:true,alpha:true});
+            if(!gl){console.warn('No WebGL2');return;}
+
+            const program=createProgram(gl,[VERT,FRAG],{aModelPosition:0,aModelNormal:1,aModelUvs:2,aInstanceMatrix:3});
+            const locs={
+                aModelPosition:gl.getAttribLocation(program,'aModelPosition'),
+                aModelUvs:gl.getAttribLocation(program,'aModelUvs'),
+                aInstanceMatrix:gl.getAttribLocation(program,'aInstanceMatrix'),
+                uWorldMatrix:gl.getUniformLocation(program,'uWorldMatrix'),
+                uViewMatrix:gl.getUniformLocation(program,'uViewMatrix'),
+                uProjectionMatrix:gl.getUniformLocation(program,'uProjectionMatrix'),
+                uCameraPosition:gl.getUniformLocation(program,'uCameraPosition'),
+                uRotationAxisVelocity:gl.getUniformLocation(program,'uRotationAxisVelocity'),
+                uTex:gl.getUniformLocation(program,'uTex'),
+                uFrames:gl.getUniformLocation(program,'uFrames'),
+                uItemCount:gl.getUniformLocation(program,'uItemCount'),
+                uAtlasSize:gl.getUniformLocation(program,'uAtlasSize'),
+            };
+
+            const discGeo=new DiscGeometry(56,1);
+            const discBufs=discGeo.data;
+            const discVAO=makeVAO(gl,[[makeBuffer(gl,discBufs.vertices,gl.STATIC_DRAW),locs.aModelPosition,3],[makeBuffer(gl,discBufs.uvs,gl.STATIC_DRAW),locs.aModelUvs,2]],discBufs.indices);
+
+            const icoGeo=new IcosahedronGeometry();
+            icoGeo.subdivide(1).spherize(SPHERE_R);
+            const instancePositions=icoGeo.vertices.map(v=>v.position);
+            const DISC_COUNT=icoGeo.vertices.length;
+
+            // Instance matrices
+            const matricesArray=new Float32Array(DISC_COUNT*16);
+            const matrices=[];
+            const instanceBuf=gl.createBuffer();
+            for(let i=0;i<DISC_COUNT;i++){
+                const arr=new Float32Array(matricesArray.buffer,i*16*4,16);
+                arr.set(mat4.create());matrices.push(arr);
+            }
+            gl.bindVertexArray(discVAO);
+            gl.bindBuffer(gl.ARRAY_BUFFER,instanceBuf);
+            gl.bufferData(gl.ARRAY_BUFFER,matricesArray.byteLength,gl.DYNAMIC_DRAW);
+            for(let j=0;j<4;j++){
+                const loc=locs.aInstanceMatrix+j;
+                gl.enableVertexAttribArray(loc);
+                gl.vertexAttribPointer(loc,4,gl.FLOAT,false,64,j*16);
+                gl.vertexAttribDivisor(loc,1);
+            }
+            gl.bindBuffer(gl.ARRAY_BUFFER,null);gl.bindVertexArray(null);
+
+            // Texture atlas
+            const tex=setupTexture(gl);
+            const atlasSize=Math.ceil(Math.sqrt(ITEMS.length));
+            const atlasCanvas=document.createElement('canvas');
+            const atlasCtx=atlasCanvas.getContext('2d');
+            const cellSize=512;
+            atlasCanvas.width=atlasSize*cellSize;atlasCanvas.height=atlasSize*cellSize;
+            Promise.all(ITEMS.map(item=>new Promise(res=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>res(img);img.onerror=()=>res(null);img.src=item.image;}))).then(images=>{
+                images.forEach((img,i)=>{
+                    if(!img)return;
+                    const x=(i%atlasSize)*cellSize,y=Math.floor(i/atlasSize)*cellSize;
+                    atlasCtx.drawImage(img,x,y,cellSize,cellSize);
+                });
+                gl.bindTexture(gl.TEXTURE_2D,tex);
+                gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,atlasCanvas);
+                gl.generateMipmap(gl.TEXTURE_2D);
+            });
+
+            // Camera + world
+            const worldMatrix=mat4.create();
+            const camera={pos:vec3.fromValues(0,0,3),up:vec3.fromValues(0,1,0),view:mat4.create(),proj:mat4.create()};
+            function updateCamera(){
+                const m=mat4.create();mat4.targetTo(m,camera.pos,[0,0,0],camera.up);
+                mat4.invert(camera.view,m);
+            }
+            function updateProj(){
+                const aspect=canvas.clientWidth/canvas.clientHeight;
+                const h=SPHERE_R*0.35,dist=camera.pos[2];
+                const fov=aspect>1?2*Math.atan(h/dist):2*Math.atan(h/aspect/dist);
+                mat4.perspective(camera.proj,fov,aspect,0.1,40);
+            }
+            function resizeCanvas(){
+                const dpr=Math.min(2,window.devicePixelRatio);
+                const w=Math.round(canvas.clientWidth*dpr),h=Math.round(canvas.clientHeight*dpr);
+                if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+                gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight);
+                updateProj();
+            }
+            updateCamera();updateProj();resizeCanvas();
+            window.addEventListener('resize',resizeCanvas);
+
+            // Active item UI
+            let currentActiveIndex=-1;
+            let isMoving=false;
+            function setActive(index){
+                const i=index%ITEMS.length;
+                if(i===currentActiveIndex)return;
+                currentActiveIndex=i;
+                const item=ITEMS[i];
+                if(faceTitle)faceTitle.textContent=item.title;
+                if(faceDesc)faceDesc.textContent=item.description;
+            }
+            function setMoving(moving){
+                isMoving=moving;
+                const cls=moving?'inactive':'active';
+                const cls2=moving?'active':'inactive';
+                if(faceTitle){faceTitle.classList.remove('active','inactive');faceTitle.classList.add(cls);}
+                if(faceDesc){faceDesc.classList.remove('active','inactive');faceDesc.classList.add(cls);}
+                if(actionBtn){actionBtn.classList.remove('active','inactive');actionBtn.classList.add(cls);}
+            }
+            if(actionBtn){
+                actionBtn.addEventListener('click',()=>{
+                    if(currentActiveIndex<0)return;
+                    const link=ITEMS[currentActiveIndex].link;
+                    if(link)window.location.href=link;
+                });
+            }
+
+            // ArcballControl
+            let smoothRotVel=0;
+            const control=new ArcballControl(canvas,(dt)=>{
+                const ts=dt/TARGET_FD+0.0001;
+                let cameraTargetZ=3;
+                const moving=control.isPointerDown||Math.abs(smoothRotVel)>0.01;
+                if(moving!==isMoving)setMoving(moving);
+                if(!control.isPointerDown){
+                    const n=control.snapDirection;
+                    const invOri=quat.conjugate(quat.create(),control.orientation);
+                    const nt=vec3.transformQuat(vec3.create(),n,invOri);
+                    let maxD=-1,nearestIdx=0;
+                    for(let i=0;i<instancePositions.length;i++){
+                        const d=vec3.dot(nt,instancePositions[i]);
+                        if(d>maxD){maxD=d;nearestIdx=i;}
+                    }
+                    setActive(nearestIdx);
+                    const snapDir=vec3.normalize(vec3.create(),vec3.transformQuat(vec3.create(),instancePositions[nearestIdx],control.orientation));
+                    control.snapTargetDirection=snapDir;
+                }else{
+                    cameraTargetZ+=control.rotationVelocity*80+2.5;
+                }
+                camera.pos[2]+=(cameraTargetZ-camera.pos[2])/(5/ts);
+                updateCamera();
+            });
+
+            // Render loop
+            let time=0,lastT=0,frames=0;
+            (function loop(t){
+                requestAnimationFrame(loop);
+                const dt=Math.min(32,t-lastT);lastT=t;
+                const df=dt/TARGET_FD;frames+=df;
+                control.update(dt,TARGET_FD);
+
+                // Update instance matrices
+                const scale=0.25,SI=0.6;
+                instancePositions.forEach((p,ndx)=>{
+                    const wp=vec3.transformQuat(vec3.create(),p,control.orientation);
+                    const s=(Math.abs(wp[2])/SPHERE_R)*SI+(1-SI);
+                    const fs=s*scale;
+                    const m=mat4.create();
+                    mat4.multiply(m,m,mat4.fromTranslation(mat4.create(),vec3.negate(vec3.create(),wp)));
+                    mat4.multiply(m,m,mat4.targetTo(mat4.create(),[0,0,0],wp,[0,1,0]));
+                    mat4.multiply(m,m,mat4.fromScaling(mat4.create(),[fs,fs,fs]));
+                    mat4.multiply(m,m,mat4.fromTranslation(mat4.create(),[0,0,-SPHERE_R]));
+                    mat4.copy(matrices[ndx],m);
+                });
+                gl.bindBuffer(gl.ARRAY_BUFFER,instanceBuf);
+                gl.bufferSubData(gl.ARRAY_BUFFER,0,matricesArray);
+                gl.bindBuffer(gl.ARRAY_BUFFER,null);
+                smoothRotVel=control.rotationVelocity;
+
+                // Draw
+                gl.useProgram(program);
+                gl.enable(gl.CULL_FACE);gl.enable(gl.DEPTH_TEST);
+                gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+                gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+                gl.uniformMatrix4fv(locs.uWorldMatrix,false,worldMatrix);
+                gl.uniformMatrix4fv(locs.uViewMatrix,false,camera.view);
+                gl.uniformMatrix4fv(locs.uProjectionMatrix,false,camera.proj);
+                gl.uniform3f(locs.uCameraPosition,camera.pos[0],camera.pos[1],camera.pos[2]);
+                gl.uniform4f(locs.uRotationAxisVelocity,control.rotationAxis[0],control.rotationAxis[1],control.rotationAxis[2],smoothRotVel*1.1);
+                gl.uniform1i(locs.uItemCount,ITEMS.length);
+                gl.uniform1i(locs.uAtlasSize,atlasSize);
+                gl.uniform1f(locs.uFrames,frames);
+                gl.uniform1i(locs.uTex,0);
+                gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);
+                gl.bindVertexArray(discVAO);
+                gl.drawElementsInstanced(gl.TRIANGLES,discBufs.indices.length,gl.UNSIGNED_SHORT,0,DISC_COUNT);
+            })(0);
+        }
+
         // ── Boot ──────────────────────────────────────────────────
         initHeroRings();
         initHeroOrb();
+        initInfiniteMenu();
 
         // ── DELETED: initCircularGallery & initLanyard ────────────
         (function initLanyard() {
