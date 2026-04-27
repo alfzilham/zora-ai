@@ -185,89 +185,204 @@
         </div>
     </section>
 
-    <!-- ── LABS GRID SECTION ──────────────────────────────── -->
-    <section class="lh-labs-grid" id="labs-grid">
-        <div class="lh-labs-grid-inner">
+    <!-- ── TAHAP 1: HERO LABS FEATURE ────────────────────── -->
+    <section class="lf-hero" id="labs-grid">
+        <div class="lf-hero-inner">
 
-            <div class="lh-labs-grid-header" data-aos="fade-up">
+            <!-- LEFT: Card Swap -->
+            <div class="lf-hero-left">
+                <div class="lf-card-swap-container" id="cardSwapContainer">
+                    <!-- Cards: ganti src dengan gambar asli nanti -->
+                    <div class="lf-card" id="lf-card-0" style="background: linear-gradient(135deg,#0a0a1a,#0d1a2e);">
+                        <div class="lf-card-placeholder">
+                            <i class="fi fi-rr-terminal"></i>
+                            <span>Zora Code</span>
+                        </div>
+                    </div>
+                    <div class="lf-card" id="lf-card-1" style="background: linear-gradient(135deg,#0d1a2e,#1a0a2e);">
+                        <div class="lf-card-placeholder">
+                            <i class="fi fi-rr-pen-nib"></i>
+                            <span>Zora Design</span>
+                        </div>
+                    </div>
+                    <div class="lf-card" id="lf-card-2" style="background: linear-gradient(135deg,#1a0a2e,#2e0a1a);">
+                        <div class="lf-card-placeholder">
+                            <i class="fi fi-rr-picture"></i>
+                            <span>Zora Image</span>
+                        </div>
+                    </div>
+                    <div class="lf-card" id="lf-card-3" style="background: linear-gradient(135deg,#0a1a0a,#0a2e1a);">
+                        <div class="lf-card-placeholder">
+                            <i class="fi fi-rr-play-alt"></i>
+                            <span>Zora Video</span>
+                        </div>
+                    </div>
+                    <div class="lf-card" id="lf-card-4" style="background: linear-gradient(135deg,#0a1a2e,#001a33);">
+                        <div class="lf-card-placeholder">
+                            <i class="fi fi-rr-search-alt"></i>
+                            <span>Zora Research</span>
+                        </div>
+                    </div>
+                    <div class="lf-card" id="lf-card-5" style="background: linear-gradient(135deg,#001a1a,#002e2e);">
+                        <div class="lf-card-placeholder">
+                            <i class="fi fi-rr-chart-histogram"></i>
+                            <span>Zora Analytics</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Title + Falling Text -->
+            <div class="lf-hero-right">
                 <span class="lh-badge">
                     <span class="lh-badge-dot"></span>
                     FEATURED TOOLS
                 </span>
-                <h2 class="lh-labs-grid-title">Our Lab Features</h2>
-                <p class="lh-labs-grid-desc">Advanced AI technology for every creative and analytical need.</p>
+                <h2 class="lf-hero-title">Our Lab<br>Features</h2>
+                <div class="lf-falling-wrap" id="fallingTextWrap">
+                    <div class="lf-falling-text" id="fallingTextTarget">
+                        Advanced AI technology for every creative and analytical need. Six powerful labs, each
+                        engineered for a specific domain — so you always have the right tool at the right moment.
+                    </div>
+                    <canvas class="lf-falling-canvas" id="fallingTextCanvas"></canvas>
+                </div>
+                <a href="#flying-posters" class="lh-btn-hero-primary lf-cta" id="lfCta">
+                    Explore All Labs <i class="fi fi-rr-arrow-down"></i>
+                </a>
             </div>
 
-            <div class="lh-labs-cards" data-aos="fade-up" data-aos-delay="100">
+        </div>
+    </section>
 
-                <a href="/labs/code.html" class="lh-lab-card">
-                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#0066FF,#00D4FF);">
-                        <i class="fi fi-rr-terminal"></i>
-                    </div>
-                    <div class="lh-lab-card-body">
-                        <h3>Zora Code</h3>
-                        <p>Write, debug, and explain code in any language. Powered by Qwen.</p>
-                    </div>
-                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
-                </a>
+    <!-- ── TAHAP 2: FLYING POSTERS ────────────────────────── -->
+    <section class="lf-flying-section" id="flying-posters">
+        <div class="lf-flying-container" id="flyingPostersContainer">
+            <canvas class="lf-flying-canvas" id="flyingPostersCanvas"></canvas>
+        </div>
+        <div class="lf-flying-label">
+            <span>Scroll to explore</span>
+            <i class="fi fi-rr-arrow-down"></i>
+        </div>
+    </section>
 
-                <a href="/labs/design.html" class="lh-lab-card">
-                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#7B2FFF,#00D4FF);">
-                        <i class="fi fi-rr-pen-nib"></i>
-                    </div>
-                    <div class="lh-lab-card-body">
-                        <h3>Zora Design</h3>
-                        <p>Generate creative briefs, UI concepts, and compelling copy. Powered by Minimax.</p>
-                    </div>
-                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
-                </a>
+    <!-- ── TAHAP 3: CIRCULAR GALLERY ─────────────────────── -->
+    <section class="lf-gallery-section" id="circular-gallery">
+        <div class="lf-gallery-header">
+            <span class="lh-badge">
+                <span class="lh-badge-dot"></span>
+                EXPLORE LABS
+            </span>
+            <h2 class="lf-gallery-title">Drag to Explore</h2>
+        </div>
+        <div class="lf-circular-gallery" id="circularGallery"></div>
+    </section>
 
-                <a href="/labs/image.html" class="lh-lab-card">
-                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#FF6B35,#FFD700);">
-                        <i class="fi fi-rr-picture"></i>
-                    </div>
-                    <div class="lh-lab-card-body">
-                        <h3>Zora Image</h3>
-                        <p>Turn your descriptions into stunning AI-generated visuals. Powered by Gemini.</p>
-                    </div>
-                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
-                </a>
+    <!-- ── TAHAP 4: LAB DETAIL CARDS ─────────────────────── -->
+    <section class="lf-details" id="lab-details">
 
-                <a href="/labs/vid.html" class="lh-lab-card lh-lab-card--coming">
-                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#1a1a2e,#333);">
-                        <i class="fi fi-rr-play-alt"></i>
-                    </div>
-                    <div class="lh-lab-card-body">
-                        <h3>Zora Video <span class="lh-lab-soon">Soon</span></h3>
-                        <p>Generate short AI videos from text prompts. Coming soon.</p>
-                    </div>
-                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
-                </a>
-
-                <a href="/labs/research.html" class="lh-lab-card">
-                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#0099CC,#00D4FF);">
-                        <i class="fi fi-rr-search-alt"></i>
-                    </div>
-                    <div class="lh-lab-card-body">
-                        <h3>Zora Research</h3>
-                        <p>Deep research with structured sources and analysis. Powered by Gemini.</p>
-                    </div>
-                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
-                </a>
-
-                <a href="/labs/analytics.html" class="lh-lab-card">
-                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#00C896,#0066FF);">
-                        <i class="fi fi-rr-chart-histogram"></i>
-                    </div>
-                    <div class="lh-lab-card-body">
-                        <h3>Zora Analytics</h3>
-                        <p>Analyze data, spot trends, and surface insights instantly.</p>
-                    </div>
-                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
-                </a>
-
+        <!-- Zora Code — img kiri -->
+        <div class="lf-detail-row lf-detail-row--img-left" data-aos="fade-up">
+            <div class="lf-detail-img">
+                <div class="lf-tilted-card" data-img="/assets/images/labs/card-code.png">
+                    <img src="/assets/images/labs/card-code.png" alt="Zora Code" class="lf-tilted-img">
+                </div>
+            </div>
+            <div class="lf-detail-text">
+                <span class="lh-badge"><span class="lh-badge-dot"></span>CODE</span>
+                <h3 class="lf-detail-title">ZORA Code</h3>
+                <p class="lf-detail-sub">Powered by Qwen</p>
+                <p class="lf-detail-desc">A next-generation AI-powered code editor that thinks alongside you — write,
+                    debug, refactor, and ship production-ready code in any language, faster than ever.</p>
+                <a href="/labs/code.html" class="lf-detail-btn">Open Lab <i class="fi fi-rr-arrow-up-right"></i></a>
             </div>
         </div>
+
+        <!-- Zora Design — img kanan -->
+        <div class="lf-detail-row lf-detail-row--img-right" data-aos="fade-up">
+            <div class="lf-detail-text">
+                <span class="lh-badge"><span class="lh-badge-dot"></span>DESIGN</span>
+                <h3 class="lf-detail-title">ZORA Design</h3>
+                <p class="lf-detail-sub">Powered by Minimax</p>
+                <p class="lf-detail-desc">Your AI design partner — from wireframes to high-fidelity UI concepts, brand
+                    systems, and interactive prototypes, all generated from a single prompt.</p>
+                <a href="/labs/design.html" class="lf-detail-btn">Open Lab <i class="fi fi-rr-arrow-up-right"></i></a>
+            </div>
+            <div class="lf-detail-img">
+                <div class="lf-tilted-card" data-img="/assets/images/labs/card-design.png">
+                    <img src="/assets/images/labs/card-design.png" alt="Zora Design" class="lf-tilted-img">
+                </div>
+            </div>
+        </div>
+
+        <!-- Zora Image — img kiri -->
+        <div class="lf-detail-row lf-detail-row--img-left" data-aos="fade-up">
+            <div class="lf-detail-img">
+                <div class="lf-tilted-card" data-img="/assets/images/labs/card-image.png">
+                    <img src="/assets/images/labs/card-image.png" alt="Zora Image" class="lf-tilted-img">
+                </div>
+            </div>
+            <div class="lf-detail-text">
+                <span class="lh-badge"><span class="lh-badge-dot"></span>IMAGE</span>
+                <h3 class="lf-detail-title">ZORA Image</h3>
+                <p class="lf-detail-sub">Powered by Nano Banana</p>
+                <p class="lf-detail-desc">Transform your imagination into stunning visuals. Generate photorealistic
+                    images, concept art, illustrations, and campaign creatives in seconds.</p>
+                <a href="/labs/image.html" class="lf-detail-btn">Open Lab <i class="fi fi-rr-arrow-up-right"></i></a>
+            </div>
+        </div>
+
+        <!-- Zora Video — img kanan -->
+        <div class="lf-detail-row lf-detail-row--img-right" data-aos="fade-up">
+            <div class="lf-detail-text">
+                <span class="lh-badge"><span class="lh-badge-dot"></span>VIDEO</span>
+                <h3 class="lf-detail-title">ZORA Video</h3>
+                <p class="lf-detail-sub">Coming Soon</p>
+                <p class="lf-detail-desc">From script to screen in one prompt. Generate cinematic AI videos, motion
+                    graphics, and short-form content powered by the world's most advanced video models.</p>
+                <a href="/labs/vid.html" class="lf-detail-btn">Open Lab <i class="fi fi-rr-arrow-up-right"></i></a>
+            </div>
+            <div class="lf-detail-img">
+                <div class="lf-tilted-card" data-img="/assets/images/labs/card-video.png">
+                    <img src="/assets/images/labs/card-video.png" alt="Zora Video" class="lf-tilted-img">
+                </div>
+            </div>
+        </div>
+
+        <!-- Zora Research — img kiri -->
+        <div class="lf-detail-row lf-detail-row--img-left" data-aos="fade-up">
+            <div class="lf-detail-img">
+                <div class="lf-tilted-card" data-img="/assets/images/labs/card-research.png">
+                    <img src="/assets/images/labs/card-research.png" alt="Zora Research" class="lf-tilted-img">
+                </div>
+            </div>
+            <div class="lf-detail-text">
+                <span class="lh-badge"><span class="lh-badge-dot"></span>RESEARCH</span>
+                <h3 class="lf-detail-title">ZORA Research</h3>
+                <p class="lf-detail-sub">Powered by Gemini</p>
+                <p class="lf-detail-desc">Deep research, simplified. ZORA scours the web, synthesizes sources, and
+                    delivers structured insights — so you learn faster and go deeper on any topic.</p>
+                <a href="/labs/research.html" class="lf-detail-btn">Open Lab <i class="fi fi-rr-arrow-up-right"></i></a>
+            </div>
+        </div>
+
+        <!-- Zora Analytics — img kanan -->
+        <div class="lf-detail-row lf-detail-row--img-right" data-aos="fade-up">
+            <div class="lf-detail-text">
+                <span class="lh-badge"><span class="lh-badge-dot"></span>ANALYTICS</span>
+                <h3 class="lf-detail-title">ZORA Analytics</h3>
+                <p class="lf-detail-sub">Powered by Gemini</p>
+                <p class="lf-detail-desc">Real-time market intelligence at your fingertips — crypto charts, currency
+                    conversion, breaking business news, and trend analysis, all in one unified dashboard.</p>
+                <a href="/labs/analytics.html" class="lf-detail-btn">Open Lab <i
+                        class="fi fi-rr-arrow-up-right"></i></a>
+            </div>
+            <div class="lf-detail-img">
+                <div class="lf-tilted-card" data-img="/assets/images/labs/card-analytic.png">
+                    <img src="/assets/images/labs/card-analytic.png" alt="Zora Analytics" class="lf-tilted-img">
+                </div>
+            </div>
+        </div>
+
     </section>
 
     <!-- ── FOOTER ─────────────────────────────────────────── -->
@@ -1347,87 +1462,87 @@ void main() {
             ];
 
             // ── Geometry helpers ──────────────────────────────────
-            class Face { constructor(a,b,c){this.a=a;this.b=b;this.c=c;} }
-            class Vertex { constructor(x,y,z){this.position=vec3.fromValues(x,y,z);this.normal=vec3.create();this.uv=vec2.create();} }
+            class Face { constructor(a, b, c) { this.a = a; this.b = b; this.c = c; } }
+            class Vertex { constructor(x, y, z) { this.position = vec3.fromValues(x, y, z); this.normal = vec3.create(); this.uv = vec2.create(); } }
             class Geometry {
-                constructor(){this.vertices=[];this.faces=[];}
-                addVertex(...a){for(let i=0;i<a.length;i+=3)this.vertices.push(new Vertex(a[i],a[i+1],a[i+2]));return this;}
-                addFace(...a){for(let i=0;i<a.length;i+=3)this.faces.push(new Face(a[i],a[i+1],a[i+2]));return this;}
-                get lastVertex(){return this.vertices[this.vertices.length-1];}
-                subdivide(d=1){
-                    const cache={};let f=this.faces;
-                    for(let div=0;div<d;div++){
-                        const nf=new Array(f.length*4);
-                        f.forEach((face,ndx)=>{
-                            const mAB=this.getMidPoint(face.a,face.b,cache);
-                            const mBC=this.getMidPoint(face.b,face.c,cache);
-                            const mCA=this.getMidPoint(face.c,face.a,cache);
-                            const i=ndx*4;
-                            nf[i]=new Face(face.a,mAB,mCA);nf[i+1]=new Face(face.b,mBC,mAB);
-                            nf[i+2]=new Face(face.c,mCA,mBC);nf[i+3]=new Face(mAB,mBC,mCA);
-                        });f=nf;
-                    }this.faces=f;return this;
+                constructor() { this.vertices = []; this.faces = []; }
+                addVertex(...a) { for (let i = 0; i < a.length; i += 3)this.vertices.push(new Vertex(a[i], a[i + 1], a[i + 2])); return this; }
+                addFace(...a) { for (let i = 0; i < a.length; i += 3)this.faces.push(new Face(a[i], a[i + 1], a[i + 2])); return this; }
+                get lastVertex() { return this.vertices[this.vertices.length - 1]; }
+                subdivide(d = 1) {
+                    const cache = {}; let f = this.faces;
+                    for (let div = 0; div < d; div++) {
+                        const nf = new Array(f.length * 4);
+                        f.forEach((face, ndx) => {
+                            const mAB = this.getMidPoint(face.a, face.b, cache);
+                            const mBC = this.getMidPoint(face.b, face.c, cache);
+                            const mCA = this.getMidPoint(face.c, face.a, cache);
+                            const i = ndx * 4;
+                            nf[i] = new Face(face.a, mAB, mCA); nf[i + 1] = new Face(face.b, mBC, mAB);
+                            nf[i + 2] = new Face(face.c, mCA, mBC); nf[i + 3] = new Face(mAB, mBC, mCA);
+                        }); f = nf;
+                    } this.faces = f; return this;
                 }
-                spherize(r=1){this.vertices.forEach(v=>{vec3.normalize(v.normal,v.position);vec3.scale(v.position,v.normal,r);});return this;}
-                get vertexData(){return new Float32Array(this.vertices.flatMap(v=>Array.from(v.position)));}
-                get normalData(){return new Float32Array(this.vertices.flatMap(v=>Array.from(v.normal)));}
-                get uvData(){return new Float32Array(this.vertices.flatMap(v=>Array.from(v.uv)));}
-                get indexData(){return new Uint16Array(this.faces.flatMap(f=>[f.a,f.b,f.c]));}
-                getMidPoint(a,b,cache){
-                    const key=a<b?`k_${b}_${a}`:`k_${a}_${b}`;
-                    if(Object.prototype.hasOwnProperty.call(cache,key))return cache[key];
-                    const pa=this.vertices[a].position,pb=this.vertices[b].position;
-                    const ndx=this.vertices.length;cache[key]=ndx;
-                    this.addVertex((pa[0]+pb[0])*0.5,(pa[1]+pb[1])*0.5,(pa[2]+pb[2])*0.5);
+                spherize(r = 1) { this.vertices.forEach(v => { vec3.normalize(v.normal, v.position); vec3.scale(v.position, v.normal, r); }); return this; }
+                get vertexData() { return new Float32Array(this.vertices.flatMap(v => Array.from(v.position))); }
+                get normalData() { return new Float32Array(this.vertices.flatMap(v => Array.from(v.normal))); }
+                get uvData() { return new Float32Array(this.vertices.flatMap(v => Array.from(v.uv))); }
+                get indexData() { return new Uint16Array(this.faces.flatMap(f => [f.a, f.b, f.c])); }
+                getMidPoint(a, b, cache) {
+                    const key = a < b ? `k_${b}_${a}` : `k_${a}_${b}`;
+                    if (Object.prototype.hasOwnProperty.call(cache, key)) return cache[key];
+                    const pa = this.vertices[a].position, pb = this.vertices[b].position;
+                    const ndx = this.vertices.length; cache[key] = ndx;
+                    this.addVertex((pa[0] + pb[0]) * 0.5, (pa[1] + pb[1]) * 0.5, (pa[2] + pb[2]) * 0.5);
                     return ndx;
                 }
             }
             class IcosahedronGeometry extends Geometry {
-                constructor(){
-                    super();const t=Math.sqrt(5)*0.5+0.5;
-                    this.addVertex(-1,t,0,1,t,0,-1,-t,0,1,-t,0,0,-1,t,0,1,t,0,-1,-t,0,1,-t,t,0,-1,t,0,1,-t,0,-1,-t,0,1)
-                    .addFace(0,11,5,0,5,1,0,1,7,0,7,10,0,10,11,1,5,9,5,11,4,11,10,2,10,7,6,7,1,8,3,9,4,3,4,2,3,2,6,3,6,8,3,8,9,4,9,5,2,4,11,6,2,10,8,6,7,9,8,1);
+                constructor() {
+                    super(); const t = Math.sqrt(5) * 0.5 + 0.5;
+                    this.addVertex(-1, t, 0, 1, t, 0, -1, -t, 0, 1, -t, 0, 0, -1, t, 0, 1, t, 0, -1, -t, 0, 1, -t, t, 0, -1, t, 0, 1, -t, 0, -1, -t, 0, 1)
+                        .addFace(0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11, 1, 5, 9, 5, 11, 4, 11, 10, 2, 10, 7, 6, 7, 1, 8, 3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9, 4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7, 9, 8, 1);
                 }
             }
             class DiscGeometry extends Geometry {
-                constructor(steps=4,r=1){
-                    super();steps=Math.max(4,steps);const alpha=(2*Math.PI)/steps;
-                    this.addVertex(0,0,0);this.lastVertex.uv[0]=0.5;this.lastVertex.uv[1]=0.5;
-                    for(let i=0;i<steps;i++){
-                        const x=Math.cos(alpha*i),y=Math.sin(alpha*i);
-                        this.addVertex(r*x,r*y,0);this.lastVertex.uv[0]=x*0.5+0.5;this.lastVertex.uv[1]=y*0.5+0.5;
-                        if(i>0)this.addFace(0,i,i+1);
-                    }this.addFace(0,steps,1);
+                constructor(steps = 4, r = 1) {
+                    super(); steps = Math.max(4, steps); const alpha = (2 * Math.PI) / steps;
+                    this.addVertex(0, 0, 0); this.lastVertex.uv[0] = 0.5; this.lastVertex.uv[1] = 0.5;
+                    for (let i = 0; i < steps; i++) {
+                        const x = Math.cos(alpha * i), y = Math.sin(alpha * i);
+                        this.addVertex(r * x, r * y, 0); this.lastVertex.uv[0] = x * 0.5 + 0.5; this.lastVertex.uv[1] = y * 0.5 + 0.5;
+                        if (i > 0) this.addFace(0, i, i + 1);
+                    } this.addFace(0, steps, 1);
                 }
             }
 
             // ── WebGL helpers ─────────────────────────────────────
-            function createShader(gl,type,src){
-                const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);
-                if(gl.getShaderParameter(s,gl.COMPILE_STATUS))return s;
-                console.error(gl.getShaderInfoLog(s));gl.deleteShader(s);return null;
+            function createShader(gl, type, src) {
+                const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+                if (gl.getShaderParameter(s, gl.COMPILE_STATUS)) return s;
+                console.error(gl.getShaderInfoLog(s)); gl.deleteShader(s); return null;
             }
-            function createProgram(gl,srcs,attribLocs){
-                const p=gl.createProgram();
-                [gl.VERTEX_SHADER,gl.FRAGMENT_SHADER].forEach((type,i)=>{const s=createShader(gl,type,srcs[i]);if(s)gl.attachShader(p,s);});
-                if(attribLocs){for(const a in attribLocs)gl.bindAttribLocation(p,attribLocs[a],a);}
+            function createProgram(gl, srcs, attribLocs) {
+                const p = gl.createProgram();
+                [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach((type, i) => { const s = createShader(gl, type, srcs[i]); if (s) gl.attachShader(p, s); });
+                if (attribLocs) { for (const a in attribLocs) gl.bindAttribLocation(p, attribLocs[a], a); }
                 gl.linkProgram(p);
-                if(gl.getProgramParameter(p,gl.LINK_STATUS))return p;
-                console.error(gl.getProgramInfoLog(p));gl.deleteProgram(p);return null;
+                if (gl.getProgramParameter(p, gl.LINK_STATUS)) return p;
+                console.error(gl.getProgramInfoLog(p)); gl.deleteProgram(p); return null;
             }
-            function makeBuffer(gl,data,usage){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,usage);gl.bindBuffer(gl.ARRAY_BUFFER,null);return b;}
-            function makeVAO(gl,pairs,indices){
-                const va=gl.createVertexArray();gl.bindVertexArray(va);
-                for(const[buf,loc,num]of pairs){if(loc===-1)continue;gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,num,gl.FLOAT,false,0,0);}
-                if(indices){const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(indices),gl.STATIC_DRAW);}
-                gl.bindVertexArray(null);return va;
+            function makeBuffer(gl, data, usage) { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, usage); gl.bindBuffer(gl.ARRAY_BUFFER, null); return b; }
+            function makeVAO(gl, pairs, indices) {
+                const va = gl.createVertexArray(); gl.bindVertexArray(va);
+                for (const [buf, loc, num] of pairs) { if (loc === -1) continue; gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, num, gl.FLOAT, false, 0, 0); }
+                if (indices) { const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW); }
+                gl.bindVertexArray(null); return va;
             }
-            function setupTexture(gl){
-                const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
-                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-                gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+            function setupTexture(gl) {
+                const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
                 return t;
             }
 
@@ -1480,262 +1595,815 @@ void main(){
             // ── ArcballControl ────────────────────────────────────
             class ArcballControl {
                 constructor(canvas, cb) {
-                    this.canvas=canvas;this.updateCallback=cb||(() => {});
-                    this.isPointerDown=false;this.orientation=quat.create();
-                    this.pointerRotation=quat.create();this.rotationVelocity=0;
-                    this.rotationAxis=vec3.fromValues(1,0,0);
-                    this.snapDirection=vec3.fromValues(0,0,-1);
-                    this.snapTargetDirection=null;
-                    this.EPSILON=0.1;this.IDENTITY_QUAT=quat.create();
-                    this.pointerPos=vec2.create();this.previousPointerPos=vec2.create();
-                    this._rotationVelocity=0;this._combinedQuat=quat.create();
-                    canvas.addEventListener('pointerdown',e=>{vec2.set(this.pointerPos,e.clientX,e.clientY);vec2.copy(this.previousPointerPos,this.pointerPos);this.isPointerDown=true;});
-                    canvas.addEventListener('pointerup',()=>{this.isPointerDown=false;});
-                    canvas.addEventListener('pointerleave',()=>{this.isPointerDown=false;});
-                    canvas.addEventListener('pointermove',e=>{if(this.isPointerDown)vec2.set(this.pointerPos,e.clientX,e.clientY);});
-                    canvas.style.touchAction='none';
+                    this.canvas = canvas; this.updateCallback = cb || (() => { });
+                    this.isPointerDown = false; this.orientation = quat.create();
+                    this.pointerRotation = quat.create(); this.rotationVelocity = 0;
+                    this.rotationAxis = vec3.fromValues(1, 0, 0);
+                    this.snapDirection = vec3.fromValues(0, 0, -1);
+                    this.snapTargetDirection = null;
+                    this.EPSILON = 0.1; this.IDENTITY_QUAT = quat.create();
+                    this.pointerPos = vec2.create(); this.previousPointerPos = vec2.create();
+                    this._rotationVelocity = 0; this._combinedQuat = quat.create();
+                    canvas.addEventListener('pointerdown', e => { vec2.set(this.pointerPos, e.clientX, e.clientY); vec2.copy(this.previousPointerPos, this.pointerPos); this.isPointerDown = true; });
+                    canvas.addEventListener('pointerup', () => { this.isPointerDown = false; });
+                    canvas.addEventListener('pointerleave', () => { this.isPointerDown = false; });
+                    canvas.addEventListener('pointermove', e => { if (this.isPointerDown) vec2.set(this.pointerPos, e.clientX, e.clientY); });
+                    canvas.style.touchAction = 'none';
                 }
-                update(dt,targetFD=16){
-                    const ts=dt/targetFD+0.00001;let af=ts;let snapRot=quat.create();
-                    if(this.isPointerDown){
-                        const INT=0.3*ts,AMP=5/ts;
-                        const mid=vec2.sub(vec2.create(),this.pointerPos,this.previousPointerPos);
-                        vec2.scale(mid,mid,INT);
-                        if(vec2.sqrLen(mid)>this.EPSILON){
-                            vec2.add(mid,this.previousPointerPos,mid);
-                            const p=this._project(mid),q=this._project(this.previousPointerPos);
-                            const a=vec3.normalize(vec3.create(),p),b=vec3.normalize(vec3.create(),q);
-                            vec2.copy(this.previousPointerPos,mid);af*=AMP;
-                            this.quatFromVectors(a,b,this.pointerRotation,af);
-                        }else{quat.slerp(this.pointerRotation,this.pointerRotation,this.IDENTITY_QUAT,INT);}
-                    }else{
-                        quat.slerp(this.pointerRotation,this.pointerRotation,this.IDENTITY_QUAT,0.1*ts);
-                        if(this.snapTargetDirection){
-                            const SI=0.2,a=this.snapTargetDirection,b=this.snapDirection;
-                            const sq=vec3.squaredDistance(a,b),df=Math.max(0.1,1-sq*10);
-                            af*=SI*df;this.quatFromVectors(a,b,snapRot,af);
+                update(dt, targetFD = 16) {
+                    const ts = dt / targetFD + 0.00001; let af = ts; let snapRot = quat.create();
+                    if (this.isPointerDown) {
+                        const INT = 0.3 * ts, AMP = 5 / ts;
+                        const mid = vec2.sub(vec2.create(), this.pointerPos, this.previousPointerPos);
+                        vec2.scale(mid, mid, INT);
+                        if (vec2.sqrLen(mid) > this.EPSILON) {
+                            vec2.add(mid, this.previousPointerPos, mid);
+                            const p = this._project(mid), q = this._project(this.previousPointerPos);
+                            const a = vec3.normalize(vec3.create(), p), b = vec3.normalize(vec3.create(), q);
+                            vec2.copy(this.previousPointerPos, mid); af *= AMP;
+                            this.quatFromVectors(a, b, this.pointerRotation, af);
+                        } else { quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INT); }
+                    } else {
+                        quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, 0.1 * ts);
+                        if (this.snapTargetDirection) {
+                            const SI = 0.2, a = this.snapTargetDirection, b = this.snapDirection;
+                            const sq = vec3.squaredDistance(a, b), df = Math.max(0.1, 1 - sq * 10);
+                            af *= SI * df; this.quatFromVectors(a, b, snapRot, af);
                         }
                     }
-                    const cq=quat.multiply(quat.create(),snapRot,this.pointerRotation);
-                    this.orientation=quat.multiply(quat.create(),cq,this.orientation);
-                    quat.normalize(this.orientation,this.orientation);
-                    const RA=0.8*ts;
-                    quat.slerp(this._combinedQuat,this._combinedQuat,cq,RA);
-                    quat.normalize(this._combinedQuat,this._combinedQuat);
-                    const rad=Math.acos(this._combinedQuat[3])*2.0,s=Math.sin(rad/2.0);
-                    let rv=0;
-                    if(s>0.000001){rv=rad/(2*Math.PI);this.rotationAxis[0]=this._combinedQuat[0]/s;this.rotationAxis[1]=this._combinedQuat[1]/s;this.rotationAxis[2]=this._combinedQuat[2]/s;}
-                    this._rotationVelocity+=(rv-this._rotationVelocity)*0.5*ts;
-                    this.rotationVelocity=this._rotationVelocity/ts;
+                    const cq = quat.multiply(quat.create(), snapRot, this.pointerRotation);
+                    this.orientation = quat.multiply(quat.create(), cq, this.orientation);
+                    quat.normalize(this.orientation, this.orientation);
+                    const RA = 0.8 * ts;
+                    quat.slerp(this._combinedQuat, this._combinedQuat, cq, RA);
+                    quat.normalize(this._combinedQuat, this._combinedQuat);
+                    const rad = Math.acos(this._combinedQuat[3]) * 2.0, s = Math.sin(rad / 2.0);
+                    let rv = 0;
+                    if (s > 0.000001) { rv = rad / (2 * Math.PI); this.rotationAxis[0] = this._combinedQuat[0] / s; this.rotationAxis[1] = this._combinedQuat[1] / s; this.rotationAxis[2] = this._combinedQuat[2] / s; }
+                    this._rotationVelocity += (rv - this._rotationVelocity) * 0.5 * ts;
+                    this.rotationVelocity = this._rotationVelocity / ts;
                     this.updateCallback(dt);
                 }
-                quatFromVectors(a,b,out,af=1){
-                    const axis=vec3.normalize(vec3.create(),vec3.cross(vec3.create(),a,b));
-                    const d=Math.max(-1,Math.min(1,vec3.dot(a,b)));
-                    quat.setAxisAngle(out,axis,Math.acos(d)*af);return out;
+                quatFromVectors(a, b, out, af = 1) {
+                    const axis = vec3.normalize(vec3.create(), vec3.cross(vec3.create(), a, b));
+                    const d = Math.max(-1, Math.min(1, vec3.dot(a, b)));
+                    quat.setAxisAngle(out, axis, Math.acos(d) * af); return out;
                 }
-                _project(pos){
-                    const r=2,w=this.canvas.clientWidth,h=this.canvas.clientHeight,s=Math.max(w,h)-1;
-                    const x=(2*pos[0]-w-1)/s,y=(2*pos[1]-h-1)/s;
-                    const xySq=x*x+y*y,rSq=r*r;
-                    const z=xySq<=rSq/2?Math.sqrt(rSq-xySq):rSq/Math.sqrt(xySq);
-                    return vec3.fromValues(-x,y,z);
+                _project(pos) {
+                    const r = 2, w = this.canvas.clientWidth, h = this.canvas.clientHeight, s = Math.max(w, h) - 1;
+                    const x = (2 * pos[0] - w - 1) / s, y = (2 * pos[1] - h - 1) / s;
+                    const xySq = x * x + y * y, rSq = r * r;
+                    const z = xySq <= rSq / 2 ? Math.sqrt(rSq - xySq) : rSq / Math.sqrt(xySq);
+                    return vec3.fromValues(-x, y, z);
                 }
             }
 
             // ── InfiniteGridMenu ──────────────────────────────────
-            const SPHERE_R=2,TARGET_FD=1000/60;
-            const gl=canvas.getContext('webgl2',{antialias:true,alpha:true});
-            if(!gl){console.warn('No WebGL2');return;}
+            const SPHERE_R = 2, TARGET_FD = 1000 / 60;
+            const gl = canvas.getContext('webgl2', { antialias: true, alpha: true });
+            if (!gl) { console.warn('No WebGL2'); return; }
 
-            const program=createProgram(gl,[VERT,FRAG],{aModelPosition:0,aModelNormal:1,aModelUvs:2,aInstanceMatrix:3});
-            const locs={
-                aModelPosition:gl.getAttribLocation(program,'aModelPosition'),
-                aModelUvs:gl.getAttribLocation(program,'aModelUvs'),
-                aInstanceMatrix:gl.getAttribLocation(program,'aInstanceMatrix'),
-                uWorldMatrix:gl.getUniformLocation(program,'uWorldMatrix'),
-                uViewMatrix:gl.getUniformLocation(program,'uViewMatrix'),
-                uProjectionMatrix:gl.getUniformLocation(program,'uProjectionMatrix'),
-                uCameraPosition:gl.getUniformLocation(program,'uCameraPosition'),
-                uRotationAxisVelocity:gl.getUniformLocation(program,'uRotationAxisVelocity'),
-                uTex:gl.getUniformLocation(program,'uTex'),
-                uFrames:gl.getUniformLocation(program,'uFrames'),
-                uItemCount:gl.getUniformLocation(program,'uItemCount'),
-                uAtlasSize:gl.getUniformLocation(program,'uAtlasSize'),
+            const program = createProgram(gl, [VERT, FRAG], { aModelPosition: 0, aModelNormal: 1, aModelUvs: 2, aInstanceMatrix: 3 });
+            const locs = {
+                aModelPosition: gl.getAttribLocation(program, 'aModelPosition'),
+                aModelUvs: gl.getAttribLocation(program, 'aModelUvs'),
+                aInstanceMatrix: gl.getAttribLocation(program, 'aInstanceMatrix'),
+                uWorldMatrix: gl.getUniformLocation(program, 'uWorldMatrix'),
+                uViewMatrix: gl.getUniformLocation(program, 'uViewMatrix'),
+                uProjectionMatrix: gl.getUniformLocation(program, 'uProjectionMatrix'),
+                uCameraPosition: gl.getUniformLocation(program, 'uCameraPosition'),
+                uRotationAxisVelocity: gl.getUniformLocation(program, 'uRotationAxisVelocity'),
+                uTex: gl.getUniformLocation(program, 'uTex'),
+                uFrames: gl.getUniformLocation(program, 'uFrames'),
+                uItemCount: gl.getUniformLocation(program, 'uItemCount'),
+                uAtlasSize: gl.getUniformLocation(program, 'uAtlasSize'),
             };
 
-            const discGeo=new DiscGeometry(56,1);
-            const discBufs=discGeo.data;
-            const discVAO=makeVAO(gl,[[makeBuffer(gl,discBufs.vertices,gl.STATIC_DRAW),locs.aModelPosition,3],[makeBuffer(gl,discBufs.uvs,gl.STATIC_DRAW),locs.aModelUvs,2]],discBufs.indices);
+            const discGeo = new DiscGeometry(56, 1);
+            const discBufs = discGeo.data;
+            const discVAO = makeVAO(gl, [[makeBuffer(gl, discBufs.vertices, gl.STATIC_DRAW), locs.aModelPosition, 3], [makeBuffer(gl, discBufs.uvs, gl.STATIC_DRAW), locs.aModelUvs, 2]], discBufs.indices);
 
-            const icoGeo=new IcosahedronGeometry();
+            const icoGeo = new IcosahedronGeometry();
             icoGeo.subdivide(1).spherize(SPHERE_R);
-            const instancePositions=icoGeo.vertices.map(v=>v.position);
-            const DISC_COUNT=icoGeo.vertices.length;
+            const instancePositions = icoGeo.vertices.map(v => v.position);
+            const DISC_COUNT = icoGeo.vertices.length;
 
             // Instance matrices
-            const matricesArray=new Float32Array(DISC_COUNT*16);
-            const matrices=[];
-            const instanceBuf=gl.createBuffer();
-            for(let i=0;i<DISC_COUNT;i++){
-                const arr=new Float32Array(matricesArray.buffer,i*16*4,16);
-                arr.set(mat4.create());matrices.push(arr);
+            const matricesArray = new Float32Array(DISC_COUNT * 16);
+            const matrices = [];
+            const instanceBuf = gl.createBuffer();
+            for (let i = 0; i < DISC_COUNT; i++) {
+                const arr = new Float32Array(matricesArray.buffer, i * 16 * 4, 16);
+                arr.set(mat4.create()); matrices.push(arr);
             }
             gl.bindVertexArray(discVAO);
-            gl.bindBuffer(gl.ARRAY_BUFFER,instanceBuf);
-            gl.bufferData(gl.ARRAY_BUFFER,matricesArray.byteLength,gl.DYNAMIC_DRAW);
-            for(let j=0;j<4;j++){
-                const loc=locs.aInstanceMatrix+j;
+            gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuf);
+            gl.bufferData(gl.ARRAY_BUFFER, matricesArray.byteLength, gl.DYNAMIC_DRAW);
+            for (let j = 0; j < 4; j++) {
+                const loc = locs.aInstanceMatrix + j;
                 gl.enableVertexAttribArray(loc);
-                gl.vertexAttribPointer(loc,4,gl.FLOAT,false,64,j*16);
-                gl.vertexAttribDivisor(loc,1);
+                gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 64, j * 16);
+                gl.vertexAttribDivisor(loc, 1);
             }
-            gl.bindBuffer(gl.ARRAY_BUFFER,null);gl.bindVertexArray(null);
+            gl.bindBuffer(gl.ARRAY_BUFFER, null); gl.bindVertexArray(null);
 
             // Texture atlas
-            const tex=setupTexture(gl);
-            const atlasSize=Math.ceil(Math.sqrt(ITEMS.length));
-            const atlasCanvas=document.createElement('canvas');
-            const atlasCtx=atlasCanvas.getContext('2d');
-            const cellSize=512;
-            atlasCanvas.width=atlasSize*cellSize;atlasCanvas.height=atlasSize*cellSize;
-            Promise.all(ITEMS.map(item=>new Promise(res=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>res(img);img.onerror=()=>res(null);img.src=item.image;}))).then(images=>{
-                images.forEach((img,i)=>{
-                    if(!img)return;
-                    const x=(i%atlasSize)*cellSize,y=Math.floor(i/atlasSize)*cellSize;
-                    atlasCtx.drawImage(img,x,y,cellSize,cellSize);
+            const tex = setupTexture(gl);
+            const atlasSize = Math.ceil(Math.sqrt(ITEMS.length));
+            const atlasCanvas = document.createElement('canvas');
+            const atlasCtx = atlasCanvas.getContext('2d');
+            const cellSize = 512;
+            atlasCanvas.width = atlasSize * cellSize; atlasCanvas.height = atlasSize * cellSize;
+            Promise.all(ITEMS.map(item => new Promise(res => { const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = () => res(img); img.onerror = () => res(null); img.src = item.image; }))).then(images => {
+                images.forEach((img, i) => {
+                    if (!img) return;
+                    const x = (i % atlasSize) * cellSize, y = Math.floor(i / atlasSize) * cellSize;
+                    atlasCtx.drawImage(img, x, y, cellSize, cellSize);
                 });
-                gl.bindTexture(gl.TEXTURE_2D,tex);
-                gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,atlasCanvas);
+                gl.bindTexture(gl.TEXTURE_2D, tex);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlasCanvas);
                 gl.generateMipmap(gl.TEXTURE_2D);
             });
 
             // Camera + world
-            const worldMatrix=mat4.create();
-            const camera={pos:vec3.fromValues(0,0,3),up:vec3.fromValues(0,1,0),view:mat4.create(),proj:mat4.create()};
-            function updateCamera(){
-                const m=mat4.create();mat4.targetTo(m,camera.pos,[0,0,0],camera.up);
-                mat4.invert(camera.view,m);
+            const worldMatrix = mat4.create();
+            const camera = { pos: vec3.fromValues(0, 0, 3), up: vec3.fromValues(0, 1, 0), view: mat4.create(), proj: mat4.create() };
+            function updateCamera() {
+                const m = mat4.create(); mat4.targetTo(m, camera.pos, [0, 0, 0], camera.up);
+                mat4.invert(camera.view, m);
             }
-            function updateProj(){
-                const aspect=canvas.clientWidth/canvas.clientHeight;
-                const h=SPHERE_R*0.35,dist=camera.pos[2];
-                const fov=aspect>1?2*Math.atan(h/dist):2*Math.atan(h/aspect/dist);
-                mat4.perspective(camera.proj,fov,aspect,0.1,40);
+            function updateProj() {
+                const aspect = canvas.clientWidth / canvas.clientHeight;
+                const h = SPHERE_R * 0.35, dist = camera.pos[2];
+                const fov = aspect > 1 ? 2 * Math.atan(h / dist) : 2 * Math.atan(h / aspect / dist);
+                mat4.perspective(camera.proj, fov, aspect, 0.1, 40);
             }
-            function resizeCanvas(){
-                const dpr=Math.min(2,window.devicePixelRatio);
-                const w=Math.round(canvas.clientWidth*dpr),h=Math.round(canvas.clientHeight*dpr);
-                if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
-                gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight);
+            function resizeCanvas() {
+                const dpr = Math.min(2, window.devicePixelRatio);
+                const w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
+                if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+                gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
                 updateProj();
             }
-            updateCamera();updateProj();resizeCanvas();
-            window.addEventListener('resize',resizeCanvas);
+            updateCamera(); updateProj(); resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
 
             // Active item UI
-            let currentActiveIndex=-1;
-            let isMoving=false;
-            function setActive(index){
-                const i=index%ITEMS.length;
-                if(i===currentActiveIndex)return;
-                currentActiveIndex=i;
-                const item=ITEMS[i];
-                if(faceTitle)faceTitle.textContent=item.title;
-                if(faceDesc)faceDesc.textContent=item.description;
+            let currentActiveIndex = -1;
+            let isMoving = false;
+            function setActive(index) {
+                const i = index % ITEMS.length;
+                if (i === currentActiveIndex) return;
+                currentActiveIndex = i;
+                const item = ITEMS[i];
+                if (faceTitle) faceTitle.textContent = item.title;
+                if (faceDesc) faceDesc.textContent = item.description;
             }
-            function setMoving(moving){
-                isMoving=moving;
-                const cls=moving?'inactive':'active';
-                const cls2=moving?'active':'inactive';
-                if(faceTitle){faceTitle.classList.remove('active','inactive');faceTitle.classList.add(cls);}
-                if(faceDesc){faceDesc.classList.remove('active','inactive');faceDesc.classList.add(cls);}
-                if(actionBtn){actionBtn.classList.remove('active','inactive');actionBtn.classList.add(cls);}
+            function setMoving(moving) {
+                isMoving = moving;
+                const cls = moving ? 'inactive' : 'active';
+                const cls2 = moving ? 'active' : 'inactive';
+                if (faceTitle) { faceTitle.classList.remove('active', 'inactive'); faceTitle.classList.add(cls); }
+                if (faceDesc) { faceDesc.classList.remove('active', 'inactive'); faceDesc.classList.add(cls); }
+                if (actionBtn) { actionBtn.classList.remove('active', 'inactive'); actionBtn.classList.add(cls); }
             }
-            if(actionBtn){
-                actionBtn.addEventListener('click',()=>{
-                    if(currentActiveIndex<0)return;
-                    const link=ITEMS[currentActiveIndex].link;
-                    if(link)window.location.href=link;
+            if (actionBtn) {
+                actionBtn.addEventListener('click', () => {
+                    if (currentActiveIndex < 0) return;
+                    const link = ITEMS[currentActiveIndex].link;
+                    if (link) window.location.href = link;
                 });
             }
 
             // ArcballControl
-            let smoothRotVel=0;
-            const control=new ArcballControl(canvas,(dt)=>{
-                const ts=dt/TARGET_FD+0.0001;
-                let cameraTargetZ=3;
-                const moving=control.isPointerDown||Math.abs(smoothRotVel)>0.01;
-                if(moving!==isMoving)setMoving(moving);
-                if(!control.isPointerDown){
-                    const n=control.snapDirection;
-                    const invOri=quat.conjugate(quat.create(),control.orientation);
-                    const nt=vec3.transformQuat(vec3.create(),n,invOri);
-                    let maxD=-1,nearestIdx=0;
-                    for(let i=0;i<instancePositions.length;i++){
-                        const d=vec3.dot(nt,instancePositions[i]);
-                        if(d>maxD){maxD=d;nearestIdx=i;}
+            let smoothRotVel = 0;
+            const control = new ArcballControl(canvas, (dt) => {
+                const ts = dt / TARGET_FD + 0.0001;
+                let cameraTargetZ = 3;
+                const moving = control.isPointerDown || Math.abs(smoothRotVel) > 0.01;
+                if (moving !== isMoving) setMoving(moving);
+                if (!control.isPointerDown) {
+                    const n = control.snapDirection;
+                    const invOri = quat.conjugate(quat.create(), control.orientation);
+                    const nt = vec3.transformQuat(vec3.create(), n, invOri);
+                    let maxD = -1, nearestIdx = 0;
+                    for (let i = 0; i < instancePositions.length; i++) {
+                        const d = vec3.dot(nt, instancePositions[i]);
+                        if (d > maxD) { maxD = d; nearestIdx = i; }
                     }
                     setActive(nearestIdx);
-                    const snapDir=vec3.normalize(vec3.create(),vec3.transformQuat(vec3.create(),instancePositions[nearestIdx],control.orientation));
-                    control.snapTargetDirection=snapDir;
-                }else{
-                    cameraTargetZ+=control.rotationVelocity*80+2.5;
+                    const snapDir = vec3.normalize(vec3.create(), vec3.transformQuat(vec3.create(), instancePositions[nearestIdx], control.orientation));
+                    control.snapTargetDirection = snapDir;
+                } else {
+                    cameraTargetZ += control.rotationVelocity * 80 + 2.5;
                 }
-                camera.pos[2]+=(cameraTargetZ-camera.pos[2])/(5/ts);
+                camera.pos[2] += (cameraTargetZ - camera.pos[2]) / (5 / ts);
                 updateCamera();
             });
 
             // Render loop
-            let time=0,lastT=0,frames=0;
-            (function loop(t){
+            let time = 0, lastT = 0, frames = 0;
+            (function loop(t) {
                 requestAnimationFrame(loop);
-                const dt=Math.min(32,t-lastT);lastT=t;
-                const df=dt/TARGET_FD;frames+=df;
-                control.update(dt,TARGET_FD);
+                const dt = Math.min(32, t - lastT); lastT = t;
+                const df = dt / TARGET_FD; frames += df;
+                control.update(dt, TARGET_FD);
 
                 // Update instance matrices
-                const scale=0.25,SI=0.6;
-                instancePositions.forEach((p,ndx)=>{
-                    const wp=vec3.transformQuat(vec3.create(),p,control.orientation);
-                    const s=(Math.abs(wp[2])/SPHERE_R)*SI+(1-SI);
-                    const fs=s*scale;
-                    const m=mat4.create();
-                    mat4.multiply(m,m,mat4.fromTranslation(mat4.create(),vec3.negate(vec3.create(),wp)));
-                    mat4.multiply(m,m,mat4.targetTo(mat4.create(),[0,0,0],wp,[0,1,0]));
-                    mat4.multiply(m,m,mat4.fromScaling(mat4.create(),[fs,fs,fs]));
-                    mat4.multiply(m,m,mat4.fromTranslation(mat4.create(),[0,0,-SPHERE_R]));
-                    mat4.copy(matrices[ndx],m);
+                const scale = 0.25, SI = 0.6;
+                instancePositions.forEach((p, ndx) => {
+                    const wp = vec3.transformQuat(vec3.create(), p, control.orientation);
+                    const s = (Math.abs(wp[2]) / SPHERE_R) * SI + (1 - SI);
+                    const fs = s * scale;
+                    const m = mat4.create();
+                    mat4.multiply(m, m, mat4.fromTranslation(mat4.create(), vec3.negate(vec3.create(), wp)));
+                    mat4.multiply(m, m, mat4.targetTo(mat4.create(), [0, 0, 0], wp, [0, 1, 0]));
+                    mat4.multiply(m, m, mat4.fromScaling(mat4.create(), [fs, fs, fs]));
+                    mat4.multiply(m, m, mat4.fromTranslation(mat4.create(), [0, 0, -SPHERE_R]));
+                    mat4.copy(matrices[ndx], m);
                 });
-                gl.bindBuffer(gl.ARRAY_BUFFER,instanceBuf);
-                gl.bufferSubData(gl.ARRAY_BUFFER,0,matricesArray);
-                gl.bindBuffer(gl.ARRAY_BUFFER,null);
-                smoothRotVel=control.rotationVelocity;
+                gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuf);
+                gl.bufferSubData(gl.ARRAY_BUFFER, 0, matricesArray);
+                gl.bindBuffer(gl.ARRAY_BUFFER, null);
+                smoothRotVel = control.rotationVelocity;
 
                 // Draw
                 gl.useProgram(program);
-                gl.enable(gl.CULL_FACE);gl.enable(gl.DEPTH_TEST);
-                gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-                gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-                gl.uniformMatrix4fv(locs.uWorldMatrix,false,worldMatrix);
-                gl.uniformMatrix4fv(locs.uViewMatrix,false,camera.view);
-                gl.uniformMatrix4fv(locs.uProjectionMatrix,false,camera.proj);
-                gl.uniform3f(locs.uCameraPosition,camera.pos[0],camera.pos[1],camera.pos[2]);
-                gl.uniform4f(locs.uRotationAxisVelocity,control.rotationAxis[0],control.rotationAxis[1],control.rotationAxis[2],smoothRotVel*1.1);
-                gl.uniform1i(locs.uItemCount,ITEMS.length);
-                gl.uniform1i(locs.uAtlasSize,atlasSize);
-                gl.uniform1f(locs.uFrames,frames);
-                gl.uniform1i(locs.uTex,0);
-                gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);
+                gl.enable(gl.CULL_FACE); gl.enable(gl.DEPTH_TEST);
+                gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                gl.uniformMatrix4fv(locs.uWorldMatrix, false, worldMatrix);
+                gl.uniformMatrix4fv(locs.uViewMatrix, false, camera.view);
+                gl.uniformMatrix4fv(locs.uProjectionMatrix, false, camera.proj);
+                gl.uniform3f(locs.uCameraPosition, camera.pos[0], camera.pos[1], camera.pos[2]);
+                gl.uniform4f(locs.uRotationAxisVelocity, control.rotationAxis[0], control.rotationAxis[1], control.rotationAxis[2], smoothRotVel * 1.1);
+                gl.uniform1i(locs.uItemCount, ITEMS.length);
+                gl.uniform1i(locs.uAtlasSize, atlasSize);
+                gl.uniform1f(locs.uFrames, frames);
+                gl.uniform1i(locs.uTex, 0);
+                gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex);
                 gl.bindVertexArray(discVAO);
-                gl.drawElementsInstanced(gl.TRIANGLES,discBufs.indices.length,gl.UNSIGNED_SHORT,0,DISC_COUNT);
+                gl.drawElementsInstanced(gl.TRIANGLES, discBufs.indices.length, gl.UNSIGNED_SHORT, 0, DISC_COUNT);
             })(0);
         }
+
+        // ── Card Swap (Labs Feature Hero) ─────────────────────────
+        (function initCardSwap() {
+            const container = document.getElementById('cardSwapContainer');
+            if (!container) return;
+
+            const cards = Array.from(container.querySelectorAll('.lf-card'));
+            if (cards.length < 2) return;
+
+            const CARD_DIST = 50;
+            const VERT_DIST = 55;
+            const DELAY = 3500;
+            const SKEW = 5;
+
+            const total = cards.length;
+            let order = cards.map((_, i) => i);
+
+            // GSAP inline (load via CDN)
+            function loadGSAP(cb) {
+                if (window.gsap) { cb(); return; }
+                const s = document.createElement('script');
+                s.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+                s.onload = cb;
+                document.head.appendChild(s);
+            }
+
+            function makeSlot(i) {
+                return {
+                    x: i * CARD_DIST,
+                    y: -i * VERT_DIST,
+                    z: -i * CARD_DIST * 1.5,
+                    zIndex: total - i
+                };
+            }
+
+            function placeNow(el, slot) {
+                gsap.set(el, {
+                    x: slot.x, y: slot.y, z: slot.z,
+                    xPercent: -50, yPercent: -50,
+                    skewY: SKEW,
+                    transformOrigin: 'center center',
+                    zIndex: slot.zIndex,
+                    force3D: true
+                });
+            }
+
+            loadGSAP(() => {
+                // Initial placement
+                cards.forEach((card, i) => placeNow(card, makeSlot(i)));
+
+                function swap() {
+                    const [front, ...rest] = order;
+                    const elFront = cards[front];
+                    const tl = gsap.timeline();
+
+                    // Drop front card down
+                    tl.to(elFront, { y: '+=500', duration: 1.8, ease: 'elastic.out(0.6,0.9)' });
+
+                    // Promote rest
+                    tl.addLabel('promote', `-=${1.8 * 0.9}`);
+                    rest.forEach((idx, i) => {
+                        const slot = makeSlot(i);
+                        gsap.set(cards[idx], { zIndex: slot.zIndex }, 'promote');
+                        tl.to(cards[idx], { x: slot.x, y: slot.y, z: slot.z, duration: 1.8, ease: 'elastic.out(0.6,0.9)' }, `promote+=${i * 0.12}`);
+                    });
+
+                    // Return front to back
+                    const backSlot = makeSlot(total - 1);
+                    tl.addLabel('return', 'promote+=0.2');
+                    tl.call(() => gsap.set(elFront, { zIndex: backSlot.zIndex }), undefined, 'return');
+                    tl.to(elFront, { x: backSlot.x, y: backSlot.y, z: backSlot.z, duration: 1.8, ease: 'elastic.out(0.6,0.9)' }, 'return');
+                    tl.call(() => { order = [...rest, front]; });
+                }
+
+                swap();
+                setInterval(swap, DELAY);
+            });
+        })();
+
+        // ── Falling Text ───────────────────────────────────────────
+        (function initFallingText() {
+            const wrap = document.getElementById('fallingTextWrap');
+            const textEl = document.getElementById('fallingTextTarget');
+            const canvas = document.getElementById('fallingTextCanvas');
+            if (!wrap || !textEl || !canvas) return;
+
+            // Split into word spans
+            const words = textEl.textContent.trim().split(' ');
+            const highlights = ['AI', 'six', 'six', 'powerful', 'right'];
+            textEl.innerHTML = words.map(w => {
+                const isH = highlights.some(h => w.toLowerCase().startsWith(h.toLowerCase()));
+                return `<span class="ft-word${isH ? ' ft-highlight' : ''}">${w}</span>`;
+            }).join(' ');
+
+            let started = false;
+
+            // Intersection observer — trigger on scroll
+            const obs = new IntersectionObserver(([entry]) => {
+                if (entry.isIntersecting && !started) {
+                    started = true;
+                    obs.disconnect();
+                    runPhysics();
+                }
+            }, { threshold: 0.3 });
+            obs.observe(wrap);
+
+            // Also trigger on click
+            wrap.addEventListener('click', () => { if (!started) { started = true; runPhysics(); } });
+
+            function runPhysics() {
+                // Load Matter.js
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js';
+                script.onload = () => {
+                    const { Engine, Render, World, Bodies, Runner, Mouse, MouseConstraint } = Matter;
+
+                    const rect = wrap.getBoundingClientRect();
+                    const W = rect.width, H = Math.max(rect.height, 200);
+
+                    // Resize canvas
+                    canvas.width = W;
+                    canvas.height = H;
+                    canvas.style.pointerEvents = 'auto';
+
+                    const engine = Engine.create();
+                    engine.world.gravity.y = 0.8;
+
+                    const render = Render.create({
+                        canvas,
+                        engine,
+                        options: { width: W, height: H, background: 'transparent', wireframes: false }
+                    });
+
+                    const walls = [
+                        Bodies.rectangle(W / 2, H + 25, W, 50, { isStatic: true, render: { fillStyle: 'transparent' } }),
+                        Bodies.rectangle(-25, H / 2, 50, H, { isStatic: true, render: { fillStyle: 'transparent' } }),
+                        Bodies.rectangle(W + 25, H / 2, 50, H, { isStatic: true, render: { fillStyle: 'transparent' } }),
+                    ];
+
+                    const wrapRect = wrap.getBoundingClientRect();
+                    const wordSpans = textEl.querySelectorAll('.ft-word');
+                    const wordBodies = [...wordSpans].map(span => {
+                        const sr = span.getBoundingClientRect();
+                        const x = sr.left - wrapRect.left + sr.width / 2;
+                        const y = sr.top - wrapRect.top + sr.height / 2;
+                        const body = Bodies.rectangle(x, y, sr.width, sr.height, {
+                            render: { fillStyle: 'transparent' },
+                            restitution: 0.6,
+                            frictionAir: 0.02,
+                            friction: 0.1
+                        });
+                        Matter.Body.setVelocity(body, { x: (Math.random() - 0.5) * 4, y: 0 });
+                        Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.05);
+                        return { span, body };
+                    });
+
+                    wordBodies.forEach(({ span }) => {
+                        span.style.position = 'absolute';
+                        span.style.whiteSpace = 'nowrap';
+                    });
+
+                    const mouse = Mouse.create(canvas);
+                    const mc = MouseConstraint.create(engine, {
+                        mouse,
+                        constraint: { stiffness: 0.2, render: { visible: false } }
+                    });
+                    render.mouse = mouse;
+
+                    World.add(engine.world, [...walls, mc, ...wordBodies.map(w => w.body)]);
+                    Runner.run(Runner.create(), engine);
+                    Render.run(render);
+
+                    (function updateLoop() {
+                        wordBodies.forEach(({ body, span }) => {
+                            span.style.left = `${body.position.x}px`;
+                            span.style.top = `${body.position.y}px`;
+                            span.style.transform = `translate(-50%,-50%) rotate(${body.angle}rad)`;
+                        });
+                        requestAnimationFrame(updateLoop);
+                    })();
+                };
+                document.head.appendChild(script);
+            }
+        })();
+
+        // ── Flying Posters ─────────────────────────────────────────
+        async function initFlyingPosters() {
+            const container = document.getElementById('flyingPostersContainer');
+            const canvas = document.getElementById('flyingPostersCanvas');
+            if (!container || !canvas) return;
+
+            try {
+                const { Renderer, Camera, Transform, Plane, Program, Mesh, Texture } =
+                    await import('https://cdn.jsdelivr.net/npm/ogl@1.0.9/src/index.js');
+
+                const IMAGES = [
+                    '/assets/images/labs/card-code.png',
+                    '/assets/images/labs/card-design.png',
+                    '/assets/images/labs/card-image.png',
+                    '/assets/images/labs/card-video.png',
+                    '/assets/images/labs/card-research.png',
+                    '/assets/images/labs/card-analytic.png',
+                ];
+
+                const renderer = new Renderer({ canvas, alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio, 2) });
+                const gl = renderer.gl;
+                gl.clearColor(0, 0, 0, 0);
+
+                const camera = new Camera(gl);
+                camera.fov = 45;
+                camera.position.z = 20;
+
+                const scene = new Transform();
+
+                const planeGeo = new Plane(gl, { heightSegments: 1, widthSegments: 100 });
+
+                const vert = `
+precision highp float;
+attribute vec3 position; attribute vec2 uv;
+uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix;
+uniform float uPosition; uniform float uDistortion;
+varying vec2 vUv;
+float PI = 3.14159265;
+mat4 rotMat(vec3 axis, float angle) {
+    axis = normalize(axis); float s=sin(angle),c=cos(angle),oc=1.0-c;
+    return mat4(oc*axis.x*axis.x+c,oc*axis.x*axis.y-axis.z*s,oc*axis.z*axis.x+axis.y*s,0.0,
+                oc*axis.x*axis.y+axis.z*s,oc*axis.y*axis.y+c,oc*axis.y*axis.z-axis.x*s,0.0,
+                oc*axis.z*axis.x-axis.y*s,oc*axis.y*axis.z+axis.x*s,oc*axis.z*axis.z+c,0.0,
+                0.0,0.0,0.0,1.0);
+}
+vec3 rot(vec3 v, vec3 axis, float angle) { return (rotMat(axis,angle)*vec4(v,1.0)).xyz; }
+float quintic(float t) { return t<0.5 ? 16.0*pow(t,5.0) : -0.5*abs(pow(2.0*t-2.0,5.0))+1.0; }
+void main() {
+    vUv = uv;
+    float norm=0.5;
+    vec3 newpos=position;
+    float offset=(dot(vec3(1,1,0),position)+norm/2.)/norm;
+    float lp=clamp((fract(uPosition*5.0*0.01)-0.01*uDistortion*offset)/(1.-0.01*uDistortion),0.,2.);
+    lp=quintic(lp)*PI;
+    newpos=rot(newpos,vec3(0,1,0),lp);
+    gl_Position=projectionMatrix*modelViewMatrix*vec4(newpos,1.0);
+}`;
+                const frag = `
+precision highp float;
+uniform sampler2D tMap; uniform vec2 uImageSize; uniform vec2 uPlaneSize;
+varying vec2 vUv;
+void main() {
+    float ia=uImageSize.x/uImageSize.y, pa=uPlaneSize.x/uPlaneSize.y;
+    vec2 scale=vec2(1.0);
+    if(pa>ia) scale.x=ia/pa; else scale.y=pa/ia;
+    vec2 uv=vUv*scale+(1.0-scale)*0.5;
+    gl_FragColor=texture2D(tMap,uv);
+}`;
+
+                function lerp(a, b, t) { return a + (b - a) * t; }
+
+                let screen = { width: container.clientWidth, height: container.clientHeight };
+                renderer.setSize(screen.width, screen.height);
+                canvas.style.width = screen.width + 'px';
+                canvas.style.height = screen.height + 'px';
+                camera.perspective({ aspect: screen.width / screen.height });
+
+                const fovR = (camera.fov * Math.PI) / 180;
+                let vpH = 2 * Math.tan(fovR / 2) * camera.position.z;
+                let vpW = vpH * (screen.width / screen.height);
+
+                const PLANE_W_PX = 320, PLANE_H_PX = 320;
+                const PADDING = 5;
+                const medias = [];
+
+                IMAGES.forEach((src, index) => {
+                    const tex = new Texture(gl, { generateMipmaps: false });
+                    const prog = new Program(gl, {
+                        vertex: vert, fragment: frag,
+                        uniforms: {
+                            tMap: { value: tex },
+                            uPosition: { value: 0 },
+                            uPlaneSize: { value: [0, 0] },
+                            uImageSize: { value: [1, 1] },
+                            uDistortion: { value: 3 },
+                        },
+                        cullFace: false, depthTest: false, depthWrite: false,
+                    });
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.onload = () => { tex.image = img; prog.uniforms.uImageSize.value = [img.naturalWidth, img.naturalHeight]; };
+                    img.src = src;
+
+                    const mesh = new Mesh(gl, { geometry: planeGeo, program: prog });
+                    mesh.setParent(scene);
+
+                    const planeH = (vpH * PLANE_H_PX) / screen.height;
+                    const planeW = (vpW * PLANE_W_PX) / screen.width;
+                    mesh.scale.set(planeW, planeH, 1);
+                    prog.uniforms.uPlaneSize.value = [planeW, planeH];
+
+                    const height = planeH + PADDING;
+                    const heightTotal = height * IMAGES.length;
+                    const y = -heightTotal / 2 + (index + 0.5) * height;
+
+                    medias.push({ mesh, prog, y, heightTotal, extra: 0 });
+                });
+
+                const scroll = { current: 0, target: 0, ease: 0.08, last: 0 };
+                let isDown = false, startY = 0, scrollPos = 0;
+
+                // Only scroll when section is in viewport
+                function isInView() {
+                    const rect = container.getBoundingClientRect();
+                    return rect.top < window.innerHeight && rect.bottom > 0;
+                }
+
+                window.addEventListener('wheel', (e) => {
+                    if (!isInView()) return;
+                    scroll.target += e.deltaY * 0.005;
+                });
+                window.addEventListener('mousedown', (e) => { isDown = true; scrollPos = scroll.current; startY = e.clientY; });
+                window.addEventListener('mousemove', (e) => { if (!isDown) return; scroll.target = scrollPos + (startY - e.clientY) * 0.1; });
+                window.addEventListener('mouseup', () => { isDown = false; });
+                window.addEventListener('touchstart', (e) => { isDown = true; scrollPos = scroll.current; startY = e.touches[0].clientY; });
+                window.addEventListener('touchmove', (e) => { if (!isDown) return; scroll.target = scrollPos + (startY - e.touches[0].clientY) * 0.1; });
+                window.addEventListener('touchend', () => { isDown = false; });
+
+                window.addEventListener('resize', () => {
+                    screen = { width: container.clientWidth, height: container.clientHeight };
+                    renderer.setSize(screen.width, screen.height);
+                    canvas.style.width = screen.width + 'px';
+                    canvas.style.height = screen.height + 'px';
+                    camera.perspective({ aspect: screen.width / screen.height });
+                    vpH = 2 * Math.tan(fovR / 2) * camera.position.z;
+                    vpW = vpH * (screen.width / screen.height);
+                    medias.forEach((m, i) => {
+                        const pH = (vpH * PLANE_H_PX) / screen.height;
+                        const pW = (vpW * PLANE_W_PX) / screen.width;
+                        m.mesh.scale.set(pW, pH, 1);
+                        m.prog.uniforms.uPlaneSize.value = [pW, pH];
+                        const h = pH + PADDING;
+                        const ht = h * IMAGES.length;
+                        m.y = -ht / 2 + (i + 0.5) * h;
+                        m.heightTotal = ht;
+                    });
+                });
+
+                (function loop() {
+                    requestAnimationFrame(loop);
+                    scroll.current = lerp(scroll.current, scroll.target, scroll.ease);
+
+                    medias.forEach(m => {
+                        m.mesh.position.y = m.y - scroll.current - m.extra;
+                        const pos = (m.mesh.position.y / vpH) * 10 + 10;
+                        m.prog.uniforms.uPosition.value = pos;
+
+                        const top = m.mesh.position.y + m.mesh.scale.y / 2;
+                        const bot = m.mesh.position.y - m.mesh.scale.y / 2;
+                        if (top < -vpH / 2) m.extra -= m.heightTotal;
+                        else if (bot > vpH / 2) m.extra += m.heightTotal;
+                    });
+
+                    renderer.render({ scene, camera });
+                    scroll.last = scroll.current;
+                })();
+
+            } catch (err) {
+                console.warn('Flying posters failed:', err);
+            }
+        }
+
+        // ── Circular Gallery ───────────────────────────────────────
+        function initCircularGallery() {
+            const container = document.getElementById('circularGallery');
+            if (!container) return;
+
+            const ITEMS = [
+                { image: '/assets/images/labs/card-code.png', text: 'Zora Code' },
+                { image: '/assets/images/labs/card-design.png', text: 'Zora Design' },
+                { image: '/assets/images/labs/card-image.png', text: 'Zora Image' },
+                { image: '/assets/images/labs/card-video.png', text: 'Zora Video' },
+                { image: '/assets/images/labs/card-research.png', text: 'Zora Research' },
+                { image: '/assets/images/labs/card-analytic.png', text: 'Zora Analytics' },
+            ];
+
+            import('https://cdn.jsdelivr.net/npm/ogl@1.0.9/src/index.js').then(({ Renderer, Camera, Transform, Plane, Mesh, Program, Texture }) => {
+                function lerp(a, b, t) { return a + (b - a) * t; }
+                function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+                function createTextTex(gl, text) {
+                    const c = document.createElement('canvas');
+                    const ctx = c.getContext('2d');
+                    const font = 'bold 30px Inter, sans-serif';
+                    ctx.font = font;
+                    const m = ctx.measureText(text);
+                    c.width = Math.ceil(m.width) + 20; c.height = 50;
+                    ctx.font = font; ctx.fillStyle = '#0099CC';
+                    ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+                    ctx.fillText(text, c.width / 2, c.height / 2);
+                    const tex = new Texture(gl, { generateMipmaps: false });
+                    tex.image = c;
+                    return { tex, w: c.width, h: c.height };
+                }
+
+                const allItems = [...ITEMS, ...ITEMS];
+                const renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio, 2) });
+                const gl = renderer.gl;
+                gl.clearColor(0, 0, 0, 0);
+                container.appendChild(gl.canvas);
+
+                const camera = new Camera(gl);
+                camera.fov = 45; camera.position.z = 20;
+                const scene = new Transform();
+                const geo = new Plane(gl, { heightSegments: 50, widthSegments: 100 });
+
+                const vert = `precision highp float;
+attribute vec3 position; attribute vec2 uv;
+uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix;
+uniform float uTime,uSpeed; varying vec2 vUv;
+void main(){vUv=uv;vec3 p=position;p.z=(sin(p.x*4.0+uTime)*1.5+cos(p.y*2.0+uTime)*1.5)*(0.1+uSpeed*0.5);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`;
+                const frag = `precision highp float;
+uniform vec2 uImageSizes,uPlaneSizes; uniform sampler2D tMap; uniform float uBorderRadius; varying vec2 vUv;
+float rSDF(vec2 p,vec2 b,float r){vec2 d=abs(p)-b;return length(max(d,vec2(0.0)))+min(max(d.x,d.y),0.0)-r;}
+void main(){
+vec2 ratio=vec2(min((uPlaneSizes.x/uPlaneSizes.y)/(uImageSizes.x/uImageSizes.y),1.0),min((uPlaneSizes.y/uPlaneSizes.x)/(uImageSizes.y/uImageSizes.x),1.0));
+vec2 uv=vUv*ratio+(1.0-ratio)*0.5;
+vec4 col=texture2D(tMap,uv);
+float d=rSDF(vUv-0.5,vec2(0.5-uBorderRadius),uBorderRadius);
+gl_FragColor=vec4(col.rgb,1.0-smoothstep(-0.002,0.002,d));}`;
+
+                const scroll = { ease: 0.05, current: 0, target: 0, last: 0 };
+                let screen = { width: container.clientWidth, height: container.clientHeight };
+                renderer.setSize(screen.width, screen.height);
+                camera.perspective({ aspect: screen.width / screen.height });
+                const f2 = (camera.fov * Math.PI) / 180;
+                let vpH = 2 * Math.tan(f2 / 2) * camera.position.z;
+                let vpW = vpH * (screen.width / screen.height);
+
+                const planes = allItems.map((item, index) => {
+                    const tex = new Texture(gl, { generateMipmaps: true });
+                    const prog = new Program(gl, {
+                        depthTest: false, depthWrite: false, vertex: vert, fragment: frag,
+                        uniforms: { tMap: { value: tex }, uPlaneSizes: { value: [0, 0] }, uImageSizes: { value: [1, 1] }, uSpeed: { value: 0 }, uTime: { value: Math.random() * 100 }, uBorderRadius: { value: 0.05 } },
+                        transparent: true
+                    });
+                    const img = new Image(); img.crossOrigin = 'anonymous';
+                    img.onload = () => { tex.image = img; prog.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight]; };
+                    img.src = item.image;
+
+                    const mesh = new Mesh(gl, { geometry: geo, program: prog });
+                    mesh.setParent(scene);
+
+                    const { tex: lt, w: lw, h: lh } = createTextTex(gl, item.text);
+                    const lProg = new Program(gl, {
+                        vertex: `attribute vec3 position;attribute vec2 uv;uniform mat4 modelViewMatrix,projectionMatrix;varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+                        fragment: `precision highp float;uniform sampler2D tMap;varying vec2 vUv;void main(){vec4 c=texture2D(tMap,vUv);if(c.a<0.1)discard;gl_FragColor=c;}`,
+                        uniforms: { tMap: { value: lt } }, transparent: true
+                    });
+                    const lMesh = new Mesh(gl, { geometry: new Plane(gl), program: lProg });
+                    lMesh.setParent(mesh);
+
+                    return { mesh, lMesh, prog, index, length: allItems.length, lw, lh, extra: 0, width: 0, widthTotal: 0, x: 0 };
+                });
+
+                function resizePlanes() {
+                    screen = { width: container.clientWidth, height: container.clientHeight };
+                    renderer.setSize(screen.width, screen.height);
+                    camera.perspective({ aspect: screen.width / screen.height });
+                    vpH = 2 * Math.tan(f2 / 2) * camera.position.z;
+                    vpW = vpH * (screen.width / screen.height);
+                    const scale = screen.height / 1500;
+                    planes.forEach(p => {
+                        p.mesh.scale.y = (vpH * (900 * scale)) / screen.height;
+                        p.mesh.scale.x = (vpW * (700 * scale)) / screen.width;
+                        p.prog.uniforms.uPlaneSizes.value = [p.mesh.scale.x, p.mesh.scale.y];
+                        const tH = p.mesh.scale.y * 0.12, tW = tH * (p.lw / p.lh);
+                        p.lMesh.scale.set(tW, tH, 1);
+                        p.lMesh.position.y = -p.mesh.scale.y * 0.5 - tH * 0.5 - 0.05;
+                        p.width = p.mesh.scale.x + 2;
+                        p.widthTotal = p.width * p.length;
+                        p.x = p.width * p.index;
+                    });
+                }
+                resizePlanes();
+                window.addEventListener('resize', debounce(resizePlanes, 200));
+
+                let isDown = false, startX = 0, scrollPos = 0;
+                container.addEventListener('wheel', e => { scroll.target += (e.deltaY > 0 ? 2 : -2) * 0.2; });
+                container.addEventListener('mousedown', e => { isDown = true; scrollPos = scroll.current; startX = e.clientX; });
+                window.addEventListener('mousemove', e => { if (!isDown) return; scroll.target = scrollPos + (startX - e.clientX) * 0.05; });
+                window.addEventListener('mouseup', () => { isDown = false; });
+                container.addEventListener('touchstart', e => { isDown = true; scrollPos = scroll.current; startX = e.touches[0].clientX; });
+                window.addEventListener('touchmove', e => { if (!isDown) return; scroll.target = scrollPos + (startX - e.touches[0].clientX) * 0.05; });
+                window.addEventListener('touchend', () => { isDown = false; });
+
+                (function loop() {
+                    requestAnimationFrame(loop);
+                    scroll.current = lerp(scroll.current, scroll.target, scroll.ease);
+                    const dir = scroll.current > scroll.last ? 'right' : 'left';
+                    planes.forEach(p => {
+                        p.mesh.position.x = p.x - scroll.current - p.extra;
+                        const x = p.mesh.position.x, H = vpW / 2;
+                        const B = 3, R = (H * H + B * B) / (2 * B);
+                        const ex = Math.min(Math.abs(x), H);
+                        const arc = R - Math.sqrt(R * R - ex * ex);
+                        p.mesh.position.y = -arc;
+                        p.mesh.rotation.z = -Math.sign(x) * Math.asin(ex / R);
+                        p.prog.uniforms.uTime.value += 0.04;
+                        p.prog.uniforms.uSpeed.value = scroll.current - scroll.last;
+                        const po = p.mesh.scale.x / 2, vo = vpW / 2;
+                        if (dir === 'right' && p.mesh.position.x + po < -vo) p.extra -= p.widthTotal;
+                        if (dir === 'left' && p.mesh.position.x - po > vo) p.extra += p.widthTotal;
+                    });
+                    renderer.render({ scene, camera });
+                    scroll.last = scroll.current;
+                })();
+            });
+        }
+
+        // ── Tilted Cards ───────────────────────────────────────────
+        (function initTiltedCards() {
+            document.querySelectorAll('.lf-tilted-card').forEach(card => {
+                // Wrap img in inner div
+                const img = card.querySelector('.lf-tilted-img');
+                const inner = document.createElement('div');
+                inner.className = 'lf-tilted-inner';
+                card.insertBefore(inner, img);
+                inner.appendChild(img);
+
+                // Tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = 'lf-tilted-tooltip';
+                tooltip.textContent = img.alt;
+                card.appendChild(tooltip);
+
+                const AMPLITUDE = 14;
+                const SCALE = 1.05;
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const ox = e.clientX - rect.left - rect.width / 2;
+                    const oy = e.clientY - rect.top - rect.height / 2;
+                    const rx = (oy / (rect.height / 2)) * -AMPLITUDE;
+                    const ry = (ox / (rect.width / 2)) * AMPLITUDE;
+                    inner.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${SCALE})`;
+                    tooltip.style.left = `${e.clientX - rect.left}px`;
+                    tooltip.style.top = `${e.clientY - rect.top}px`;
+                    tooltip.style.opacity = '1';
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    inner.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
+                    tooltip.style.opacity = '0';
+                });
+            });
+        })();
 
         // ── Boot ──────────────────────────────────────────────────
         initHeroRings();
         initHeroOrb();
         initInfiniteMenu();
+        initFlyingPosters();
+        initCircularGallery();
 
         // ── DELETED: initCircularGallery & initLanyard ────────────
         (function initLanyard() {

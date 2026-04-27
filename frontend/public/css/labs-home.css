@@ -912,7 +912,7 @@ img {
     letter-spacing: -0.02em;
     pointer-events: none;
     white-space: nowrap;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     transition: opacity 0.5s ease, transform 0.5s ease;
     z-index: 10;
 }
@@ -934,17 +934,22 @@ img {
     transform: translateX(-50%);
     font-size: 0.8rem;
     font-weight: 500;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
     text-align: center;
     max-width: 200px;
     pointer-events: none;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
     transition: opacity 0.5s ease;
     z-index: 10;
 }
 
-.im-face-desc.active { opacity: 1; }
-.im-face-desc.inactive { opacity: 0; }
+.im-face-desc.active {
+    opacity: 1;
+}
+
+.im-face-desc.inactive {
+    opacity: 0;
+}
 
 .im-action-btn {
     position: absolute;
@@ -955,7 +960,7 @@ img {
     height: 44px;
     border-radius: 50%;
     background: #0099CC;
-    border: 3px solid rgba(255,255,255,0.2);
+    border: 3px solid rgba(255, 255, 255, 0.2);
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -1131,7 +1136,7 @@ img {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(0,153,204,0.03) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(0, 153, 204, 0.03) 0%, transparent 60%);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -1216,10 +1221,352 @@ img {
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 999px;
-    background: rgba(0,0,0,0.06);
+    background: rgba(0, 0, 0, 0.06);
     color: #999;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+}
+
+/* ── LABS FEATURE HERO ───────────────────────────────── */
+.lf-hero {
+    padding: 120px 0 100px;
+    background: #f8f8ff;
+    overflow: hidden;
+}
+
+.lf-hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    gap: 80px;
+}
+
+.lf-hero-left {
+    flex: 0 0 440px;
+    width: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lf-hero-right {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Card Swap */
+.lf-card-swap-container {
+    position: relative;
+    width: 340px;
+    height: 420px;
+    perspective: 900px;
+}
+
+.lf-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 380px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transform-style: preserve-3d;
+    will-change: transform;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.lf-card-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.lf-card-placeholder i {
+    font-size: 3rem;
+    color: #00D4FF;
+}
+
+.lf-card-placeholder span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* Falling Text */
+.lf-hero-title {
+    font-size: clamp(2.4rem, 4vw, 4rem);
+    font-weight: 900;
+    color: #0a0a1a;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin: 0 0 28px;
+}
+
+.lf-falling-wrap {
+    position: relative;
+    width: 100%;
+    min-height: 160px;
+    margin-bottom: 36px;
+    cursor: pointer;
+}
+
+.lf-falling-text {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: #444466;
+}
+
+.lf-falling-text .ft-word {
+    display: inline-block;
+    margin: 0 3px;
+    user-select: none;
+}
+
+.lf-falling-text .ft-word.ft-highlight {
+    color: #0099CC;
+    font-weight: 600;
+}
+
+.lf-falling-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.lf-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+/* ── FLYING POSTERS ──────────────────────────────────── */
+.lf-flying-section {
+    position: relative;
+    height: 100vh;
+    background: #0a0a1a;
+    overflow: hidden;
+}
+
+.lf-flying-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.lf-flying-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.lf-flying-label {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: flyLabelBounce 2s ease-in-out infinite;
+}
+
+@keyframes flyLabelBounce {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(-8px);
+    }
+}
+
+/* ── CIRCULAR GALLERY ────────────────────────────────── */
+.lf-gallery-section {
+    padding: 80px 0 60px;
+    background: #f8f8ff;
+    overflow: hidden;
+}
+
+.lf-gallery-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 0 40px;
+}
+
+.lf-gallery-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 900;
+    color: #0a0a1a;
+    letter-spacing: -0.04em;
+    margin: 12px 0 0;
+}
+
+.lf-circular-gallery {
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.lf-circular-gallery:active {
+    cursor: grabbing;
+}
+
+/* ── LAB DETAIL CARDS ────────────────────────────────── */
+.lf-details {
+    padding: 80px 0 120px;
+    background: #ffffff;
+}
+
+.lf-detail-row {
+    max-width: 1200px;
+    margin: 0 auto 100px;
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    gap: 80px;
+}
+
+.lf-detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.lf-detail-row--img-left {
+    flex-direction: row;
+}
+
+.lf-detail-row--img-right {
+    flex-direction: row-reverse;
+}
+
+.lf-detail-img {
+    flex: 0 0 420px;
+    width: 420px;
+}
+
+.lf-detail-text {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Tilted Card */
+.lf-tilted-card {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 20px;
+    overflow: hidden;
+    perspective: 800px;
+    cursor: pointer;
+    will-change: transform;
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 102, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.lf-tilted-card:hover {
+    box-shadow: 0 30px 80px rgba(0, 102, 255, 0.2), 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.lf-tilted-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease;
+    will-change: transform;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.lf-tilted-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+.lf-tilted-tooltip {
+    position: absolute;
+    background: #fff;
+    color: #111;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: opacity 0.2s ease;
+}
+
+/* Detail text styles */
+.lf-detail-title {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 900;
+    color: #0a0a1a;
+    letter-spacing: -0.04em;
+    margin: 12px 0 4px;
+    line-height: 1.1;
+}
+
+.lf-detail-sub {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #0099CC;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 16px;
+}
+
+.lf-detail-desc {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #555577;
+    margin: 0 0 28px;
+    max-width: 480px;
+}
+
+.lf-detail-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    background: #0099CC;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.lf-detail-btn:hover {
+    background: #007aaa;
+    transform: translateY(-2px);
 }
 
 /* ── FOOTER ───────────────────────────────────────────── */
@@ -1346,6 +1693,40 @@ img {
         padding: 110px 24px 60px;
         text-align: center;
         gap: 40px;
+    }
+
+    .lf-hero-inner {
+        flex-direction: column;
+        padding: 0 24px;
+        gap: 40px;
+    }
+
+    .lf-hero-left {
+        flex: none;
+        width: 100%;
+    }
+
+    .lf-card-swap-container {
+        width: 280px;
+        height: 340px;
+        margin: 0 auto;
+    }
+
+    .lf-card {
+        width: 240px;
+        height: 300px;
+    }
+
+    .lf-detail-row {
+        flex-direction: column !important;
+        padding: 0 24px;
+        gap: 32px;
+        margin-bottom: 60px;
+    }
+
+    .lf-detail-img {
+        flex: none;
+        width: 100%;
     }
 
     .lh-hero-two-col .lh-hero-actions {
