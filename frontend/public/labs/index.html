@@ -576,67 +576,67 @@
             }
         }
 
-        // ── Shuffle Text Animation ────────────────────────────────
-        function shuffleAnimate(el, options = {}) {
+        // ── SplitText Animation ───────────────────────────────────
+        function splitTextAnimate(el, options = {}) {
             if (!el) return;
             const {
-                duration = 350,
-                stagger = 30,
-                ease = 'power3',
+                delay = 50,
+                duration = 1.25,
+                ease = 'cubic-bezier(0.22, 1, 0.36, 1)',
+                fromY = 40,
                 onComplete = null,
-                shuffleTimes = 2,
             } = options;
 
-            const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             const originalText = el.textContent.trim();
             el.textContent = '';
             el.style.visibility = 'visible';
+            el.style.display = 'inline';
 
-            // Split into char spans
-            const chars = [];
-            [...originalText].forEach((ch) => {
-                if (ch === ' ') {
-                    const sp = document.createElement('span');
-                    sp.textContent = '\u00A0';
-                    sp.style.display = 'inline-block';
-                    el.appendChild(sp);
-                    chars.push(null);
-                    return;
+            const words = originalText.split(' ');
+            const allChars = [];
+
+            words.forEach((word, wi) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.style.cssText = 'display:inline-block; white-space:nowrap;';
+
+                [...word].forEach(ch => {
+                    const span = document.createElement('span');
+                    span.textContent = ch;
+                    span.style.cssText = `
+                        display: inline-block;
+                        opacity: 0;
+                        transform: translateY(${fromY}px);
+                        will-change: transform, opacity;
+                    `;
+                    wordSpan.appendChild(span);
+                    allChars.push(span);
+                });
+
+                el.appendChild(wordSpan);
+
+                // space between words
+                if (wi < words.length - 1) {
+                    const space = document.createElement('span');
+                    space.textContent = '\u00A0';
+                    space.style.display = 'inline-block';
+                    el.appendChild(space);
                 }
-                const wrap = document.createElement('span');
-                wrap.className = 'shuffle-char-wrap';
-                const inner = document.createElement('span');
-                inner.className = 'shuffle-char-inner';
-                inner.textContent = ch;
-                wrap.appendChild(inner);
-                el.appendChild(wrap);
-                chars.push({ wrap, inner, original: ch });
             });
 
-            // Animate each char with stagger
-            let completedCount = 0;
-            const animatableChars = chars.filter(Boolean);
-
-            animatableChars.forEach((charObj, i) => {
-                const delay = i * stagger;
-                const totalCycles = shuffleTimes * 6;
-                let cycle = 0;
-
+            // Animate each char staggered
+            let completed = 0;
+            allChars.forEach((span, i) => {
                 setTimeout(() => {
-                    const interval = setInterval(() => {
-                        if (cycle < totalCycles) {
-                            charObj.inner.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
-                            cycle++;
-                        } else {
-                            clearInterval(interval);
-                            charObj.inner.textContent = charObj.original;
-                            completedCount++;
-                            if (completedCount === animatableChars.length && onComplete) {
-                                onComplete();
-                            }
-                        }
-                    }, duration / totalCycles);
-                }, delay);
+                    span.style.transition = `opacity ${duration}s ${ease}, transform ${duration}s ${ease}`;
+                    span.style.opacity = '1';
+                    span.style.transform = 'translateY(0px)';
+
+                    if (i === allChars.length - 1) {
+                        setTimeout(() => {
+                            if (onComplete) onComplete();
+                        }, duration * 1000);
+                    }
+                }, i * delay);
             });
         }
 
@@ -1671,19 +1671,19 @@ void main() {
             canvas.addEventListener('touchend', onUp);
         })();
 
-        // ── Start Shuffle Title ───────────────────────────────────
+        // ── Start SplitText Title ─────────────────────────────────
         setTimeout(() => {
-            const shuffleEl = document.getElementById('shuffleTitle');
-            shuffleAnimate(shuffleEl, {
-                duration: 400,
-                stagger: 25,
-                shuffleTimes: 2,
+            const splitEl = document.getElementById('shuffleTitle');
+            splitTextAnimate(splitEl, {
+                delay: 50,
+                duration: 1.25,
+                fromY: 40,
                 onComplete: () => {
                     fadeInElement(document.getElementById('heroDesc'), 0);
                     fadeInElement(document.getElementById('heroActions'), 200);
                 }
             });
-        }, 400);
+        }, 300);
     </script>
 </body>
 

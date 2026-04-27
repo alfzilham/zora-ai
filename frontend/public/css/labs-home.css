@@ -848,25 +848,9 @@ img {
     text-align: center;
 }
 
-/* ── SHUFFLE TITLE ───────────────────────────────────── */
+/* ── SPLIT TEXT ──────────────────────────────────────── */
 .shuffle-text {
     display: inline;
-}
-
-.shuffle-char-wrap {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
-}
-
-.shuffle-char-inner {
-    display: inline-block;
-    will-change: transform;
-}
-
-.shuffle-char {
-    display: inline-block;
-    text-align: center;
 }
 
 /* ── LANYARD CANVAS ──────────────────────────────────────── */
