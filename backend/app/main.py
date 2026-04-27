@@ -101,7 +101,7 @@ async def normalize_vercel_api_prefix(request: Request, call_next):
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(onboarding.router, prefix="/onboarding", tags=["Onboarding"])
 app.include_router(chat.router, prefix="/chat", tags=["Chat"])
-app.include_router(settings_router.router, prefix="/settings", tags=["Settings"])
+app.include_router(settings_router.router, tags=["Settings"])
 app.include_router(labs.router, prefix="/labs", tags=["Labs"])
 app.include_router(dashboard.router, tags=["Dashboard"])
 app.include_router(feedback.router, prefix="/feedback", tags=["Feedback"])
