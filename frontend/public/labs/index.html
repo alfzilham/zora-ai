@@ -1314,15 +1314,21 @@ void main() {
 
         // ── Infinite Menu (Hero Right) ────────────────────────────
         async function initInfiniteMenu() {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix-min.js';
-            document.head.appendChild(script);
-            await new Promise(r => script.onload = r);
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
 
-            const mat4 = glMatrix.mat4;
-            const quat = glMatrix.quat;
-            const vec2 = glMatrix.vec2;
-            const vec3 = glMatrix.vec3;
+            // gl-matrix 2.x exposes mat4, quat, vec2, vec3 directly as globals
+            const mat4 = window.mat4;
+            const quat = window.quat;
+            const vec2 = window.vec2;
+            const vec3 = window.vec3;
+
+            if (!mat4 || !vec3) { console.error('gl-matrix globals not found'); return; }
             const canvas = document.getElementById('infiniteMenuCanvas');
             if (!canvas) return;
             if (!glMatrix || !glMatrix.mat4) { console.error('glMatrix not loaded'); return; }
