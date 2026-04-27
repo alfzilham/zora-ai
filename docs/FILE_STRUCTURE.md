@@ -1,10 +1,10 @@
 # File Tree: zora-ai
 
-**Generated:** 4/26/2026, 5:21:44 PM
+**Generated:** 4/27/2026, 10:29:21 AM
 **Root Path:** `d:\2026\Workspace\Website\.AI\zora-ai`
 
 ```
-zora-ai
+zora-ai/
 ├── api
 │   ├── index.py
 │   └── requirements.txt
@@ -18,14 +18,17 @@ zora-ai
 │   │   │   └── cors.py
 │   │   ├── models
 │   │   │   ├── chat.py
+│   │   │   ├── feedback.py
 │   │   │   ├── memory.py
 │   │   │   ├── session.py
-│   │   │   └── user.py
+│   │   │   ├── user.py
+│   │   │   └── withdrawal.py
 │   │   ├── routers
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
 │   │   │   ├── chat.py
 │   │   │   ├── dashboard.py
+│   │   │   ├── feedback.py
 │   │   │   ├── labs.py
 │   │   │   ├── onboarding.py
 │   │   │   └── settings.py
@@ -86,13 +89,15 @@ zora-ai
 │       │   │   ├── favicon-16x16.png
 │       │   │   ├── favicon-32x32.png
 │       │   │   └── favicon.png
-│       │   └── images
-│       │       ├── labs
-│       │       │   ├── labs.png
-│       │       │   └── navigate.png
-│       │       └── logo
-│       │           ├── logo-white.png
-│       │           └── logo.png
+│       │   ├── images
+│       │   │   ├── labs
+│       │   │   │   ├── labs.png
+│       │   │   │   └── navigate.png
+│       │   │   └── logo
+│       │   │       ├── logo-white.png
+│       │   │       └── logo.png
+│       │   └── model
+│       │       └── card.glb
 │       ├── auth
 │       │   ├── github-callback.html
 │       │   ├── google-callback.html
@@ -120,6 +125,7 @@ zora-ai
 │       │   ├── feedback-admin.html
 │       │   ├── index.html
 │       │   ├── notifications.html
+│       │   ├── settings.html
 │       │   ├── trade-history.html
 │       │   └── users.html
 │       ├── docs

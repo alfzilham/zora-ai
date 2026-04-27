@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from app.models.withdrawal import Withdrawal  # noqa
 
 try:
     from slowapi.errors import RateLimitExceeded
