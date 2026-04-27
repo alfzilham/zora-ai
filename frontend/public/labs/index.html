@@ -136,77 +136,120 @@
 
     <!-- ── HERO SECTION ───────────────────────────────────── -->
     <section class="lh-hero" id="hero">
-
-        <!-- Magic Rings Background (layer 1 - paling belakang) -->
         <div id="heroRingsContainer" class="lh-hero-rings"></div>
-
-        <!-- WebGL Orb (layer 2 - tengah) -->
         <div id="heroOrbContainer" class="lh-hero-orb"></div>
-
-        <!-- Light overlay -->
         <div class="lh-hero-orb-overlay"></div>
 
-        <div class="lh-hero-content lh-hero-two-col">
+        <div class="lh-hero-content">
+            <span class="lh-badge lh-badge--light" data-aos="fade-down" data-aos-duration="600">
+                <span class="lh-badge-dot"></span>
+                ZORA LABS
+            </span>
 
-            <!-- LEFT: Text content -->
-            <div class="lh-hero-left">
-                <span class="lh-badge lh-badge--light" data-aos="fade-down" data-aos-duration="600">
-                    <span class="lh-badge-dot"></span>
-                    ZORA LABS
-                </span>
+            <h1 class="lh-hero-title" id="heroTitle" aria-label="SuperIntelligence Tools for Every Task">
+                <span class="shuffle-text" id="shuffleTitle">SuperIntelligence Tools for Every Task</span>
+            </h1>
 
-                <!-- Shuffle Title -->
-                <h1 class="lh-hero-title" id="heroTitle" aria-label="SuperIntelligence Tools for Every Task">
-                    <span class="shuffle-text" id="shuffleTitle">SuperIntelligence Tools for Every Task</span>
-                </h1>
+            <p class="lh-hero-desc" id="heroDesc" style="opacity:0; transform:translateY(20px);">
+                Six powerful AI labs — each powered by the best model for the job.
+                Code, design, create, research, and analyze like never before.
+            </p>
 
-                <p class="lh-hero-desc" id="heroDesc" style="opacity:0; transform:translateY(20px);">
-                    Six powerful AI labs — each powered by the best model for the job.
-                    Code, design, create, research, and analyze like never before.
-                </p>
-
-                <div class="lh-hero-actions" id="heroActions" style="opacity:0; transform:translateY(20px);">
-                    <a href="#features" class="lh-btn-hero-primary">
-                        Explore Now
-                        <i class="fi fi-rr-arrow-down"></i>
-                    </a>
-                    <a href="#footer" class="lh-btn-hero-secondary">
-                        View Roadmap
-                        <i class="fi fi-rr-map"></i>
-                    </a>
-                </div>
+            <div class="lh-hero-actions" id="heroActions" style="opacity:0; transform:translateY(20px);">
+                <a href="#labs-grid" class="lh-btn-hero-primary">
+                    Explore Labs
+                    <i class="fi fi-rr-arrow-down"></i>
+                </a>
+                <a href="#footer" class="lh-btn-hero-secondary">
+                    View Roadmap
+                    <i class="fi fi-rr-map"></i>
+                </a>
             </div>
-
-            <!-- RIGHT: Lanyard visual -->
-            <div class="lh-hero-right" id="heroLanyard">
-                <!-- RIGHT: Lanyard visual -->
-                <div class="lh-hero-right" id="heroLanyard">
-                    <canvas id="lanyardCanvas" class="lanyard-canvas"></canvas>
-                </div>
-            </div>
-
         </div>
     </section>
 
-    <!-- ── FEATURES SECTION ───────────────────────────────── -->
-    <section class="lh-features" id="features">
-        <div class="lh-features-bg">
-            <img src="/assets/images/labs/feature.png" alt="ZORA Labs Features" class="lh-features-img">
-            <div class="lh-features-overlay"></div>
-        </div>
+    <!-- ── LABS GRID SECTION ──────────────────────────────── -->
+    <section class="lh-labs-grid" id="labs-grid">
+        <div class="lh-labs-grid-inner">
 
-        <div class="lh-features-content">
-            <div class="lh-features-header" data-aos="fade-up">
-                <span class="lh-badge lh-badge--dark">
+            <div class="lh-labs-grid-header" data-aos="fade-up">
+                <span class="lh-badge">
                     <span class="lh-badge-dot"></span>
                     FEATURED TOOLS
                 </span>
-                <h2 class="lh-features-title">Our Lab Features</h2>
-                <p class="lh-features-desc">Advanced AI technology for every creative and analytical need.</p>
+                <h2 class="lh-labs-grid-title">Our Lab Features</h2>
+                <p class="lh-labs-grid-desc">Advanced AI technology for every creative and analytical need.</p>
             </div>
 
-            <div id="labsGallery" class="lh-circular-gallery"></div>
+            <div class="lh-labs-cards" data-aos="fade-up" data-aos-delay="100">
 
+                <a href="/labs/code.html" class="lh-lab-card">
+                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#0066FF,#00D4FF);">
+                        <i class="fi fi-rr-terminal"></i>
+                    </div>
+                    <div class="lh-lab-card-body">
+                        <h3>Zora Code</h3>
+                        <p>Write, debug, and explain code in any language. Powered by Qwen.</p>
+                    </div>
+                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
+                </a>
+
+                <a href="/labs/design.html" class="lh-lab-card">
+                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#7B2FFF,#00D4FF);">
+                        <i class="fi fi-rr-pen-nib"></i>
+                    </div>
+                    <div class="lh-lab-card-body">
+                        <h3>Zora Design</h3>
+                        <p>Generate creative briefs, UI concepts, and compelling copy. Powered by Minimax.</p>
+                    </div>
+                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
+                </a>
+
+                <a href="/labs/image.html" class="lh-lab-card">
+                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#FF6B35,#FFD700);">
+                        <i class="fi fi-rr-picture"></i>
+                    </div>
+                    <div class="lh-lab-card-body">
+                        <h3>Zora Image</h3>
+                        <p>Turn your descriptions into stunning AI-generated visuals. Powered by Gemini.</p>
+                    </div>
+                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
+                </a>
+
+                <a href="/labs/vid.html" class="lh-lab-card lh-lab-card--coming">
+                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#1a1a2e,#333);">
+                        <i class="fi fi-rr-play-alt"></i>
+                    </div>
+                    <div class="lh-lab-card-body">
+                        <h3>Zora Video <span class="lh-lab-soon">Soon</span></h3>
+                        <p>Generate short AI videos from text prompts. Coming soon.</p>
+                    </div>
+                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
+                </a>
+
+                <a href="/labs/research.html" class="lh-lab-card">
+                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#0099CC,#00D4FF);">
+                        <i class="fi fi-rr-search-alt"></i>
+                    </div>
+                    <div class="lh-lab-card-body">
+                        <h3>Zora Research</h3>
+                        <p>Deep research with structured sources and analysis. Powered by Gemini.</p>
+                    </div>
+                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
+                </a>
+
+                <a href="/labs/analytics.html" class="lh-lab-card">
+                    <div class="lh-lab-card-icon" style="background: linear-gradient(135deg,#00C896,#0066FF);">
+                        <i class="fi fi-rr-chart-histogram"></i>
+                    </div>
+                    <div class="lh-lab-card-body">
+                        <h3>Zora Analytics</h3>
+                        <p>Analyze data, spot trends, and surface insights instantly.</p>
+                    </div>
+                    <span class="lh-lab-card-arrow"><i class="fi fi-rr-arrow-up-right"></i></span>
+                </a>
+
+            </div>
         </div>
     </section>
 
@@ -1255,9 +1298,8 @@ void main() {
         // ── Boot ──────────────────────────────────────────────────
         initHeroRings();
         initHeroOrb();
-        initCircularGallery();
 
-        // ── Lanyard Canvas Physics ────────────────────────────────────
+        // ── DELETED: initCircularGallery & initLanyard ────────────
         (function initLanyard() {
             const canvas = document.getElementById('lanyardCanvas');
             const container = document.getElementById('heroLanyard');
