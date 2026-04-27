@@ -444,43 +444,53 @@
     <div class="db-app">
 
         <!-- ── SIDEBAR ── -->
-        <aside class="db-sidebar">
+                <aside class="db-sidebar">
             <div class="db-sidebar-brand">
                 <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
                 <span class="db-sidebar-name">ZORA AI</span>
             </div>
             <nav class="db-sidebar-nav">
-                <a href="/dashboard/index.html" class="db-nav-item">
-                    <i class="fi fi-rr-chart-pie-alt"></i><span>Dashboard</span>
+                <a href="/dashboard/index.html" class="db-nav-item" data-page="index">
+                    <i class="fi fi-rr-chart-pie-alt"></i>
+                    <span>Dashboard</span>
                 </a>
-                <a href="/dashboard/users.html" class="db-nav-item">
-                    <i class="fi fi-rr-users"></i><span>Users</span>
+                <a href="/dashboard/users.html" class="db-nav-item" data-page="users">
+                    <i class="fi fi-rr-users"></i>
+                    <span>Users</span>
                 </a>
-                <a href="/dashboard/feedback-admin.html" class="db-nav-item">
-                    <i class="fi fi-rr-comment-alt"></i><span>Feedback</span>
+                <a href="/dashboard/feedback-admin.html" class="db-nav-item" data-page="feedback-admin">
+                    <i class="fi fi-rr-comment-alt"></i>
+                    <span>Feedback</span>
                 </a>
-                <a href="/dashboard/analytics.html" class="db-nav-item">
-                    <i class="fi fi-rr-chart-line-up"></i><span>Analytics</span>
+                <a href="/dashboard/analytics.html" class="db-nav-item" data-page="analytics">
+                    <i class="fi fi-rr-chart-line-up"></i>
+                    <span>Analytics</span>
                 </a>
-                <a href="/dashboard/earnings.html" class="db-nav-item">
-                    <i class="fi fi-rr-wallet"></i><span>Earnings</span>
+                <a href="/dashboard/earnings.html" class="db-nav-item" data-page="earnings">
+                    <i class="fi fi-rr-wallet"></i>
+                    <span>Earnings</span>
                 </a>
-                <a href="/dashboard/trade-history.html" class="db-nav-item">
-                    <i class="fi fi-rr-coins"></i><span>Trade History</span>
+                <a href="/dashboard/trade-history.html" class="db-nav-item" data-page="trade-history">
+                    <i class="fi fi-rr-coins"></i>
+                    <span>Trade History</span>
                 </a>
-                <a href="/dashboard/notifications.html" class="db-nav-item">
-                    <i class="fi fi-rr-bell"></i><span>Notifications</span>
+                <a href="/dashboard/notifications.html" class="db-nav-item" data-page="notifications">
+                    <i class="fi fi-rr-bell"></i>
+                    <span>Notifications</span>
                 </a>
-                <div class="db-nav-item active">
-                    <i class="fi fi-rr-settings"></i><span>Settings</span>
-                </div>
+                <a href="/dashboard/settings.html" class="db-nav-item" data-page="settings">
+                    <i class="fi fi-rr-settings"></i>
+                    <span>Settings</span>
+                </a>
             </nav>
             <div class="db-sidebar-footer">
                 <a href="/chat/index.html" class="db-back-chat">
-                    <i class="fi fi-rr-arrow-left"></i><span>Back to Chat</span>
+                    <i class="fi fi-rr-arrow-left"></i>
+                    <span>Back to Chat</span>
                 </a>
-                <button id="logoutBtn" class="db-logout-btn" type="button">
-                    <i class="fi fi-rr-sign-out-alt"></i><span>Logout</span>
+                <button class="db-logout-btn db-logout-trigger" type="button">
+                    <i class="fi fi-rr-sign-out-alt"></i>
+                    <span>Logout</span>
                 </button>
             </div>
         </aside>
@@ -741,7 +751,7 @@
                 e.preventDefault();
                 if (!loader) { window.location.href = href; return; }
                 loader.classList.remove('hidden', 'fade-out');
-                setTimeout(() => { window.location.href = href; }, 350);
+                setTimeout(() => { window.location.href = href; }, 1500);
             });
         })();
 
@@ -881,6 +891,25 @@
             }
 
             document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+    <script>
+        // Set active nav item based on current page
+        (function () {
+            const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+            document.querySelectorAll('.db-nav-item[data-page]').forEach(item => {
+                if (item.dataset.page === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+            // Logout handler
+            document.querySelectorAll('.db-logout-trigger').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    localStorage.removeItem('zora_token');
+                    sessionStorage.removeItem('zora_dashboard_unlocked');
+                    window.location.href = '/auth/login.html';
+                });
+            });
         })();
     </script>
 </body>
