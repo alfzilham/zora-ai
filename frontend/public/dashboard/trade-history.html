@@ -2,14 +2,6 @@
 <html lang="en">
 
 <head>
-    <script>
-        // Session guard — redirect to dashboard if not unlocked
-        (function () {
-            if (sessionStorage.getItem('zora_dashboard_unlocked') !== '1') {
-                window.location.replace('/dashboard/index.html');
-            }
-        })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trade History - ZORA AI</title>
@@ -22,9 +14,7 @@
     <link rel="stylesheet"
         href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css">
     <link rel="stylesheet" href="/css/dashboard.css">
-
     <style>
-        /* ── PAGE LOADER ─────────────────────────────────────── */
         #pageLoader {
             position: fixed;
             inset: 0;
@@ -53,7 +43,6 @@
             height: 80px;
             width: 80px;
             animation: rotate_3922 1.2s linear infinite;
-            background-color: #00D4FF;
             background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
         }
 
@@ -62,7 +51,6 @@
             border-radius: 50%;
             height: 100%;
             width: 100%;
-            background-color: #00D4FF;
             background-image: linear-gradient(#00D4FF, #0088ff, #00e5a0);
         }
 
@@ -96,15 +84,14 @@
 
         @keyframes rotate_3922 {
             from {
-                transform: rotate(0deg);
+                transform: rotate(0deg)
             }
 
             to {
-                transform: rotate(360deg);
+                transform: rotate(360deg)
             }
         }
 
-        /* ── TOPBAR ──────────────────────────────────────────── */
         .trade-topbar {
             display: flex;
             align-items: flex-start;
@@ -133,10 +120,9 @@
             padding-top: 6px;
         }
 
-        /* ── SUMMARY CARDS ───────────────────────────────────── */
         .trade-summary {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 14px;
             padding: 20px 28px 0;
         }
@@ -158,7 +144,7 @@
         }
 
         .trade-stat-value {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             letter-spacing: -0.03em;
             line-height: 1;
@@ -176,13 +162,15 @@
             color: #fbbf24;
         }
 
-        /* ── FILTER BAR ──────────────────────────────────────── */
+        .trade-stat-value.red {
+            color: #ff4d4d;
+        }
+
         .trade-filter-bar {
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 16px 28px 0;
-            padding-bottom: 14px;
+            padding: 16px 28px 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             flex-wrap: wrap;
         }
@@ -223,7 +211,6 @@
             color: rgba(255, 255, 255, 0.2);
         }
 
-        /* ── CONTENT ─────────────────────────────────────────── */
         .trade-content {
             flex: 1;
             overflow-y: auto;
@@ -239,7 +226,6 @@
             border-radius: 999px;
         }
 
-        /* ── PANEL ───────────────────────────────────────────── */
         .trade-panel {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -247,7 +233,6 @@
             overflow: hidden;
         }
 
-        /* ── TABLE ───────────────────────────────────────────── */
         .trade-table {
             width: 100%;
             border-collapse: collapse;
@@ -270,6 +255,7 @@
             padding: 13px 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             color: rgba(255, 255, 255, 0.45);
+            vertical-align: middle;
         }
 
         .trade-table tbody tr:last-child td {
@@ -278,6 +264,11 @@
 
         .trade-table tbody tr:hover td {
             background: rgba(255, 255, 255, 0.02);
+        }
+
+        .trade-table td.num {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.75rem;
         }
 
         .trade-table td.name {
@@ -290,13 +281,6 @@
             font-weight: 700;
         }
 
-        .trade-table td.id {
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 0.72rem;
-            font-family: monospace;
-        }
-
-        /* Status badges */
         .trade-badge {
             display: inline-flex;
             align-items: center;
@@ -333,16 +317,86 @@
             background: #fbbf24;
         }
 
-        .trade-badge.failed {
+        .trade-badge.cancelled {
             background: rgba(255, 77, 77, 0.1);
             color: #ff4d4d;
         }
 
-        .trade-badge.failed::before {
+        .trade-badge.cancelled::before {
             background: #ff4d4d;
         }
 
-        /* ── EMPTY STATE ─────────────────────────────────────── */
+        .trade-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .trade-act-btn {
+            height: 28px;
+            padding: 0 10px;
+            border-radius: 7px;
+            border: none;
+            font: inherit;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trade-act-btn.confirm {
+            background: rgba(0, 229, 160, 0.12);
+            border: 1px solid rgba(0, 229, 160, 0.25);
+            color: #00e5a0;
+        }
+
+        .trade-act-btn.confirm:hover {
+            background: rgba(0, 229, 160, 0.22);
+        }
+
+        .trade-act-btn.cancel {
+            background: rgba(255, 77, 77, 0.08);
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            color: #ff4d4d;
+        }
+
+        .trade-act-btn.cancel:hover {
+            background: rgba(255, 77, 77, 0.16);
+        }
+
+        .trade-act-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .trade-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 8px;
+            border: none;
+            font: inherit;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .trade-action-btn.refresh {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            color: rgba(0, 212, 255, 0.7);
+        }
+
+        .trade-action-btn.refresh:hover {
+            background: rgba(0, 212, 255, 0.15);
+            color: #00D4FF;
+        }
+
         .trade-empty {
             display: flex;
             flex-direction: column;
@@ -364,41 +418,73 @@
             margin: 0;
         }
 
-        /* ── ACTION BUTTONS ──────────────────────────────────── */
-        .trade-action-btn {
+        .trade-loading {
             display: flex;
             align-items: center;
-            gap: 6px;
-            height: 32px;
-            padding: 0 14px;
-            border-radius: 8px;
-            border: none;
-            font: inherit;
-            font-size: 0.78rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.85rem;
+            padding: 60px 24px;
+            justify-content: center;
         }
 
-        .trade-action-btn.danger {
-            background: rgba(255, 80, 80, 0.08);
-            border: 1px solid rgba(255, 80, 80, 0.15);
-            color: rgba(255, 80, 80, 0.5);
+        .spin {
+            animation: spinAnim 1s linear infinite;
         }
 
-        .trade-action-btn.danger:hover {
-            background: rgba(255, 80, 80, 0.15);
-            color: rgba(255, 80, 80, 0.9);
+        @keyframes spinAnim {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        /* ── RESPONSIVE ──────────────────────────────────────── */
+        #toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            background: #13131f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 0.82rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s;
+            pointer-events: none;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        #toast.success {
+            border-color: rgba(0, 229, 160, 0.3);
+        }
+
+        #toast.error {
+            border-color: rgba(255, 77, 77, 0.3);
+        }
+
+        @media (max-width: 1100px) {
+            .trade-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .db-sidebar {
                 display: none;
             }
 
             .trade-summary {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
                 padding: 14px 16px 0;
             }
 
@@ -420,150 +506,113 @@
 
 <body>
 
-    <!-- Page Loader -->
+    <div id="toast"><i id="toastIcon"></i><span id="toastMsg"></span></div>
+
     <div id="pageLoader">
-        <div class="zora-spinner">
-            <span></span><span></span><span></span><span></span>
-        </div>
+        <div class="zora-spinner"><span></span><span></span><span></span><span></span></div>
     </div>
 
     <div class="db-app">
-
-        <!-- ── SIDEBAR ── -->
-                        <aside class="db-sidebar">
+        <aside class="db-sidebar">
             <div class="db-sidebar-brand">
                 <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
                 <span class="db-sidebar-name">ZORA AI</span>
             </div>
             <nav class="db-sidebar-nav">
-                <a href="/dashboard/index.html" class="db-nav-item" data-page="index">
-                    <i class="fi fi-rr-chart-pie-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/dashboard/users.html" class="db-nav-item" data-page="users">
-                    <i class="fi fi-rr-users"></i>
-                    <span>Users</span>
-                </a>
-                <a href="/dashboard/feedback-admin.html" class="db-nav-item" data-page="feedback-admin">
-                    <i class="fi fi-rr-comment-alt"></i>
-                    <span>Feedback</span>
-                </a>
-                <a href="/dashboard/analytics.html" class="db-nav-item" data-page="analytics">
-                    <i class="fi fi-rr-chart-line-up"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="/dashboard/earnings.html" class="db-nav-item" data-page="earnings">
-                    <i class="fi fi-rr-wallet"></i>
-                    <span>Earnings</span>
-                </a>
-                <a href="/dashboard/trade-history.html" class="db-nav-item" data-page="trade-history">
-                    <i class="fi fi-rr-coins"></i>
-                    <span>Trade History</span>
-                </a>
-                <a href="/dashboard/notifications.html" class="db-nav-item" data-page="notifications">
-                    <i class="fi fi-rr-bell"></i>
-                    <span>Notifications</span>
-                </a>
-                <a href="/dashboard/settings.html" class="db-nav-item" data-page="settings">
-                    <i class="fi fi-rr-settings"></i>
-                    <span>Settings</span>
-                </a>
+                <a href="/dashboard/index.html" class="db-nav-item"><i
+                        class="fi fi-rr-chart-pie-alt"></i><span>Dashboard</span></a>
+                <a href="/dashboard/users.html" class="db-nav-item"><i class="fi fi-rr-users"></i><span>Users</span></a>
+                <a href="/dashboard/feedback-admin.html" class="db-nav-item"><i
+                        class="fi fi-rr-comment-alt"></i><span>Feedback</span></a>
+                <a href="/dashboard/analytics.html" class="db-nav-item"><i
+                        class="fi fi-rr-chart-line-up"></i><span>Analytics</span></a>
+                <a href="/dashboard/earnings.html" class="db-nav-item"><i
+                        class="fi fi-rr-wallet"></i><span>Earnings</span></a>
+                <div class="db-nav-item active"><i class="fi fi-rr-coins"></i><span>Trade History</span></div>
+                <a href="/dashboard/notifications.html" class="db-nav-item"><i
+                        class="fi fi-rr-bell"></i><span>Notifications</span></a>
+                <a href="/dashboard/settings.html" class="db-nav-item"><i
+                        class="fi fi-rr-settings"></i><span>Settings</span></a>
             </nav>
             <div class="db-sidebar-footer">
-                <a href="/chat/index.html" class="db-back-chat">
-                    <i class="fi fi-rr-arrow-left"></i>
-                    <span>Back to Chat</span>
-                </a>
-                <button class="db-logout-btn db-logout-trigger" type="button">
-                    <i class="fi fi-rr-sign-out-alt"></i>
-                    <span>Logout</span>
-                </button>
+                <a href="/chat/index.html" class="db-back-chat"><i class="fi fi-rr-arrow-left"></i><span>Back to
+                        Chat</span></a>
+                <button id="logoutBtn" class="db-logout-btn" type="button"><i
+                        class="fi fi-rr-sign-out-alt"></i><span>Logout</span></button>
             </div>
         </aside>
 
-        <!-- ── MAIN ── -->
         <main class="db-main">
-
-            <!-- Topbar -->
             <header class="trade-topbar">
-    <script>
-        // Session guard — redirect to dashboard if not unlocked
-        (function () {
-            if (sessionStorage.getItem('zora_dashboard_unlocked') !== '1') {
-                window.location.replace('/dashboard/index.html');
-            }
-        })();
-    </script>
                 <div class="trade-topbar-left">
                     <h1 class="db-page-title">Trade History</h1>
-                    <p class="trade-subtitle">All withdrawal transactions via Xendit</p>
+                    <p class="trade-subtitle">Withdrawal requests — confirm after manual bank transfer</p>
                 </div>
                 <div class="trade-topbar-right">
-                    <button class="trade-action-btn danger" id="clearAllBtn">
-                        <i class="fi fi-rr-trash"></i>
-                        Clear All
+                    <button class="trade-action-btn refresh" id="refreshBtn">
+                        <i class="fi fi-rr-refresh"></i> Refresh
                     </button>
                 </div>
             </header>
 
-            <!-- Summary Cards -->
-            <div class="trade-summary" id="tradeSummary">
+            <div class="trade-summary">
                 <div class="trade-stat">
-                    <p class="trade-stat-label">Total Withdrawn</p>
-                    <p class="trade-stat-value green" id="totalWithdrawn">Rp0</p>
+                    <p class="trade-stat-label">Total Completed</p>
+                    <p class="trade-stat-value green" id="statCompleted">Rp0</p>
+                </div>
+                <div class="trade-stat">
+                    <p class="trade-stat-label">Pending</p>
+                    <p class="trade-stat-value amber" id="statPending">0</p>
                 </div>
                 <div class="trade-stat">
                     <p class="trade-stat-label">Total Transactions</p>
-                    <p class="trade-stat-value cyan" id="totalTransactions">0</p>
+                    <p class="trade-stat-value cyan" id="statTotal">0</p>
                 </div>
                 <div class="trade-stat">
-                    <p class="trade-stat-label">Last Transaction</p>
-                    <p class="trade-stat-value amber" id="lastTransaction" style="font-size:1rem">-</p>
+                    <p class="trade-stat-label">Cancelled</p>
+                    <p class="trade-stat-value red" id="statCancelled">0</p>
                 </div>
             </div>
 
-            <!-- Filter Bar -->
             <div class="trade-filter-bar">
                 <button class="trade-filter-btn active" data-filter="all">All</button>
-                <button class="trade-filter-btn" data-filter="completed">Completed</button>
-                <button class="trade-filter-btn" data-filter="pending">Pending</button>
-                <button class="trade-filter-btn" data-filter="failed">Failed</button>
+                <button class="trade-filter-btn" data-filter="PENDING">Pending</button>
+                <button class="trade-filter-btn" data-filter="COMPLETED">Completed</button>
+                <button class="trade-filter-btn" data-filter="CANCELLED">Cancelled</button>
                 <div class="trade-filter-right">
                     <span class="trade-count-label" id="tradeCount">0 transactions</span>
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="trade-content">
                 <div class="trade-panel">
-                    <!-- Empty State -->
-                    <div class="trade-empty" id="tradeEmpty">
+                    <div class="trade-loading" id="tradeLoading">
+                        <i class="fi fi-rr-spinner spin"></i> Loading withdrawals...
+                    </div>
+                    <div class="trade-empty" id="tradeEmpty" style="display:none">
                         <i class="fi fi-rr-wallet"></i>
                         <p>No withdrawal history yet.</p>
-                        <p style="font-size:0.75rem;opacity:0.6">
-                            Transactions will appear here after you submit a withdrawal from the dashboard.
+                        <p style="font-size:0.75rem;opacity:0.6">Submit a withdrawal from the dashboard to get started.
                         </p>
                     </div>
-
-                    <!-- Table -->
                     <table class="trade-table" id="tradeTable" style="display:none">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Date & Time</th>
+                                <th>Date</th>
                                 <th>Bank</th>
                                 <th>Account</th>
                                 <th>Holder</th>
                                 <th>Amount</th>
+                                <th>Note</th>
                                 <th>Status</th>
-                                <th>Transaction ID</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="tradeTableBody"></tbody>
                     </table>
                 </div>
             </div>
-
         </main>
     </div>
 
@@ -571,111 +620,143 @@
     <script defer src="/js/utils/api.js"></script>
     <script defer src="/js/auth.js"></script>
     <script>
-        // ── PAGE LOADER ────────────────────────────────────────────────────────────
         (function () {
             const loader = document.getElementById('pageLoader');
             window.addEventListener('load', () => {
-                if (!loader) return;
                 loader.classList.add('fade-out');
                 setTimeout(() => loader.classList.add('hidden'), 380);
             });
-
             document.addEventListener('click', (e) => {
                 const link = e.target.closest('a[href]');
                 if (!link) return;
                 const href = link.getAttribute('href');
                 if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
-                const dashPages = ['/dashboard/', '/chat/'];
-                if (!dashPages.some(p => href.includes(p))) return;
+                if (!['/dashboard/', '/chat/'].some(p => href.includes(p))) return;
                 e.preventDefault();
-                if (!loader) { window.location.href = href; return; }
                 loader.classList.remove('hidden', 'fade-out');
-                setTimeout(() => { window.location.href = href; }, 1500);
+                setTimeout(() => { window.location.href = href; }, 350);
             });
         })();
 
-        // ── TRADE HISTORY ──────────────────────────────────────────────────────────
         (function () {
-            const TRADE_KEY = 'zora_trade_history';
-            let currentFilter = 'all';
-            let allTrades = [];
+            let allTrades = [], currentFilter = 'all';
 
-            function formatRp(v) {
-                return new Intl.NumberFormat('id-ID', {
-                    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-                }).format(v || 0);
+            const formatRp = v => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v || 0);
+            const formatDate = iso => iso ? new Date(iso).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+            function showToast(msg, type = 'success') {
+                const t = document.getElementById('toast');
+                const i = document.getElementById('toastIcon');
+                document.getElementById('toastMsg').textContent = msg;
+                t.className = `show ${type}`;
+                i.className = type === 'success' ? 'fi fi-rr-check' : 'fi fi-rr-cross-circle';
+                i.style.color = type === 'success' ? '#00e5a0' : '#ff4d4d';
+                clearTimeout(t._t);
+                t._t = setTimeout(() => t.className = '', 3000);
             }
 
-            function formatDate(iso) {
-                if (!iso) return '-';
-                return new Date(iso).toLocaleString('id-ID', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                });
-            }
-
-            function loadTrades() {
-                try { return JSON.parse(localStorage.getItem(TRADE_KEY) || '[]'); } catch { return []; }
-            }
-
-            function saveTrades(data) {
-                localStorage.setItem(TRADE_KEY, JSON.stringify(data));
-            }
-
-            function applyFilter(trades, filter) {
-                if (filter === 'all') return trades;
-                return trades.filter(t => (t.status || 'COMPLETED').toLowerCase() === filter);
-            }
-
-            function updateSummary(trades) {
-                const total = trades.reduce((s, t) => s + (t.amount || 0), 0);
-                document.getElementById('totalWithdrawn').textContent = formatRp(total);
-                document.getElementById('totalTransactions').textContent = trades.length;
-                document.getElementById('lastTransaction').textContent =
-                    trades.length ? formatDate(trades[0].date).split(',')[0] : '-';
-            }
-
-            function getStatusBadge(status) {
-                const s = (status || 'COMPLETED').toLowerCase();
+            function badge(status) {
+                const s = (status || '').toLowerCase();
                 if (s === 'completed') return `<span class="trade-badge completed">Completed</span>`;
                 if (s === 'pending') return `<span class="trade-badge pending">Pending</span>`;
-                return `<span class="trade-badge failed">Failed</span>`;
+                return `<span class="trade-badge cancelled">Cancelled</span>`;
+            }
+
+            function actions(t) {
+                if (t.status !== 'PENDING') return '<span style="color:rgba(255,255,255,0.15);font-size:0.75rem">—</span>';
+                return `<div class="trade-actions">
+            <button class="trade-act-btn confirm" onclick="confirmW('${t.id}',this)"><i class="fi fi-rr-check"></i> Confirm</button>
+            <button class="trade-act-btn cancel"  onclick="cancelW('${t.id}',this)"><i class="fi fi-rr-cross"></i> Cancel</button>
+        </div>`;
+            }
+
+            function updateSummary() {
+                const comp = allTrades.filter(t => t.status === 'COMPLETED');
+                const pend = allTrades.filter(t => t.status === 'PENDING');
+                const canc = allTrades.filter(t => t.status === 'CANCELLED');
+                document.getElementById('statCompleted').textContent = formatRp(comp.reduce((s, t) => s + t.amount, 0));
+                document.getElementById('statPending').textContent = pend.length;
+                document.getElementById('statTotal').textContent = allTrades.length;
+                document.getElementById('statCancelled').textContent = canc.length;
             }
 
             function render() {
-                const filtered = applyFilter(allTrades, currentFilter);
+                const filtered = currentFilter === 'all' ? allTrades : allTrades.filter(t => t.status === currentFilter);
+                const loading = document.getElementById('tradeLoading');
                 const empty = document.getElementById('tradeEmpty');
                 const table = document.getElementById('tradeTable');
                 const tbody = document.getElementById('tradeTableBody');
-                const countEl = document.getElementById('tradeCount');
 
-                countEl.textContent = `${filtered.length} transaction${filtered.length !== 1 ? 's' : ''}`;
-                updateSummary(allTrades);
+                loading.style.display = 'none';
+                document.getElementById('tradeCount').textContent = `${filtered.length} transaction${filtered.length !== 1 ? 's' : ''}`;
 
-                if (!filtered.length) {
-                    empty.style.display = '';
-                    table.style.display = 'none';
-                    return;
-                }
-
-                empty.style.display = 'none';
-                table.style.display = '';
+                if (!filtered.length) { empty.style.display = ''; table.style.display = 'none'; return; }
+                empty.style.display = 'none'; table.style.display = '';
 
                 tbody.innerHTML = filtered.map((t, i) => `
             <tr>
-                <td class="name">${filtered.length - i}</td>
-                <td>${formatDate(t.date)}</td>
+                <td class="num">${filtered.length - i}</td>
+                <td>${formatDate(t.created_at)}</td>
                 <td class="name">${t.bank_code || '-'}</td>
                 <td>${t.account_number || '-'}</td>
                 <td>${t.account_holder_name || '-'}</td>
                 <td class="amount">${formatRp(t.amount)}</td>
-                <td>${getStatusBadge(t.status)}</td>
-                <td class="id">${(t.disbursement_id || '-').slice(0, 16)}</td>
-            </tr>
-        `).join('');
+                <td style="color:rgba(255,255,255,0.3);font-size:0.78rem">${t.note || '-'}</td>
+                <td id="status-${t.id}">${badge(t.status)}</td>
+                <td id="actions-${t.id}">${actions(t)}</td>
+            </tr>`).join('');
             }
 
-            function bindFilters() {
+            async function load() {
+                try {
+                    const res = await apiCall('/dashboard/withdrawals', 'GET', null, true);
+                    allTrades = res?.data?.withdrawals || [];
+                    updateSummary(); render();
+                } catch (err) {
+                    document.getElementById('tradeLoading').innerHTML = `<span style="color:#ff4d4d">${err.message || 'Failed to load.'}</span>`;
+                }
+            }
+
+            window.confirmW = async function (id, btn) {
+                if (!confirm('Confirm this withdrawal? This means you have already transferred the money manually.')) return;
+                btn.disabled = true;
+                try {
+                    await apiCall(`/dashboard/withdrawals/${id}/confirm`, 'PUT', null, true);
+                    const t = allTrades.find(w => w.id === id);
+                    if (t) t.status = 'COMPLETED';
+                    document.getElementById(`status-${id}`).innerHTML = badge('COMPLETED');
+                    document.getElementById(`actions-${id}`).innerHTML = '<span style="color:rgba(255,255,255,0.15);font-size:0.75rem">—</span>';
+                    updateSummary();
+                    showToast('Withdrawal confirmed as completed! ✅');
+                } catch (err) { showToast(err.message || 'Failed to confirm.', 'error'); btn.disabled = false; }
+            };
+
+            window.cancelW = async function (id, btn) {
+                if (!confirm('Cancel this withdrawal request?')) return;
+                btn.disabled = true;
+                try {
+                    await apiCall(`/dashboard/withdrawals/${id}/cancel`, 'PUT', null, true);
+                    const t = allTrades.find(w => w.id === id);
+                    if (t) t.status = 'CANCELLED';
+                    document.getElementById(`status-${id}`).innerHTML = badge('CANCELLED');
+                    document.getElementById(`actions-${id}`).innerHTML = '<span style="color:rgba(255,255,255,0.15);font-size:0.75rem">—</span>';
+                    updateSummary();
+                    showToast('Withdrawal cancelled.');
+                } catch (err) { showToast(err.message || 'Failed to cancel.', 'error'); btn.disabled = false; }
+            };
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                if (!localStorage.getItem('zora_token')) { window.location.href = '/auth/login.html'; return; }
+                document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                    localStorage.removeItem('zora_token');
+                    window.location.href = '/auth/login.html';
+                });
+                document.getElementById('refreshBtn')?.addEventListener('click', () => {
+                    document.getElementById('tradeLoading').style.display = '';
+                    document.getElementById('tradeEmpty').style.display = 'none';
+                    document.getElementById('tradeTable').style.display = 'none';
+                    load();
+                });
                 document.querySelectorAll('.trade-filter-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         document.querySelectorAll('.trade-filter-btn').forEach(b => b.classList.remove('active'));
@@ -684,59 +765,10 @@
                         render();
                     });
                 });
-            }
-
-            function bindClear() {
-                document.getElementById('clearAllBtn')?.addEventListener('click', () => {
-                    if (!confirm('Clear all trade history? This cannot be undone.')) return;
-                    saveTrades([]);
-                    allTrades = [];
-                    render();
-                });
-            }
-
-            function bindLogout() {
-                document.getElementById('logoutBtn')?.addEventListener('click', () => {
-                    localStorage.removeItem('zora_token');
-                    window.location.href = '/auth/login.html';
-                });
-            }
-
-            async function init() {
-                // Auth check
-                const token = localStorage.getItem('zora_token');
-                if (!token) { window.location.href = '/auth/login.html'; return; }
-
-                allTrades = loadTrades();
-                bindFilters();
-                bindClear();
-                bindLogout();
-                render();
-            }
-
-            document.addEventListener('DOMContentLoaded', init);
-        })();
-    </script>
-    <script>
-        // Set active nav item based on current page
-        (function () {
-            const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-            document.querySelectorAll('.db-nav-item[data-page]').forEach(item => {
-                if (item.dataset.page === currentPage) {
-                    item.classList.add('active');
-                }
-            });
-            // Logout handler
-            document.querySelectorAll('.db-logout-trigger').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    localStorage.removeItem('zora_token');
-                    sessionStorage.removeItem('zora_dashboard_unlocked');
-                    window.location.href = '/auth/login.html';
-                });
+                await load();
             });
         })();
     </script>
 </body>
 
 </html>
-

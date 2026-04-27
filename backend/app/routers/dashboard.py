@@ -147,8 +147,19 @@ async def create_withdrawal(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Create a local withdrawal request — no external gateway needed."""
+    """Create a withdrawal via Xendit disbursement API, then record locally."""
+    from app.services.xendit import create_disbursement
+
     try:
+        # 1. Hit Xendit API first
+        xendit_result = await create_disbursement(
+            amount=request.amount,
+            bank_code=request.bank_code.upper(),
+            account_number=request.account_number,
+            account_holder_name=request.account_holder_name,
+        )
+
+        # 2. Save to local DB with Xendit response data
         withdrawal = Withdrawal(
             amount=request.amount,
             bank_code=request.bank_code.upper(),
@@ -156,16 +167,24 @@ async def create_withdrawal(
             account_holder_name=request.account_holder_name,
             note=request.note,
             status="PENDING",
+            disbursement_id=xendit_result.get("disbursement_id"),
+            xendit_status=xendit_result.get("status"),
         )
         db.add(withdrawal)
         await db.flush()
 
         return api_success(
             withdrawal.to_dict(),
-            "Withdrawal request created. Transfer the amount manually then confirm.",
+            f"Disbursement submitted to Xendit successfully. ID: {xendit_result.get('disbursement_id')}",
         )
+
+    except ValueError as exc:
+        # Xendit secret key not configured
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to create withdrawal: {exc}") from exc
+        # Xendit API error atau DB error
+        raise HTTPException(status_code=500, detail=f"Failed to create disbursement: {exc}") from exc
 
 
 @router.get("/dashboard/withdrawals")
