@@ -868,9 +868,11 @@ img {
 .lh-hero-right {
     flex: 0 0 340px;
     width: 340px;
+    height: 560px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible;
 }
 
 /* Adjust badge and actions alignment */
@@ -908,7 +910,7 @@ img {
 .lanyard-canvas {
     display: block;
     width: 100%;
-    height: 100%;
+    height: 560px;
     cursor: grab;
     touch-action: none;
     user-select: none;
