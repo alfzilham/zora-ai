@@ -1319,7 +1319,10 @@ void main() {
             document.head.appendChild(script);
             await new Promise(r => script.onload = r);
 
-            const { mat4, quat, vec2, vec3 } = glMatrix;
+            const mat4 = glMatrix.mat4;
+            const quat = glMatrix.quat;
+            const vec2 = glMatrix.vec2;
+            const vec3 = glMatrix.vec3;
             const canvas = document.getElementById('infiniteMenuCanvas');
             if (!canvas) return;
 
