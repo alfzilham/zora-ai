@@ -1325,6 +1325,7 @@ void main() {
             const vec3 = glMatrix.vec3;
             const canvas = document.getElementById('infiniteMenuCanvas');
             if (!canvas) return;
+            if (!glMatrix || !glMatrix.mat4) { console.error('glMatrix not loaded'); return; }
 
             const faceTitle = document.getElementById('imFaceTitle');
             const faceDesc = document.getElementById('imFaceDesc');
