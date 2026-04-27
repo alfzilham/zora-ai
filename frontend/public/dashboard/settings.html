@@ -444,7 +444,7 @@
     <div class="db-app">
 
         <!-- ── SIDEBAR ── -->
-                        <aside class="db-sidebar">
+        <aside class="db-sidebar">
             <div class="db-sidebar-brand">
                 <img src="/assets/images/logo/logo.png" alt="ZORA AI" class="db-sidebar-logo">
                 <span class="db-sidebar-name">ZORA AI</span>
@@ -522,21 +522,21 @@
                             <p class="set-row-label">Full Name</p>
                             <p class="set-row-desc">Your name displayed on the dashboard</p>
                         </div>
-                        <input class="set-input readonly" type="text" value="Alfiz Ilham" readonly>
+                        <input class="set-input readonly" id="devName" type="text" value="Loading..." readonly>
                     </div>
                     <div class="set-row">
                         <div class="set-row-left">
                             <p class="set-row-label">Email</p>
                             <p class="set-row-desc">Developer account email</p>
                         </div>
-                        <input class="set-input readonly" type="email" value="alfizilham@gmail.com" readonly>
+                        <input class="set-input readonly" id="devEmail" type="email" value="Loading..." readonly>
                     </div>
                     <div class="set-row">
                         <div class="set-row-left">
                             <p class="set-row-label">Platform</p>
                             <p class="set-row-desc">Production URL</p>
                         </div>
-                        <input class="set-input readonly" type="text" value="zora-ai-zeta.vercel.app" readonly>
+                        <input class="set-input readonly" id="devPlatform" type="text" value="Loading..." readonly>
                     </div>
                 </div>
 
@@ -729,11 +729,10 @@
         </main>
     </div>
 
-    <script defer src="/js/utils/helpers.js"></script>
-    <script defer src="/js/utils/api.js"></script>
-    <script defer src="/js/auth.js"></script>
+    <script src="/js/utils/helpers.js"></script>
+    <script src="/js/utils/api.js"></script>
     <script>
-        // ── PAGE LOADER ────────────────────────────────────────────────────────────
+        // ── PAGE LOADER ────────────────────────────────────────────────────────
         (function () {
             const loader = document.getElementById('pageLoader');
             window.addEventListener('load', () => {
@@ -755,154 +754,12 @@
             });
         })();
 
-        // ── SETTINGS ───────────────────────────────────────────────────────────────
-        (function () {
-            const SETTINGS_KEY = 'zora_dashboard_settings';
-            const NOTIF_KEY = 'zora_dashboard_notifications';
-            const TRADE_KEY = 'zora_trade_history';
-
-            // ── Toast ──
-            function showToast(msg, type = 'success') {
-                const toast = document.getElementById('toast');
-                const toastMsg = document.getElementById('toastMsg');
-                const toastIcon = document.getElementById('toastIcon');
-                toast.className = `show ${type}`;
-                toastIcon.className = type === 'success' ? 'fi fi-rr-check' : 'fi fi-rr-cross-circle';
-                toastIcon.style.color = type === 'success' ? '#00e5a0' : '#ff4d4d';
-                toastMsg.textContent = msg;
-                clearTimeout(toast._timer);
-                toast._timer = setTimeout(() => { toast.className = ''; }, 3000);
-            }
-
-            function formatRp(v) {
-                return new Intl.NumberFormat('id-ID', {
-                    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-                }).format(v || 0);
-            }
-
-            // ── Load/Save settings ──
-            function loadSettings() {
-                try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; }
-            }
-            function saveSettings(data) {
-                localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
-            }
-
-            // ── Apply saved notification toggles ──
-            function applyNotifSettings() {
-                const s = loadSettings();
-                document.getElementById('notifSignup').checked = s.notifSignup !== false;
-                document.getElementById('notifWithdraw').checked = s.notifWithdraw !== false;
-                document.getElementById('notifAutoRefresh').checked = s.notifAutoRefresh !== false;
-                document.getElementById('notifShowEarnings').checked = s.notifShowEarnings !== false;
-            }
-
-            // ── Hash password ──
-            async function hashText(text) {
-                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-            }
-
-            // ── Load live stats ──
-            async function loadStats() {
-                try {
-                    const res = await apiCall('/dashboard/stats', 'GET', null, true);
-                    const data = res?.data || {};
-                    document.getElementById('settingTotalUsers').value = data.total_users || 0;
-                    document.getElementById('settingTotalEarnings').value = formatRp(data.total_earnings || 0);
-                } catch {
-                    document.getElementById('settingTotalUsers').value = 'Error';
-                    document.getElementById('settingTotalEarnings').value = 'Error';
-                }
-            }
-
-            // ── Bind all events ──
-            function bindEvents() {
-                // Logout buttons
-                const logoutFn = () => {
-                    localStorage.removeItem('zora_token');
-                    window.location.href = '/auth/login.html';
-                };
-                document.getElementById('logoutBtn')?.addEventListener('click', logoutFn);
-                document.getElementById('logoutDangerBtn')?.addEventListener('click', logoutFn);
-
-                // Generate hash
-                document.getElementById('hashBtn').addEventListener('click', async () => {
-                    const pw = document.getElementById('newPasswordInput').value.trim();
-                    if (!pw) { showToast('Please enter a password first.', 'error'); return; }
-                    const hash = await hashText(pw);
-                    document.getElementById('hashOutput').value = hash;
-                    document.getElementById('hashResultRow').style.display = '';
-                    showToast('Hash generated! Copy and update all dashboard HTML files.');
-                });
-
-                // Copy hash
-                document.getElementById('copyHashBtn').addEventListener('click', () => {
-                    const val = document.getElementById('hashOutput').value;
-                    navigator.clipboard.writeText(val).then(() => showToast('Hash copied to clipboard!'));
-                });
-
-                // Save notification prefs
-                document.getElementById('saveNotifBtn').addEventListener('click', () => {
-                    const s = {
-                        notifSignup: document.getElementById('notifSignup').checked,
-                        notifWithdraw: document.getElementById('notifWithdraw').checked,
-                        notifAutoRefresh: document.getElementById('notifAutoRefresh').checked,
-                        notifShowEarnings: document.getElementById('notifShowEarnings').checked,
-                    };
-                    saveSettings(s);
-                    showToast('Notification preferences saved!');
-                });
-
-                // Clear notifications
-                document.getElementById('clearNotifBtn').addEventListener('click', () => {
-                    if (!confirm('Clear all notification history?')) return;
-                    localStorage.removeItem(NOTIF_KEY);
-                    showToast('Notifications cleared.');
-                });
-
-                // Clear trade history
-                document.getElementById('clearTradeBtn').addEventListener('click', () => {
-                    if (!confirm('Clear all trade history?')) return;
-                    localStorage.removeItem(TRADE_KEY);
-                    showToast('Trade history cleared.');
-                });
-
-                // Reset everything
-                document.getElementById('resetAllBtn').addEventListener('click', () => {
-                    if (!confirm('Reset ALL dashboard data? This cannot be undone.')) return;
-                    [NOTIF_KEY, TRADE_KEY, SETTINGS_KEY,
-                        'zora_dashboard_seen_signups', 'zora_notifications',
-                        'zora_seen_signups', 'zora_dashboard_unlocked'
-                    ].forEach(k => localStorage.removeItem(k));
-                    sessionStorage.removeItem('zora_dashboard_unlocked');
-                    showToast('All data reset. Redirecting...');
-                    setTimeout(() => { window.location.href = '/dashboard/index.html'; }, 1500);
-                });
-            }
-
-            async function init() {
-                const token = localStorage.getItem('zora_token');
-                if (!token) { window.location.href = '/auth/login.html'; return; }
-
-                applyNotifSettings();
-                bindEvents();
-                await loadStats();
-            }
-
-            document.addEventListener('DOMContentLoaded', init);
-        })();
-    </script>
-    <script>
-        // Set active nav item based on current page
+        // ── ACTIVE NAV ─────────────────────────────────────────────────────────
         (function () {
             const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
             document.querySelectorAll('.db-nav-item[data-page]').forEach(item => {
-                if (item.dataset.page === currentPage) {
-                    item.classList.add('active');
-                }
+                if (item.dataset.page === currentPage) item.classList.add('active');
             });
-            // Logout handler
             document.querySelectorAll('.db-logout-trigger').forEach(btn => {
                 btn.addEventListener('click', () => {
                     localStorage.removeItem('zora_token');
@@ -911,8 +768,163 @@
                 });
             });
         })();
+
+        // ── SETTINGS ───────────────────────────────────────────────────────────
+        (function () {
+            const SETTINGS_KEY = 'zora_dashboard_settings';
+            const NOTIF_KEY = 'zora_dashboard_notifications';
+            const TRADE_KEY = 'zora_trade_history';
+
+            // ── helpers ──
+            function loadLocalSettings() {
+                try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; }
+            }
+            function saveLocalSettings(data) {
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
+            }
+
+            function setVal(id, val) {
+                const el = document.getElementById(id);
+                if (el) el.value = val;
+            }
+
+            async function hashText(text) {
+                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // ── Load Developer Info + Earning Rate from API ──
+            async function loadDevInfo() {
+                try {
+                    const res = await apiCall('/settings', 'GET', null, true);
+                    const data = res?.data || {};
+
+                    // Developer Info
+                    setVal('devName', data.general?.display_name || '-');
+                    setVal('devEmail', data.general?.email || '-');
+                    setVal('devPlatform', window.location.hostname);
+                } catch (e) {
+                    setVal('devName', 'Error loading');
+                    setVal('devEmail', 'Error loading');
+                }
+            }
+
+            async function loadStats() {
+                try {
+                    const res = await apiCall('/dashboard/stats', 'GET', null, true);
+                    const data = res?.data || {};
+                    setVal('settingTotalUsers', data.total_users || 0);
+                    setVal('settingTotalEarnings', formatRupiah(data.total_earnings || 0));
+                } catch {
+                    setVal('settingTotalUsers', 'Error');
+                    setVal('settingTotalEarnings', 'Error');
+                }
+            }
+
+            // ── Notification toggles ──
+            function applyNotifSettings() {
+                const s = loadLocalSettings();
+                document.getElementById('notifSignup').checked = s.notifSignup !== false;
+                document.getElementById('notifWithdraw').checked = s.notifWithdraw !== false;
+                document.getElementById('notifAutoRefresh').checked = s.notifAutoRefresh !== false;
+                document.getElementById('notifShowEarnings').checked = s.notifShowEarnings !== false;
+            }
+
+            // ── Bind events ──
+            function bindEvents() {
+                const logoutFn = () => {
+                    localStorage.removeItem('zora_token');
+                    sessionStorage.removeItem('zora_dashboard_unlocked');
+                    window.location.href = '/auth/login.html';
+                };
+                document.getElementById('logoutDangerBtn')?.addEventListener('click', logoutFn);
+
+                // Generate hash
+                document.getElementById('hashBtn').addEventListener('click', async () => {
+                    const pw = document.getElementById('newPasswordInput').value.trim();
+                    if (!pw) { showError('Please enter a password first.'); return; }
+                    const hash = await hashText(pw);
+                    document.getElementById('hashOutput').value = hash;
+                    document.getElementById('hashResultRow').style.display = '';
+                    showSuccess('Hash generated! Copy and update all dashboard HTML files.');
+                });
+
+                // Copy hash
+                document.getElementById('copyHashBtn').addEventListener('click', () => {
+                    const val = document.getElementById('hashOutput').value;
+                    if (!val) { showError('Generate a hash first.'); return; }
+                    navigator.clipboard.writeText(val).then(() => showSuccess('Hash copied to clipboard!'));
+                });
+
+                // Save notification prefs
+                document.getElementById('saveNotifBtn').addEventListener('click', async () => {
+                    const btn = document.getElementById('saveNotifBtn');
+                    showLoading(btn);
+                    try {
+                        const s = {
+                            notifSignup: document.getElementById('notifSignup').checked,
+                            notifWithdraw: document.getElementById('notifWithdraw').checked,
+                            notifAutoRefresh: document.getElementById('notifAutoRefresh').checked,
+                            notifShowEarnings: document.getElementById('notifShowEarnings').checked,
+                        };
+                        saveLocalSettings(s);
+
+                        // also sync to backend
+                        await apiCall('/settings/preferences', 'PUT', {
+                            preferences: { notifications: s }
+                        }, true);
+
+                        showSuccess('Notification preferences saved!');
+                    } catch {
+                        showError('Failed to save preferences.');
+                    } finally {
+                        hideLoading(btn);
+                    }
+                });
+
+                // Clear notifications
+                document.getElementById('clearNotifBtn').addEventListener('click', () => {
+                    if (!confirm('Clear all notification history?')) return;
+                    localStorage.removeItem(NOTIF_KEY);
+                    showSuccess('Notifications cleared.');
+                });
+
+                // Clear trade history
+                document.getElementById('clearTradeBtn').addEventListener('click', () => {
+                    if (!confirm('Clear all trade history?')) return;
+                    localStorage.removeItem(TRADE_KEY);
+                    showSuccess('Trade history cleared.');
+                });
+
+                // Reset everything
+                document.getElementById('resetAllBtn').addEventListener('click', () => {
+                    if (!confirm('Reset ALL dashboard data? This cannot be undone.')) return;
+                    [
+                        NOTIF_KEY, TRADE_KEY, SETTINGS_KEY,
+                        'zora_dashboard_seen_signups', 'zora_notifications',
+                        'zora_seen_signups', 'zora_dashboard_unlocked'
+                    ].forEach(k => localStorage.removeItem(k));
+                    sessionStorage.removeItem('zora_dashboard_unlocked');
+                    showSuccess('All data reset. Redirecting...');
+                    setTimeout(() => { window.location.href = '/dashboard/index.html'; }, 1500);
+                });
+            }
+
+            // ── Init ──
+            async function init() {
+                const token = localStorage.getItem('zora_token');
+                if (!token) { window.location.href = '/auth/login.html'; return; }
+
+                applyNotifSettings();
+                bindEvents();
+
+                // load API data in parallel
+                await Promise.all([loadDevInfo(), loadStats()]);
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
 </body>
 
 </html>
-
