@@ -179,43 +179,9 @@
 
             <!-- RIGHT: Lanyard visual -->
             <div class="lh-hero-right" id="heroLanyard">
-                <div class="lanyard-scene">
-                    <!-- Fixed anchor point at top -->
-                    <div class="lanyard-anchor">
-                        <!-- The entire pendulum swings from here -->
-                        <div class="lanyard-pendulum" id="lanyardPendulum">
-                            <!-- Strap -->
-                            <div class="lanyard-strap">
-                                <div class="lanyard-strap-pattern"></div>
-                            </div>
-                            <!-- Hook -->
-                            <div class="lanyard-hook">
-                                <svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <ellipse cx="8" cy="8" rx="5" ry="5" stroke="#999" stroke-width="1.5" fill="none" />
-                                    <rect x="6.5" y="12" width="3" height="6" rx="1.5" fill="#999" />
-                                </svg>
-                            </div>
-                            <!-- Card -->
-                            <div class="lanyard-card" id="lanyardCard">
-                                <div class="lanyard-card-inner">
-                                    <div class="lanyard-card-front">
-                                        <div class="lanyard-card-logo-wrap">
-                                            <img src="/assets/images/logo/logo.png" alt="ZORA"
-                                                class="lanyard-card-logo">
-                                        </div>
-                                        <div class="lanyard-card-info">
-                                            <div class="lanyard-card-name">ZORA AI</div>
-                                            <div class="lanyard-card-sub">SuperIntelligence</div>
-                                        </div>
-                                        <div class="lanyard-card-badge">
-                                            <span class="lanyard-badge-dot"></span> LABS
-                                        </div>
-                                        <div class="lanyard-card-stripe"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- RIGHT: Lanyard visual -->
+                <div class="lh-hero-right" id="heroLanyard">
+                    <canvas id="lanyardCanvas" class="lanyard-canvas"></canvas>
                 </div>
             </div>
 
@@ -1291,154 +1257,406 @@ void main() {
         initHeroOrb();
         initCircularGallery();
 
-        // ── Lanyard Physics (Spring/Elastic) ──────────────────────
+        // ── Lanyard Canvas Physics ────────────────────────────────────
         (function initLanyard() {
-            const scene = document.querySelector('.lanyard-scene');
-            const pendulum = document.getElementById('lanyardPendulum');
-            const card = document.getElementById('lanyardCard');
-            if (!scene || !pendulum || !card) return;
+            const canvas = document.getElementById('lanyardCanvas');
+            const container = document.getElementById('heroLanyard');
+            if (!canvas || !container) return;
 
-            // ── State ──────────────────────────────────────────────
-            let angle = 0;          // current rotation angle (deg)
-            let omega = 0;          // angular velocity (deg/frame)
-            let isDown = false;
-            let lastX = 0;
-            let lastTime = performance.now();
+            const ctx = canvas.getContext('2d');
 
-            // Velocity tracking for release impulse
-            const velHistory = [];  // [{dx, t}]
-            const VEL_WINDOW = 80;  // ms window to average release velocity
+            const GRAVITY = 0.42;
+            const DAMPING = 0.972;
+            const STIFFNESS = 0.38;
+            const SEGMENTS = 22;
+            const SEG_LEN = 13;
+            const CARD_W = 200;
+            const CARD_H = 270;
+            const LOGO_URL = '/assets/images/logo/logo.png';
 
-            // Mouse 3D tilt state
+            let W, H, anchorX, anchorY;
+            let points = [];
+            let dragging = false;
+            let dragIdx = -1;
             let mouseX = 0, mouseY = 0;
-            let tiltX = 0, tiltY = 0;
-            let sceneRect = scene.getBoundingClientRect();
+            let logoImg = null;
 
-            // ── Physics constants ──────────────────────────────────
-            const STIFFNESS = 0.045;   // spring pull-back strength
-            const DAMPING = 0.982;   // energy retention (higher = bouncier)
-            const DRAG_SENS = 0.55;    // drag sensitivity (deg per px)
-            const MAX_ANGLE = 45;      // max rotation clamp
-            const IDLE_AMP = 3;       // idle swing amplitude (deg)
-            const IDLE_SPEED = 0.0008;  // idle swing speed
+            /* ── preload logo ───────────────────────── */
+            const img = new Image();
+            img.src = LOGO_URL;
+            img.onload = () => { logoImg = img; };
 
-            // ── Idle swing (when fully settled) ───────────────────
-            let idleT = 0;
-            let settled = false;
-
-            function getReleasedVelocity() {
-                const now = performance.now();
-                const recent = velHistory.filter(v => now - v.t < VEL_WINDOW);
-                if (!recent.length) return 0;
-                const avg = recent.reduce((s, v) => s + v.dx, 0) / recent.length;
-                return avg * DRAG_SENS * 1.8; // amplify release impulse
+            /* ── resize ─────────────────────────────── */
+            function resize() {
+                const dpr = window.devicePixelRatio || 1;
+                W = container.offsetWidth;
+                H = container.offsetHeight;
+                canvas.width = W * dpr;
+                canvas.height = H * dpr;
+                canvas.style.width = W + 'px';
+                canvas.style.height = H + 'px';
+                ctx.scale(dpr, dpr);
+                initPoints();
             }
 
-            // ── Main physics loop ──────────────────────────────────
-            function loop(now) {
-                const dt = Math.min((now - lastTime) / 16.67, 3); // normalize to 60fps
-                lastTime = now;
+            /* ── init rope points ────────────────────── */
+            function initPoints() {
+                anchorX = W * 0.5;
+                anchorY = 10;
+                points = [];
+                for (let i = 0; i <= SEGMENTS; i++) {
+                    const t = i / SEGMENTS;
+                    const y = anchorY + t * (SEGMENTS * SEG_LEN);
+                    points.push({ x: anchorX, y, px: anchorX, py: y - 0.5, fixed: i === 0 });
+                }
+            }
 
-                if (!isDown) {
-                    // Spring force: pulls angle back to 0
-                    const springForce = -STIFFNESS * angle;
-                    omega += springForce * dt;
-                    omega *= Math.pow(DAMPING, dt);
-                    angle += omega * dt;
+            resize();
+            window.addEventListener('resize', resize);
 
-                    // Detect settled
-                    const isSettled = Math.abs(angle) < 0.15 && Math.abs(omega) < 0.15;
-                    if (isSettled) {
-                        angle = 0;
-                        omega = 0;
-                        settled = true;
-                    } else {
-                        settled = false;
-                        idleT = 0;
+            /* ── physics update ──────────────────────── */
+            function update() {
+                for (let i = 0; i < points.length; i++) {
+                    const p = points[i];
+                    if (p.fixed) continue;
+                    if (dragging && i === dragIdx) {
+                        p.x += (mouseX - p.x) * 0.38;
+                        p.y += (mouseY - p.y) * 0.38;
+                        p.px = p.x; p.py = p.y;
+                        continue;
                     }
-
-                    // Idle gentle swing when settled
-                    if (settled) {
-                        idleT += dt;
-                        angle = Math.sin(performance.now() * IDLE_SPEED) * IDLE_AMP;
+                    const vx = (p.x - p.px) * DAMPING;
+                    const vy = (p.y - p.py) * DAMPING;
+                    p.px = p.x; p.py = p.y;
+                    p.x += vx;
+                    p.y += vy + GRAVITY;
+                }
+                // constraints
+                for (let iter = 0; iter < 10; iter++) {
+                    points[0].x = anchorX;
+                    points[0].y = anchorY;
+                    for (let i = 0; i < points.length - 1; i++) {
+                        const a = points[i], b = points[i + 1];
+                        const dx = b.x - a.x, dy = b.y - a.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+                        const diff = (dist - SEG_LEN) / dist * STIFFNESS * 0.5;
+                        if (!a.fixed) { a.x += dx * diff; a.y += dy * diff; }
+                        if (!b.fixed) { b.x -= dx * diff; b.y -= dy * diff; }
                     }
                 }
-
-                // Clamp angle
-                const displayAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, angle));
-
-                // Smooth 3D tilt toward mouse (lerp)
-                const centerX = sceneRect.left + sceneRect.width / 2;
-                const centerY = sceneRect.top + sceneRect.height / 2;
-                const targetTiltY = ((mouseX - centerX) / (sceneRect.width / 2)) * 10;
-                const targetTiltX = ((mouseY - centerY) / (sceneRect.height / 2)) * -8;
-                tiltX += (targetTiltX - tiltX) * 0.08 * dt;
-                tiltY += (targetTiltY - tiltY) * 0.08 * dt;
-
-                // Whole pendulum rotates from anchor top
-                pendulum.style.transform = `rotate(${displayAngle}deg)`;
-
-                // Card gets counter-rotated tilt for 3D feel
-                // but stays visually upright — only subtle tilt
-                card.style.transform = [
-                    `perspective(700px)`,
-                    `rotateX(${tiltX * 0.5}deg)`,
-                    `rotateY(${tiltY * 0.5}deg)`,
-                ].join(' ');
-
-                requestAnimationFrame(loop);
             }
 
-            // ── Input events ───────────────────────────────────────
+            /* ── draw anchor bar ─────────────────────── */
+            function drawAnchor() {
+                const bw = 56, bh = 7;
+                ctx.beginPath();
+                ctx.roundRect(anchorX - bw / 2, 0, bw, bh, 3.5);
+                ctx.fillStyle = 'rgba(160,170,195,0.75)';
+                ctx.fill();
+
+                for (let i = 0; i < 4; i++) {
+                    ctx.beginPath();
+                    ctx.roundRect(anchorX - bw / 2 + 6 + i * 11, 1.5, 7, 3.5, 1);
+                    ctx.fillStyle = 'rgba(100,115,150,0.45)';
+                    ctx.fill();
+                }
+            }
+
+            /* ── draw rope ───────────────────────────── */
+            function drawRope() {
+                for (let i = 0; i < points.length - 1; i++) {
+                    const a = points[i], b = points[i + 1];
+                    const t = i / (points.length - 1);
+
+                    // rope shadow
+                    ctx.beginPath();
+                    ctx.moveTo(a.x + 1, a.y + 1);
+                    ctx.lineTo(b.x + 1, b.y + 1);
+                    ctx.strokeStyle = `rgba(0,0,0,${0.06 + t * 0.06})`;
+                    ctx.lineWidth = 3.5;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+
+                    // rope body — gradient from dark navy to cyan
+                    const r1 = Math.round(26 + t * 0), g1 = Math.round(35 + t * 165), b1 = Math.round(60 + t * 195);
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+                    ctx.strokeStyle = `rgb(${r1},${g1},${b1})`;
+                    ctx.lineWidth = 3 - t * 0.6;
+                    ctx.stroke();
+
+                    // shine highlight
+                    ctx.beginPath();
+                    ctx.moveTo(a.x - 0.5, a.y);
+                    ctx.lineTo(b.x - 0.5, b.y);
+                    ctx.strokeStyle = `rgba(255,255,255,${0.12 + t * 0.08})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+
+            /* ── draw hook ───────────────────────────── */
+            function drawHook(x, y, angle) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                // ring
+                ctx.beginPath();
+                ctx.arc(0, 0, 5.5, 0, Math.PI * 2);
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                // pin
+                ctx.beginPath();
+                ctx.roundRect(-1.5, 4, 3, 6, 1.5);
+                ctx.fillStyle = '#999';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            /* ── draw card ───────────────────────────── */
+            function drawCard() {
+                const tip = points[points.length - 1];
+                const ref = points[points.length - 5];
+                const angle = Math.atan2(tip.y - ref.y, tip.x - ref.x) - Math.PI / 2;
+
+                const cx = tip.x;
+                const cy = tip.y + CARD_H * 0.5 + 12;
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle);
+
+                const x = -CARD_W / 2, y = -CARD_H / 2, r = 16;
+
+                // card shadow
+                ctx.shadowColor = 'rgba(0,60,150,0.18)';
+                ctx.shadowBlur = 32;
+                ctx.shadowOffsetY = 10;
+
+                // card body
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + CARD_W - r, y);
+                ctx.quadraticCurveTo(x + CARD_W, y, x + CARD_W, y + r);
+                ctx.lineTo(x + CARD_W, y + CARD_H - r);
+                ctx.quadraticCurveTo(x + CARD_W, y + CARD_H, x + CARD_W - r, y + CARD_H);
+                ctx.lineTo(x + r, y + CARD_H);
+                ctx.quadraticCurveTo(x, y + CARD_H, x, y + CARD_H - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+
+                // gradient fill
+                const grd = ctx.createLinearGradient(x, y, x + CARD_W, y + CARD_H);
+                grd.addColorStop(0, '#f4f6ff');
+                grd.addColorStop(0.5, '#ffffff');
+                grd.addColorStop(1, '#eef1f8');
+                ctx.fillStyle = grd;
+                ctx.fill();
+
+                ctx.shadowColor = 'transparent';
+
+                // border
+                ctx.strokeStyle = 'rgba(0,153,204,0.18)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // top accent bar
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + CARD_W - r, y);
+                ctx.quadraticCurveTo(x + CARD_W, y, x + CARD_W, y + r);
+                ctx.lineTo(x + CARD_W, y + 4);
+                ctx.lineTo(x, y + 4);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+                const topGrd = ctx.createLinearGradient(x, 0, x + CARD_W, 0);
+                topGrd.addColorStop(0, '#00D4FF');
+                topGrd.addColorStop(1, '#0066FF');
+                ctx.fillStyle = topGrd;
+                ctx.fill();
+                ctx.restore();
+
+                // hole
+                const holeY = y + 28;
+                ctx.beginPath();
+                ctx.arc(0, holeY, 5.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(200,210,230,0.5)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(150,165,195,0.6)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(0, holeY, 3.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(180,195,220,0.35)';
+                ctx.fill();
+
+                // logo box
+                const lbSize = 90, lbY = y + 65, lbR = 18;
+                ctx.beginPath();
+                ctx.roundRect(-lbSize / 2, lbY, lbSize, lbSize, lbR);
+                ctx.fillStyle = '#0a0a1a';
+                const lglow = ctx.createRadialGradient(0, lbY + lbSize / 2, 10, 0, lbY + lbSize / 2, 55);
+                lglow.addColorStop(0, 'rgba(0,180,255,0.15)');
+                lglow.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = '#0a0a1a';
+                ctx.fill();
+                // glow overlay
+                ctx.beginPath();
+                ctx.roundRect(-lbSize / 2, lbY, lbSize, lbSize, lbR);
+                ctx.fillStyle = lglow;
+                ctx.fill();
+
+                if (logoImg) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.roundRect(-lbSize / 2, lbY, lbSize, lbSize, lbR);
+                    ctx.clip();
+                    const pad = 8;
+                    ctx.drawImage(logoImg, -lbSize / 2 + pad, lbY + pad, lbSize - pad * 2, lbSize - pad * 2);
+                    ctx.restore();
+                } else {
+                    // fallback Z text
+                    ctx.font = 'bold 32px monospace';
+                    ctx.fillStyle = '#00c8e0';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('Z', 0, lbY + lbSize / 2);
+                }
+
+                // card name
+                ctx.font = '800 1.35rem "Inter", system-ui, sans-serif';
+                ctx.fillStyle = '#0a0a1a';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('ZORA AI', 0, y + 185);
+
+                // subtitle
+                ctx.font = '600 0.65rem "Inter", system-ui, sans-serif';
+                ctx.fillStyle = '#0099CC';
+                ctx.letterSpacing = '0.1em';
+                ctx.fillText('SUPERINTELLIGENCE', 0, y + 205);
+
+                // badge pill
+                const pillW = 80, pillH = 22, pillR = 11;
+                ctx.beginPath();
+                ctx.roundRect(-pillW / 2, y + 220, pillW, pillH, pillR);
+                ctx.fillStyle = 'rgba(0,153,204,0.1)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(0,153,204,0.28)';
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+
+                // badge dot (pulsing via time)
+                const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.003);
+                ctx.beginPath();
+                ctx.arc(-20, y + 231, 3 + pulse * 0.8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0,212,255,${0.6 + pulse * 0.4})`;
+                ctx.fill();
+
+                ctx.font = '700 0.62rem "Inter", system-ui, sans-serif';
+                ctx.fillStyle = '#0099CC';
+                ctx.textAlign = 'center';
+                ctx.fillText('LABS', 8, y + 232);
+
+                // bottom stripe
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, y + CARD_H - 28);
+                ctx.lineTo(x + CARD_W, y + CARD_H - 28);
+                ctx.lineTo(x + CARD_W, y + CARD_H - r);
+                ctx.quadraticCurveTo(x + CARD_W, y + CARD_H, x + CARD_W - r, y + CARD_H);
+                ctx.lineTo(x + r, y + CARD_H);
+                ctx.quadraticCurveTo(x, y + CARD_H, x, y + CARD_H - r);
+                ctx.lineTo(x, y + CARD_H - 28);
+                ctx.closePath();
+                const stripeGrd = ctx.createLinearGradient(x, 0, x + CARD_W, 0);
+                stripeGrd.addColorStop(0, 'rgba(0,212,255,0.18)');
+                stripeGrd.addColorStop(1, 'rgba(0,102,255,0.18)');
+                ctx.fillStyle = stripeGrd;
+                ctx.fill();
+                ctx.restore();
+
+                // hook at top of card
+                drawHook(0, y + 18, angle * -1);
+
+                ctx.restore();
+            }
+
+            /* ── render loop ─────────────────────────── */
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+                drawAnchor();
+                drawRope();
+                drawCard();
+            }
+
+            function loop() {
+                update();
+                draw();
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+
+            /* ── pointer helpers ─────────────────────── */
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = W / rect.width;
+                const scaleY = H / rect.height;
+                const src = e.touches ? e.touches[0] : e;
+                return {
+                    x: (src.clientX - rect.left) * scaleX,
+                    y: (src.clientY - rect.top) * scaleY
+                };
+            }
+
+            function hitCard(pos) {
+                const tip = points[points.length - 1];
+                const ref = points[points.length - 5];
+                const angle = Math.atan2(tip.y - ref.y, tip.x - ref.x) - Math.PI / 2;
+                const cx = tip.x, cy = tip.y + CARD_H * 0.5 + 12;
+                const cos = Math.cos(-angle), sin = Math.sin(-angle);
+                const dx = pos.x - cx, dy = pos.y - cy;
+                const lx = dx * cos - dy * sin;
+                const ly = dx * sin + dy * cos;
+                return Math.abs(lx) < CARD_W / 2 + 12 && Math.abs(ly) < CARD_H / 2 + 12;
+            }
+
             function onDown(e) {
-                isDown = true;
-                settled = false;
-                lastX = e.touches ? e.touches[0].clientX : e.clientX;
-                omega = 0;
-                velHistory.length = 0;
-                scene.style.cursor = 'grabbing';
                 e.preventDefault();
+                const pos = getPos(e);
+                mouseX = pos.x; mouseY = pos.y;
+                if (hitCard(pos)) {
+                    dragging = true;
+                    dragIdx = points.length - 1;
+                } else {
+                    for (let i = points.length - 1; i >= 1; i--) {
+                        const p = points[i];
+                        if (Math.hypot(pos.x - p.x, pos.y - p.y) < 16) {
+                            dragging = true; dragIdx = i; break;
+                        }
+                    }
+                }
             }
 
             function onMove(e) {
-                const x = e.touches ? e.touches[0].clientX : e.clientX;
-                const y = e.touches ? e.touches[0].clientY : e.clientY;
-                mouseX = x;
-                mouseY = y;
-
-                if (isDown) {
-                    const dx = x - lastX;
-                    angle += dx * DRAG_SENS;
-                    lastX = x;
-
-                    // Track velocity history
-                    velHistory.push({ dx, t: performance.now() });
-                    if (velHistory.length > 20) velHistory.shift();
-                }
+                e.preventDefault();
+                const pos = getPos(e);
+                mouseX = pos.x; mouseY = pos.y;
             }
 
-            function onUp() {
-                if (!isDown) return;
-                isDown = false;
-                scene.style.cursor = 'grab';
+            function onUp() { dragging = false; dragIdx = -1; }
 
-                // Transfer drag velocity → angular velocity for elastic bounce
-                omega = getReleasedVelocity();
-                velHistory.length = 0;
-            }
-
-            // Attach events
-            scene.addEventListener('mousedown', onDown);
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('mouseup', onUp);
-            scene.addEventListener('touchstart', onDown, { passive: false });
-            window.addEventListener('touchmove', onMove, { passive: true });
-            window.addEventListener('touchend', onUp);
-            window.addEventListener('resize', () => {
-                sceneRect = scene.getBoundingClientRect();
-            });
-
-            requestAnimationFrame(loop);
+            canvas.addEventListener('mousedown', onDown);
+            canvas.addEventListener('mousemove', onMove);
+            canvas.addEventListener('mouseup', onUp);
+            canvas.addEventListener('touchstart', onDown, { passive: false });
+            canvas.addEventListener('touchmove', onMove, { passive: false });
+            canvas.addEventListener('touchend', onUp);
         })();
 
         // ── Start Shuffle Title ───────────────────────────────────
