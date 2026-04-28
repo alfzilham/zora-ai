@@ -20,12 +20,12 @@ class Settings(BaseSettings):
     JWT_EXPIRE_MINUTES: int = 1440  # 24 hours
 
     # Google OAuth
-    GOOGLE_CLIENT_ID: str
-    GOOGLE_CLIENT_SECRET: str
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
 
     # GitHub OAuth
-    GITHUB_CLIENT_ID: str
-    GITHUB_CLIENT_SECRET: str
+    GITHUB_CLIENT_ID: str = ""
+    GITHUB_CLIENT_SECRET: str = ""
 
     # Twilio OTP
     TWILIO_ACCOUNT_SID: str = ""

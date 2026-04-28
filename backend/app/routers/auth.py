@@ -28,7 +28,7 @@ from app.middleware.auth_middleware import (
     verify_password,
     security
 )
-from app.config import settings
+from app.config import settings  # already imported — no change needed
 from app.utils.rate_limit import ip_key, limiter
 
 router = APIRouter()
@@ -354,6 +354,13 @@ async def google_auth(
     Raises:
         HTTPException: 400 if Google token invalid
     """
+    # Validate Google OAuth configuration
+    if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google OAuth is not configured",
+        )
+
     # Verify Google token
     try:
         async with httpx.AsyncClient() as client:
@@ -531,6 +538,13 @@ async def github_auth(
     db: AsyncSession = Depends(get_db),
 ):
     """Exchange GitHub OAuth code for JWT. Creates/links user as needed."""
+    # Validate GitHub OAuth configuration
+    if not settings.GITHUB_CLIENT_ID or not settings.GITHUB_CLIENT_SECRET:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="GitHub OAuth is not configured",
+        )
+
     async with httpx.AsyncClient() as client:
         # 1. Exchange code → access token
         token_resp = await client.post(
