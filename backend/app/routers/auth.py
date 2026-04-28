@@ -241,7 +241,8 @@ async def register(
     )
 
     db.add(new_user)
-    await db.flush()
+    await db.commit()
+    await db.refresh(new_user)
 
     return create_auth_response(new_user, is_new_user=True)
 
@@ -395,7 +396,6 @@ async def google_auth(
         # Existing user - update info
         user.name = name
         user.avatar_url = avatar_url
-        await db.flush()
     else:
         # Check if email exists (link Google to existing account)
         result = await db.execute(select(User).where(User.email == email))
@@ -404,7 +404,6 @@ async def google_auth(
         if existing_user:
             existing_user.google_id = google_id
             existing_user.avatar_url = avatar_url
-            await db.flush()
             user = existing_user
         else:
             # Create new user
@@ -417,10 +416,12 @@ async def google_auth(
                 is_active=True
             )
             db.add(user)
-            await db.flush()
             is_new_user = True
 
-    return create_auth_response(user, is_new_user=is_new_user)  # ← BARIS BARU
+    await db.commit()
+    await db.refresh(user)
+
+    return create_auth_response(user, is_new_user=is_new_user)
 
 # ── Email OTP ─────────────────────────────────────────────────────────
 
@@ -458,9 +459,23 @@ async def email_otp_verify(
             country=await detect_country_from_ip(get_request_ip(http_request)),
             is_active=True,
         )
-        db.add(user)
-        await db.flush()
-        is_new_user = True
+        if user:
+            user.github_id = github_id
+            user.avatar_url = avatar_url
+        else:
+            user = User(
+                name=name,
+                email=email or f"github_{github_id}@zora.local",
+                github_id=github_id,
+                avatar_url=avatar_url,
+                country=await detect_country_from_ip(get_request_ip(http_request)),
+                is_active=True,
+            )
+            db.add(user)
+            is_new_user = True
+
+    await db.commit()
+    await db.refresh(user)
 
     return create_auth_response(user, is_new_user=is_new_user)
 
@@ -499,8 +514,10 @@ async def phone_otp_verify(
             is_active=True,
         )
         db.add(user)
-        await db.flush()
         is_new_user = True
+
+    await db.commit()
+    await db.refresh(user)
 
     return create_auth_response(user, is_new_user=is_new_user)
 
