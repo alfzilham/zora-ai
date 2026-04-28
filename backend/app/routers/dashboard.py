@@ -54,6 +54,11 @@ def aggregate_users_by_month(users: list[dict]) -> list[dict]:
         created_at = user.get("created_at")
         if not created_at:
             continue
+        if isinstance(created_at, str):
+            try:
+                created_at = datetime.fromisoformat(created_at)
+            except ValueError:
+                continue
         counts[(created_at.year, created_at.month)] += 1
     return [
         {"year": year, "month": month, "count": count}
@@ -62,13 +67,24 @@ def aggregate_users_by_month(users: list[dict]) -> list[dict]:
 
 
 def aggregate_recent_signups(users: list[dict], limit: int = 10) -> list[dict]:
-    sorted_users = sorted(users, key=lambda item: item.get("created_at") or datetime.min, reverse=True)
+    def parse_created_at(user: dict):
+        created_at = user.get("created_at")
+        if not created_at:
+            return datetime.min
+        if isinstance(created_at, str):
+            try:
+                return datetime.fromisoformat(created_at)
+            except ValueError:
+                return datetime.min
+        return created_at
+
+    sorted_users = sorted(users, key=parse_created_at, reverse=True)
     return [
         {
             "name": user.get("name", ""),
             "email": user.get("email", ""),
             "country": (user.get("country") or "").strip() or "Unknown",
-            "created_at": user.get("created_at").isoformat() if user.get("created_at") else None,
+            "created_at": parse_created_at(user).isoformat() if user.get("created_at") else None,
         }
         for user in sorted_users[:limit]
     ]
