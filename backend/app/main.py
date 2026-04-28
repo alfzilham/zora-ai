@@ -93,8 +93,14 @@ if STATIC_DIR.exists():
 @app.middleware("http")
 async def normalize_vercel_api_prefix(request: Request, call_next):
     """Allow Vercel /api/* routing to resolve against the root FastAPI app."""
-    if request.scope.get("path", "").startswith("/api/"):
-        request.scope["path"] = request.scope["path"][4:] or "/"
+    path = request.scope.get("path", "")
+    if path.startswith("/api/"):
+        new_path = path[4:] or "/"
+        request.scope["path"] = new_path
+        request.scope["raw_path"] = new_path.encode("utf-8")
+    elif path == "/api":
+        request.scope["path"] = "/"
+        request.scope["raw_path"] = b"/"
     return await call_next(request)
 
 # Include routers
