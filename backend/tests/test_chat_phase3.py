@@ -66,11 +66,20 @@ class ChatRouterHelperTests(unittest.TestCase):
         self.assertLessEqual(len(title), 60)
         self.assertTrue(title.startswith("This is a fairly long first message"))
 
-    def test_incognito_skips_persistence(self):
+    def test_incognito_conversation_skips_persistence(self):
         conversation = Conversation(is_incognito=True)
-
         self.assertFalse(should_persist_conversation(conversation, incognito_override=False))
+
+    def test_incognito_override_skips_persistence(self):
         self.assertFalse(should_persist_conversation(None, incognito_override=True))
+
+    def test_normal_conversation_allows_persistence(self):
+        conversation = Conversation(is_incognito=False)
+        self.assertTrue(should_persist_conversation(conversation, incognito_override=False))
+
+    def test_none_conversation_without_override_allows_persistence(self):
+        # Returns True but actual DB write is guarded by
+        # "if persist_to_db and conversation is not None" in event_stream()
         self.assertTrue(should_persist_conversation(None, incognito_override=False))
 
     def test_sse_event_contains_json_data_line(self):
