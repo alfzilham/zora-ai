@@ -91,13 +91,9 @@ async def stream_nvidia_response(
     messages: list[dict],
     temperature: float = 0.4,
 ) -> AsyncGenerator[str, None]:
-    """Stream a response via NVIDIA NIM or fallback."""
-    try:
-        from openai import AsyncOpenAI
-    except ImportError:
-        async for chunk in _fallback_stream(model_name, messages):
-            yield chunk
-        return
+    """Stream a response via NVIDIA NIM with robust SSE parsing and fallback."""
+    import json
+    import httpx
 
     model_id, _ = MODEL_CONFIG.get(model_name, MODEL_CONFIG["nemotron"])
     primary_key = _resolve_api_key(model_name)
@@ -107,29 +103,77 @@ async def stream_nvidia_response(
             yield chunk
         return
 
-    async def _stream(api_key: str) -> AsyncGenerator[str, None]:
-        client = AsyncOpenAI(api_key=api_key, base_url=NVIDIA_BASE_URL)
-        stream = await client.chat.completions.create(
-            model=model_id,
-            messages=messages,
-            temperature=temperature,
-            stream=True,
-        )
+    # Nemotron uses OpenAI client with reasoning support
+    if model_name == "nemotron":
+        async for chunk in _stream_nemotron(primary_key, model_id, messages, temperature):
+            yield chunk
+        return
 
-        async for chunk in stream:
-            delta = chunk.choices[0].delta.content or ""
-            if delta:
-                yield delta
+    async def _stream_sse(api_key: str) -> AsyncGenerator[str, None]:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Accept": "text/event-stream",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": model_id,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": 2048,
+            "stream": True,
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                async with client.stream(
+                    "POST",
+                    f"{NVIDIA_BASE_URL}/chat/completions",
+                    headers=headers,
+                    json=payload,
+                ) as response:
+                    if response.status_code != 200:
+                        # Fallback to non-streaming
+                        fallback_text = await generate_nvidia_response(
+                            model_name, messages, temperature
+                        )
+                        yield fallback_text
+                        return
+
+                    async for line in response.aiter_lines():
+                        if not line:
+                            continue
+                        if not line.startswith("data: "):
+                            continue
+
+                        data_str = line[6:].strip()
+                        if data_str == "[DONE]":
+                            break
+
+                        try:
+                            data = json.loads(data_str)
+                            choices = data.get("choices", [])
+                            if choices:
+                                delta = choices[0].get("delta", {}).get("content", "")
+                                if delta:
+                                    yield delta
+                        except (json.JSONDecodeError, IndexError, KeyError):
+                            continue
+
+        except httpx.TimeoutException:
+            fallback_text = await generate_nvidia_response(model_name, messages, temperature)
+            yield fallback_text
+        except httpx.HTTPError:
+            raise
 
     try:
-        async for piece in _stream(primary_key):
+        async for piece in _stream_sse(primary_key):
             yield piece
         return
     except Exception:
-        fallback_key = settings.nvidia_api_key_fallback
+        fallback_key = settings.NVIDIA_API_KEY_FALLBACK
         if fallback_key and fallback_key != primary_key:
             try:
-                async for piece in _stream(fallback_key):
+                async for piece in _stream_sse(fallback_key):
                     yield piece
                 return
             except Exception:
@@ -137,3 +181,74 @@ async def stream_nvidia_response(
 
     async for chunk in _fallback_stream(model_name, messages):
         yield chunk
+
+
+async def _stream_nemotron(
+    api_key: str,
+    model_id: str,
+    messages: list[dict],
+    temperature: float = 0.4,
+) -> AsyncGenerator[str, None]:
+    """Nemotron streaming via OpenAI client with reasoning support."""
+    try:
+        from openai import AsyncOpenAI
+    except ImportError:
+        yield _fallback_response("nemotron", messages)
+        return
+
+    client = AsyncOpenAI(
+        api_key=api_key,
+        base_url=NVIDIA_BASE_URL,
+    )
+
+    try:
+        stream = await client.chat.completions.create(
+            model=model_id,
+            messages=messages,
+            temperature=1,
+            top_p=0.95,
+            max_tokens=4096,
+            extra_body={
+                "chat_template_kwargs": {"enable_thinking": True},
+                "reasoning_budget": 4096,
+            },
+            stream=True,
+        )
+
+        async for chunk in stream:
+            if not chunk.choices:
+                continue
+            delta = chunk.choices[0].delta.content or ""
+            if delta:
+                yield delta
+
+    except Exception:
+        fallback_key = settings.NVIDIA_API_KEY_FALLBACK
+        if fallback_key and fallback_key != api_key:
+            try:
+                client = AsyncOpenAI(
+                    api_key=fallback_key,
+                    base_url=NVIDIA_BASE_URL,
+                )
+                stream = await client.chat.completions.create(
+                    model=model_id,
+                    messages=messages,
+                    temperature=1,
+                    top_p=0.95,
+                    max_tokens=4096,
+                    extra_body={
+                        "chat_template_kwargs": {"enable_thinking": True},
+                        "reasoning_budget": 4096,
+                    },
+                    stream=True,
+                )
+                async for chunk in stream:
+                    if not chunk.choices:
+                        continue
+                    delta = chunk.choices[0].delta.content or ""
+                    if delta:
+                        yield delta
+                return
+            except Exception:
+                pass
+        yield _fallback_response("nemotron", messages)
