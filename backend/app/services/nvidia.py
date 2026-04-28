@@ -11,15 +11,17 @@ from app.config import settings
 
 
 NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
+
+# (model_id, settings_field_name)
 MODEL_CONFIG = {
-    "nemotron": ("nvidia/nemotron-3-super-120b-a12b", "nvidia_api_key_nemotron"),
-    "deepseek": ("deepseek-ai/deepseek-v3.2", "nvidia_api_key_deepseek"),
-    "qwen":     ("qwen/qwen3.5-122b-a10b", "nvidia_api_key_qwen"),
-    "kimi":     ("moonshotai/kimi-k2.5", "nvidia_api_key_kimi"),
-    "minimax":  ("minimax/minimax-m2.7", "nvidia_api_key_minimax"),
-    "glm":      ("z-ai/glm-5.1", "nvidia_api_key_glm"),
-    "gemma":    ("google/gemma-4-31b-it", "nvidia_api_key_gemma"),
-    "mistral":  ("mistralai/mistral-small-4-119b-2603", "nvidia_api_key_mistral"),
+    "nemotron": ("nvidia/nemotron-3-super-120b-a12b",    "NVIDIA_API_KEY_NEMOTRON"),
+    "deepseek": ("deepseek-ai/deepseek-v3.2",             "NVIDIA_API_KEY_DEEPSEEK"),
+    "qwen":     ("qwen/qwen3.5-122b-a10b",                "NVIDIA_API_KEY_QWEN"),
+    "kimi":     ("moonshotai/kimi-k2.5",                  "NVIDIA_API_KEY_KIMI"),
+    "minimax":  ("minimax/minimax-m2.7",                  "NVIDIA_API_KEY_MINIMAX"),
+    "glm":      ("z-ai/glm-5.1",                          "NVIDIA_API_KEY_GLM"),
+    "gemma":    ("google/gemma-4-31b-it",                 "NVIDIA_API_KEY_GEMMA"),
+    "mistral":  ("mistralai/mistral-small-4-119b-2603",   "NVIDIA_API_KEY_MISTRAL"),
 }
 
 
@@ -28,8 +30,8 @@ def _split_text_chunks(text: str, chunk_size: int = 32) -> list[str]:
 
 
 def _resolve_api_key(model_name: str) -> str | None:
-    _, key_attr = MODEL_CONFIG.get(model_name, MODEL_CONFIG["nemotron"])
-    return getattr(settings, key_attr.upper(), None) or settings.NVIDIA_API_KEY_FALLBACK
+    _, field_name = MODEL_CONFIG.get(model_name, MODEL_CONFIG["nemotron"])
+    return getattr(settings, field_name, None) or settings.NVIDIA_API_KEY_FALLBACK
 
 
 def _fallback_response(model_name: str, messages: list[dict]) -> str:
