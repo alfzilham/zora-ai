@@ -29,7 +29,7 @@ def _split_text_chunks(text: str, chunk_size: int = 32) -> list[str]:
 
 def _resolve_api_key(model_name: str) -> str | None:
     _, key_attr = MODEL_CONFIG.get(model_name, MODEL_CONFIG["nemotron"])
-    return getattr(settings, key_attr, None) or settings.nvidia_api_key_fallback
+    return getattr(settings, key_attr.upper(), None) or settings.NVIDIA_API_KEY_FALLBACK
 
 
 def _fallback_response(model_name: str, messages: list[dict]) -> str:

@@ -46,22 +46,20 @@ class Settings(BaseSettings):
     VIDEO_API_ENABLED: bool = False
 
     # API Keys
-    gemini_api_key: Optional[str] = None
-    nano_banana_api_key: Optional[str] = None
-    xendit_secret_key: Optional[str] = None
-    xendit_webhook_token: Optional[str] = None
-    XENDIT_SECRET_KEY: str = ""
-    XENDIT_WEBHOOK_TOKEN: str = ""
-    nvidia_api_key_nemotron: Optional[str] = None
-    nvidia_api_key_deepseek: Optional[str] = None
-    nvidia_api_key_qwen: Optional[str] = None
-    nvidia_api_key_kimi: Optional[str] = None
-    nvidia_api_key_minimax: Optional[str] = None
-    nvidia_api_key_glm: Optional[str] = None
-    nvidia_api_key_gemma: Optional[str] = None
-    nvidia_api_key_mistral: Optional[str] = None
-    nvidia_api_key_fallback: Optional[str] = None
-    groq_api_key: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
+    NANO_BANANA_API_KEY: Optional[str] = None
+    XENDIT_SECRET_KEY: Optional[str] = None
+    XENDIT_WEBHOOK_TOKEN: Optional[str] = None
+    NVIDIA_API_KEY_NEMOTRON: Optional[str] = None
+    NVIDIA_API_KEY_DEEPSEEK: Optional[str] = None
+    NVIDIA_API_KEY_QWEN: Optional[str] = None
+    NVIDIA_API_KEY_KIMI: Optional[str] = None
+    NVIDIA_API_KEY_MINIMAX: Optional[str] = None
+    NVIDIA_API_KEY_GLM: Optional[str] = None
+    NVIDIA_API_KEY_GEMMA: Optional[str] = None
+    NVIDIA_API_KEY_MISTRAL: Optional[str] = None
+    NVIDIA_API_KEY_FALLBACK: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
 
     # CORS Origins
     @property

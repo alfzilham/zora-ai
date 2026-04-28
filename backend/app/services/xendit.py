@@ -16,7 +16,7 @@ XENDIT_DISBURSEMENT_URL = "https://api.xendit.co/disbursements"
 
 def verify_webhook(token: str, expected_token: str | None = None) -> bool:
     """Verify the incoming Xendit webhook token."""
-    expected = expected_token if expected_token is not None else settings.XENDIT_WEBHOOK_TOKEN
+    expected = expected_token if expected_token is not None else (settings.XENDIT_WEBHOOK_TOKEN or "")
     return bool(expected and token == expected)
 
 
@@ -27,7 +27,7 @@ async def create_disbursement(
     account_holder_name: str,
 ) -> dict:
     """Create a Xendit disbursement request."""
-    secret_key = settings.XENDIT_SECRET_KEY or settings.xendit_secret_key
+    secret_key = settings.XENDIT_SECRET_KEY
     if not secret_key:
         raise ValueError("Xendit secret key is not configured")
 

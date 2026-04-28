@@ -47,10 +47,10 @@ async def complete_groq(messages: list[dict], temperature: float = 0.2) -> str:
     except ImportError:
         return _build_local_response(messages)
 
-    if not settings.groq_api_key:
+    if not settings.GROQ_API_KEY:
         return _build_local_response(messages)
 
-    client = AsyncGroq(api_key=settings.groq_api_key)
+    client = AsyncGroq(api_key=settings.GROQ_API_KEY)
 
     try:
         response = await client.chat.completions.create(
@@ -79,10 +79,10 @@ async def prethink_with_groq(messages: list[dict]) -> str:
     except ImportError:
         return _build_local_response(messages, mode="prethink")
 
-    if not settings.groq_api_key:
+    if not settings.GROQ_API_KEY:
         return _build_local_response(messages, mode="prethink")
 
-    client = AsyncGroq(api_key=settings.groq_api_key)
+    client = AsyncGroq(api_key=settings.GROQ_API_KEY)
 
     try:
         response = await client.chat.completions.create(
@@ -104,12 +104,12 @@ async def stream_groq_response(messages: list[dict], temperature: float = 0.4) -
             yield chunk
         return
 
-    if not settings.groq_api_key:
+    if not settings.GROQ_API_KEY:
         async for chunk in _fallback_stream(_build_local_response(messages)):
             yield chunk
         return
 
-    client = AsyncGroq(api_key=settings.groq_api_key)
+    client = AsyncGroq(api_key=settings.GROQ_API_KEY)
 
     try:
         stream = await client.chat.completions.create(

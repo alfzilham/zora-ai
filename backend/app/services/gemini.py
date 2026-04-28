@@ -82,13 +82,13 @@ async def generate_gemini_response(messages: list[dict]) -> str:
     except ImportError:
         return _fallback_response(messages)
 
-    if not settings.gemini_api_key:
+    if not settings.GEMINI_API_KEY:
         return _fallback_response(messages)
 
     prompt = _combine_messages(messages)
 
     def _call() -> str:
-        genai.configure(api_key=settings.gemini_api_key)
+        genai.configure(api_key=settings.GEMINI_API_KEY)
         model = genai.GenerativeModel(MODEL_NAME)
         response = model.generate_content(prompt)
         return getattr(response, "text", "") or ""
@@ -119,14 +119,14 @@ async def generate_image(prompt: str, style: str, system_prompt: str | None = No
             "optimized_prompt": optimized_prompt,
         }
 
-    if not settings.gemini_api_key:
+    if not settings.GEMINI_API_KEY:
         return {
             "image_url": _save_placeholder_svg(prompt, style),
             "optimized_prompt": optimized_prompt,
         }
 
     def _call() -> dict:
-        genai.configure(api_key=settings.gemini_api_key)
+        genai.configure(api_key=settings.GEMINI_API_KEY)
         model = genai.GenerativeModel(IMAGE_MODEL_NAME)
         response = model.generate_content(optimized_prompt)
 
