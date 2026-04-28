@@ -1,12 +1,12 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 greenlet==3.1.1
 asyncpg==0.29.0
 python-jose[cryptography]
 bcrypt==4.0.1
 python-multipart
-httpx
+httpx[http2]
 google-generativeai
 groq
 openai
@@ -19,3 +19,4 @@ email-validator
 google-auth
 google-auth-oauthlib
 twilio>=8.0.0
+gunicorn
