@@ -309,7 +309,6 @@ async def send_message(
                 if persist_to_db and conversation is not None:
                     if conversation.title is None and not existing_messages:
                         conversation.title = build_conversation_title(payload.message)
-                        await db.flush()
 
                     user_message = Message(
                         conversation_id=conversation.id,
@@ -318,7 +317,7 @@ async def send_message(
                         model_used=None,
                     )
                     db.add(user_message)
-                    await db.flush()
+                    await db.commit()
 
                 yield format_sse_event(
                     "metadata",
@@ -347,7 +346,7 @@ async def send_message(
                         model_used=primary_model,
                     )
                     db.add(assistant_message)
-                    await db.flush()
+                    await db.commit()
 
                 yield format_sse_event(
                     "done",
@@ -358,6 +357,7 @@ async def send_message(
                     },
                 )
             except Exception as exc:
+                await db.rollback()
                 yield format_sse_event("error", {"message": str(exc)})
 
         return StreamingResponse(event_stream(), media_type="text/event-stream")
