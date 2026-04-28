@@ -33,3 +33,17 @@ class Feedback(Base):
 
     def __repr__(self):
         return f"<Feedback id={self.id} user_id={self.user_id} category={self.category}>"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": str(self.id),
+            "user_id": str(self.user_id),
+            "message": self.message,
+            "category": self.category,
+            "rating": self.rating,
+            "screenshot_url": self.screenshot_url,
+            "reply": self.reply,
+            "reply_at": self.reply_at.isoformat() if self.reply_at else None,
+            "read_by_admin": self.read_by_admin,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
