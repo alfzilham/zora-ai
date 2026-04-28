@@ -364,34 +364,33 @@ async def google_auth(
 
     # Verify Google token
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(
                 "https://www.googleapis.com/oauth2/v3/userinfo",
                 headers={"Authorization": f"Bearer {request.google_token}"}
             )
-
-            if response.status_code != 200:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid Google token"
-                )
-
-            google_data = response.json()
-            google_id = google_data.get("sub")
-            email = google_data.get("email")
-            name = google_data.get("name", email.split("@")[0])
-            avatar_url = google_data.get("picture")
-
-            if not google_id or not email:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Invalid Google user data"
-                )
-
     except httpx.RequestError:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Unable to verify Google token"
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid Google token"
+        )
+
+    google_data = response.json()
+    google_id = google_data.get("sub")
+    email = google_data.get("email")
+    avatar_url = google_data.get("picture")
+    name = google_data.get("name") or (email.split("@")[0] if email else "User")
+
+    if not google_id or not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid Google user data"
         )
 
     # Check if user exists by Google ID
