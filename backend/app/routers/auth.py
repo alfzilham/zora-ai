@@ -6,6 +6,7 @@ Endpoints for user registration, login, logout, and Google OAuth.
 
 from datetime import datetime
 from typing import Optional
+import asyncio
 import secrets
 import smtplib
 import time
@@ -438,7 +439,7 @@ async def email_otp_send(request: Request, payload: EmailOtpSendRequest):
     """Send 6-digit OTP to email via SMTP."""
     code = _generate_otp()
     try:
-        _send_email_otp(payload.email, code)
+        await asyncio.to_thread(_send_email_otp, payload.email, code)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Failed to send email: {str(e)}")
     _store_email_otp(payload.email, code)
