@@ -252,10 +252,13 @@ async def submit_feedback(
         feedback = Feedback(
             user_id=current_user.id,
             message=request.message,
-            rating=request.rating,
+            category="general",
+            rating=request.rating if request.rating is not None else 0,
+            read_by_admin=False,
         )
         db.add(feedback)
-        await db.flush()
+        await db.commit()
+        await db.refresh(feedback)
 
         return api_success(
             {"feedback_id": str(feedback.id)},
