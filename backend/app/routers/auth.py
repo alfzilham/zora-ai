@@ -467,20 +467,8 @@ async def email_otp_verify(
             country=await detect_country_from_ip(get_request_ip(http_request)),
             is_active=True,
         )
-        if user:
-            user.github_id = github_id
-            user.avatar_url = avatar_url
-        else:
-            user = User(
-                name=name,
-                email=email or f"github_{github_id}@zora.local",
-                github_id=github_id,
-                avatar_url=avatar_url,
-                country=await detect_country_from_ip(get_request_ip(http_request)),
-                is_active=True,
-            )
-            db.add(user)
-            is_new_user = True
+        db.add(user)
+        is_new_user = True
 
     await db.commit()
     await db.refresh(user)
@@ -591,7 +579,6 @@ async def github_auth(
     if user:
         user.name = name
         user.avatar_url = avatar_url
-        await db.flush()
     else:
         # Try linking by email
         if email:
@@ -601,7 +588,6 @@ async def github_auth(
         if user:
             user.github_id = github_id
             user.avatar_url = avatar_url
-            await db.flush()
         else:
             user = User(
                 name=name,
@@ -612,7 +598,9 @@ async def github_auth(
                 is_active=True,
             )
             db.add(user)
-            await db.flush()
             is_new_user = True
+
+    await db.commit()
+    await db.refresh(user)
 
     return create_auth_response(user, is_new_user=is_new_user)
