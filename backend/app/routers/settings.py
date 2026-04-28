@@ -17,7 +17,7 @@ from app.database import get_db
 from app.middleware.auth_middleware import get_current_user
 from app.models.memory import Memory
 from app.models.user import User, UserProfile
-from app.models.feedback import Feedback
+# Feedback routes handled by routers/feedback.py
 
 router = APIRouter()
 
@@ -85,17 +85,7 @@ class PreferencesRequest(BaseModel):
     preferences: dict = Field(default_factory=dict)
 
 
-class FeedbackRequest(BaseModel):
-    message: str = Field(..., min_length=1, max_length=5000)
-    rating: int | None = Field(default=None, ge=1, le=5)
-
-    @field_validator("message")
-    @classmethod
-    def validate_message(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
-            raise ValueError("Feedback message is required")
-        return value
+# FeedbackRequest removed — handled by routers/feedback.py
 
 
 async def get_or_create_profile(db: AsyncSession, user_id) -> UserProfile:
@@ -241,53 +231,7 @@ async def update_preferences(
         raise HTTPException(status_code=500, detail=f"Failed to update preferences: {exc}") from exc
 
 
-@router.post("/feedback")
-async def submit_feedback(
-    request: FeedbackRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """Save user feedback."""
-    try:
-        feedback = Feedback(
-            user_id=current_user.id,
-            message=request.message,
-            category="general",
-            rating=request.rating if request.rating is not None else 0,
-            read_by_admin=False,
-        )
-        db.add(feedback)
-        await db.commit()
-        await db.refresh(feedback)
-
-        return api_success(
-            {"feedback_id": str(feedback.id)},
-            "Feedback submitted successfully",
-        )
-    except HTTPException:
-        raise
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to submit feedback: {exc}") from exc
+# Feedback submission handled by routers/feedback.py
 
 
-@router.get("/admin/feedback")
-async def get_admin_feedback(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """Return all feedback for the configured developer."""
-    try:
-        if not is_developer_user(current_user.email, settings.DEVELOPER_EMAIL):
-            raise HTTPException(status_code=403, detail="Developer access required")
-
-        result = await db.execute(select(Feedback).order_by(Feedback.created_at.desc()))
-        feedback_items = [feedback.to_dict() for feedback in result.scalars().all()]
-
-        return api_success(
-            {"feedback": feedback_items},
-            "Feedback list retrieved successfully",
-        )
-    except HTTPException:
-        raise
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to load feedback: {exc}") from exc
+# Admin feedback handled by routers/feedback.py
