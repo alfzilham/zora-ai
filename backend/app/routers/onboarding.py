@@ -64,16 +64,22 @@ class NameRequest(BaseModel):
 class TopicsRequest(BaseModel):
     """Request payload for saving onboarding topics."""
 
-    topics: list[str] = Field(..., min_length=2, max_length=12)
+    topics: list[str] = Field(...)
 
     @field_validator("topics")
     @classmethod
     def validate_topics(cls, value: list[str]) -> list[str]:
+        if not value:
+            raise ValueError("Topics cannot be empty")
+
+        if len(value) > 12:
+            raise ValueError("Maximum 12 topics allowed")
+
         cleaned_topics = []
         for topic in value:
             cleaned = topic.strip()
             if not cleaned:
-                raise ValueError("Topics cannot be empty")
+                raise ValueError("Topic item cannot be empty")
             if cleaned not in cleaned_topics:
                 cleaned_topics.append(cleaned)
 
