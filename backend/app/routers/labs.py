@@ -291,6 +291,8 @@ async def zora_image(
     request: ImageLabRequest,
     current_user: User = Depends(get_current_user),
 ):
+    # NOTE: Currently using Gemini as image provider (MVP mode).
+    # TODO: Replace with Nano Banana API when ready (see services/nano_banana.py)
     try:
         prompt_text = load_prompt_file("labs/image.txt")
         image_result = await generate_image(request.prompt, request.style, prompt_text)
