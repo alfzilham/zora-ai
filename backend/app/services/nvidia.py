@@ -12,14 +12,14 @@ from app.config import settings
 
 NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
 MODEL_CONFIG = {
-    "nemotron": ("nemotron-3-super-120b-a12b", "nvidia_api_key_nemotron"),
-    "deepseek": ("deepseek-v3.2", "nvidia_api_key_deepseek"),
-    "qwen": ("qwen3.5-122b-a10b", "nvidia_api_key_qwen"),
-    "kimi": ("kimi-k2.5", "nvidia_api_key_kimi"),
-    "minimax": ("minimax-m2.7", "nvidia_api_key_minimax"),
-    "glm": ("glm-5.1", "nvidia_api_key_glm"),
-    "gemma": ("gemma-4-31b-it", "nvidia_api_key_gemma"),
-    "mistral": ("mistral-small-4-119b-2603", "nvidia_api_key_mistral"),
+    "nemotron": ("nvidia/nemotron-3-super-120b-a12b", "nvidia_api_key_nemotron"),
+    "deepseek": ("deepseek-ai/deepseek-v3.2", "nvidia_api_key_deepseek"),
+    "qwen":     ("qwen/qwen3.5-122b-a10b", "nvidia_api_key_qwen"),
+    "kimi":     ("moonshotai/kimi-k2.5", "nvidia_api_key_kimi"),
+    "minimax":  ("minimax/minimax-m2.7", "nvidia_api_key_minimax"),
+    "glm":      ("z-ai/glm-5.1", "nvidia_api_key_glm"),
+    "gemma":    ("google/gemma-4-31b-it", "nvidia_api_key_gemma"),
+    "mistral":  ("mistralai/mistral-small-4-119b-2603", "nvidia_api_key_mistral"),
 }
 
 
