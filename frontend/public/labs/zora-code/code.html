@@ -1,0 +1,2734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zora Code</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --editor-bg: #1e1e1e;
+            --sidebar-bg: #252526;
+            --actbar-bg: #1a1a1a;
+            --panel-bg: #1e1e1e;
+            --menubar-bg: #2d2d2d;
+            --tab-active-bg: #1e1e1e;
+            --tab-inactive-bg: #2d2d2d;
+            --border: #3e3e42;
+            --border-light: #4a4a4f;
+            --text-primary: #cccccc;
+            --text-secondary: #969696;
+            --text-muted: #5a5a5a;
+            --accent: #0099CC;
+            --accent-dim: rgba(0, 153, 204, 0.12);
+            --accent-border: rgba(0, 153, 204, 0.3);
+            --statusbar-bg: #007ACC;
+            --hover: rgba(255, 255, 255, 0.06);
+            --hover-strong: rgba(255, 255, 255, 0.1);
+            --selection: rgba(0, 153, 204, 0.2);
+            --danger: #f44747;
+            --warn: #cca700;
+            --success: #89d185;
+            --actbar-w: 48px;
+            --sidebar-w: 240px;
+            --aipanel-w: 320px;
+            --menubar-h: 30px;
+            --tabbar-h: 35px;
+            --statusbar-h: 22px;
+            --terminal-h: 200px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--editor-bg);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            font-size: 13px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #424242 transparent;
+        }
+
+        *::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: #424242;
+            border-radius: 3px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        /* ── SHELL ── */
+        .app-shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── MENUBAR ── */
+        .menubar {
+            height: var(--menubar-h);
+            background: var(--menubar-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            user-select: none;
+            z-index: 200;
+        }
+
+        .menubar-logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 14px;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            border-right: 1px solid var(--border);
+            height: 100%;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .menubar-logo img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .menubar-menus {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            flex: 1;
+        }
+
+        .menu-item {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-trigger {
+            padding: 0 10px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            transition: background .1s, color .1s;
+            white-space: nowrap;
+        }
+
+        .menu-trigger:hover,
+        .menu-item.open .menu-trigger {
+            background: var(--hover-strong);
+            color: var(--text-primary);
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #252526;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            min-width: 200px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+            z-index: 1000;
+            display: none;
+            padding: 4px 0;
+        }
+
+        .menu-item.open .menu-dropdown {
+            display: block;
+        }
+
+        .menu-dd-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 20px 5px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: background .1s, color .1s;
+            gap: 24px;
+            white-space: nowrap;
+        }
+
+        .menu-dd-item:hover {
+            background: var(--accent-dim);
+            color: var(--text-primary);
+        }
+
+        .menu-dd-item .kbd {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .menu-dd-sep {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .menu-dd-item.disabled {
+            opacity: .4;
+            pointer-events: none;
+        }
+
+        .menubar-right {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 0 8px;
+            flex-shrink: 0;
+        }
+
+        .menubar-icon-btn {
+            width: 28px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 13px;
+            transition: background .1s, color .1s;
+        }
+
+        .menubar-icon-btn:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+
+        /* ── MAIN BODY ── */
+        .main-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── ACTIVITY BAR ── */
+        .actbar {
+            width: var(--actbar-w);
+            background: var(--actbar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 0;
+            gap: 2px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .actbar-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 18px;
+            transition: color .15s, background .15s;
+            position: relative;
+        }
+
+        .actbar-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .actbar-btn.active {
+            color: var(--text-primary);
+            border-left: 2px solid var(--accent);
+            border-radius: 0 4px 4px 0;
+            margin-left: -1px;
+            width: 41px;
+        }
+
+        .actbar-btn .tooltip {
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: #454545;
+            color: #fff;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .15s;
+            z-index: 9999;
+        }
+
+        .actbar-btn:hover .tooltip {
+            opacity: 1;
+        }
+
+        .actbar-spacer {
+            flex: 1;
+        }
+
+        /* ── SIDE PANEL ── */
+        .side-panel {
+            width: var(--sidebar-w);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: width .2s ease;
+        }
+
+        .side-panel.collapsed {
+            width: 0;
+            border-right: none;
+        }
+
+        .panel-header {
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .panel-action-btn {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: color .1s, background .1s;
+        }
+
+        .panel-action-btn:hover {
+            color: var(--text-primary);
+            background: var(--hover);
+        }
+
+        .panel-view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .panel-view.active {
+            display: flex;
+        }
+
+        /* ── FILE EXPLORER ── */
+        .file-explorer {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 4px 0;
+        }
+
+        .file-tree {
+            padding: 0;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            height: 22px;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 3px;
+            margin: 0 4px;
+            position: relative;
+            transition: background .08s;
+        }
+
+        .tree-item:hover {
+            background: var(--hover);
+        }
+
+        .tree-item.active {
+            background: var(--selection);
+        }
+
+        .tree-arrow {
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 10px;
+            color: var(--text-muted);
+            transition: transform .15s;
+        }
+
+        .tree-arrow.open {
+            transform: rotate(90deg);
+        }
+
+        .tree-arrow.leaf {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tree-icon {
+            font-size: 13px;
+            width: 16px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tree-item-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .tree-item.active .tree-item-name {
+            color: var(--text-primary);
+        }
+
+        .tree-item-actions {
+            display: none;
+            gap: 2px;
+            position: absolute;
+            right: 6px;
+        }
+
+        .tree-item:hover .tree-item-actions {
+            display: flex;
+        }
+
+        .tree-act-btn {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 11px;
+            transition: color .1s, background .1s;
+        }
+
+        .tree-act-btn:hover {
+            color: var(--text-primary);
+            background: var(--hover-strong);
+        }
+
+        .tree-children {
+            display: none;
+        }
+
+        .tree-children.open {
+            display: block;
+        }
+
+        /* File colors */
+        .icon-js {
+            color: #f7df1e;
+        }
+
+        .icon-ts {
+            color: #3178c6;
+        }
+
+        .icon-jsx {
+            color: #61dafb;
+        }
+
+        .icon-tsx {
+            color: #3178c6;
+        }
+
+        .icon-py {
+            color: #3572A5;
+        }
+
+        .icon-html {
+            color: #e34c26;
+        }
+
+        .icon-css {
+            color: #563d7c;
+        }
+
+        .icon-json {
+            color: #cbcb41;
+        }
+
+        .icon-md {
+            color: #519aba;
+        }
+
+        .icon-env {
+            color: #ffd700;
+        }
+
+        .icon-sh {
+            color: #89e051;
+        }
+
+        .icon-folder {
+            color: #dcb67a;
+        }
+
+        .icon-default {
+            color: var(--text-muted);
+        }
+
+        /* No project state */
+        .no-project-state {
+            padding: 24px 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .no-project-state .np-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            opacity: .3;
+        }
+
+        .no-project-state .np-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        /* ── CENTER AREA ── */
+        .center-area {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── TAB BAR ── */
+        .tab-bar {
+            height: var(--tabbar-h);
+            background: var(--tab-inactive-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-end;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-shrink: 0;
+            scrollbar-width: none;
+        }
+
+        .tab-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 12px;
+            height: 34px;
+            background: var(--tab-inactive-bg);
+            border-right: 1px solid var(--border);
+            border-top: 1px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: 90px;
+            max-width: 180px;
+            position: relative;
+            user-select: none;
+            transition: background .1s;
+        }
+
+        .editor-tab:hover {
+            background: #2a2d2e;
+        }
+
+        .editor-tab.active {
+            background: var(--tab-active-bg);
+            border-top: 1px solid var(--accent);
+        }
+
+        .tab-icon {
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .tab-name {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .editor-tab.active .tab-name {
+            color: var(--text-primary);
+        }
+
+        .editor-tab.dirty .tab-name::after {
+            content: '●';
+            font-size: 8px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+            vertical-align: super;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            font-size: 10px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity .1s, background .1s;
+        }
+
+        .editor-tab:hover .tab-close,
+        .editor-tab.active .tab-close {
+            opacity: 1;
+        }
+
+        .tab-close:hover {
+            background: var(--hover-strong);
+            color: var(--text-primary);
+        }
+
+        .tab-new-btn {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: color .1s;
+        }
+
+        .tab-new-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* ── EDITOR WRAPPER ── */
+        .editor-wrapper {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* ── BREADCRUMB ── */
+        .breadcrumb-bar {
+            height: 22px;
+            background: var(--editor-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .breadcrumb-sep {
+            color: var(--border-light);
+        }
+
+        .breadcrumb-item {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .breadcrumb-item.current {
+            color: var(--text-secondary);
+            cursor: default;
+        }
+
+        /* ── WELCOME SCREEN ── */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: var(--editor-bg);
+        }
+
+        .welcome-logo {
+            width: 56px;
+            height: 56px;
+            opacity: .25;
+        }
+
+        .welcome-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            opacity: .4;
+            letter-spacing: -.02em;
+        }
+
+        .welcome-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 28px;
+            font-size: 12px;
+        }
+
+        .welcome-shortcut {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            color: var(--text-muted);
+        }
+
+        .welcome-shortcut kbd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: #2d2d2d;
+            border: 1px solid #444;
+            border-radius: 3px;
+            padding: 1px 5px;
+            color: var(--text-secondary);
+        }
+
+        /* ── CODEMIRROR HOST ── */
+        #cmHost {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+        }
+
+        #cmHost .cm-editor {
+            height: 100% !important;
+            background: var(--editor-bg) !important;
+        }
+
+        #cmHost .cm-scroller {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.65 !important;
+            overflow: auto;
+        }
+
+        /* ── RESIZER ── */
+        .resizer {
+            height: 4px;
+            background: transparent;
+            cursor: row-resize;
+            flex-shrink: 0;
+            transition: background .15s;
+        }
+
+        .resizer:hover,
+        .resizer.dragging {
+            background: var(--accent);
+        }
+
+        /* ── TERMINAL PANEL ── */
+        .terminal-panel {
+            height: var(--terminal-h);
+            background: var(--panel-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .terminal-panel.hidden {
+            display: none;
+        }
+
+        .terminal-header {
+            height: 35px;
+            display: flex;
+            align-items: center;
+            background: #252526;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            padding: 0 8px;
+            gap: 4px;
+        }
+
+        .terminal-tabs {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .terminal-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background .1s, color .1s;
+            flex-shrink: 0;
+        }
+
+        .terminal-tab:hover {
+            background: var(--hover);
+            color: var(--text-secondary);
+        }
+
+        .terminal-tab.active {
+            background: var(--editor-bg);
+            color: var(--text-primary);
+        }
+
+        .terminal-tab-close {
+            font-size: 9px;
+            opacity: 0;
+            transition: opacity .1s;
+        }
+
+        .terminal-tab:hover .terminal-tab-close {
+            opacity: 1;
+        }
+
+        .terminal-actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: auto;
+        }
+
+        .term-act-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: color .1s, background .1s;
+        }
+
+        .term-act-btn:hover {
+            color: var(--text-primary);
+            background: var(--hover);
+        }
+
+        .terminal-body {
+            flex: 1;
+            overflow: hidden;
+            padding: 6px 0 0 8px;
+        }
+
+        .terminal-fake {
+            height: 100%;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            padding: 0 8px 8px 0;
+        }
+
+        .term-line {
+            display: flex;
+            gap: 8px;
+        }
+
+        .term-prompt {
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .term-cmd {
+            color: var(--text-primary);
+        }
+
+        .term-output {
+            color: var(--text-secondary);
+        }
+
+        .term-input-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .term-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            caret-color: var(--accent);
+        }
+
+        /* ── AI PANEL ── */
+        .ai-panel {
+            width: var(--aipanel-w);
+            background: #1a1a2e;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: width .2s ease;
+        }
+
+        .ai-panel.collapsed {
+            width: 0;
+            border-left: none;
+        }
+
+        .ai-panel-header {
+            height: 35px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .ai-panel-logo {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .ai-panel-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: .04em;
+            flex: 1;
+        }
+
+        .ai-panel-mode {
+            display: flex;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 6px;
+            padding: 2px;
+            gap: 2px;
+        }
+
+        .ai-mode-btn {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            transition: all .15s;
+        }
+
+        .ai-mode-btn.active {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .ai-chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ai-welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            text-align: center;
+            padding: 24px 12px;
+        }
+
+        .ai-welcome-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--accent);
+        }
+
+        .ai-welcome-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .ai-welcome-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .ai-suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .ai-suggestion-chip {
+            padding: 7px 10px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+            transition: all .15s;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .ai-suggestion-chip:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent-border);
+            color: var(--text-primary);
+        }
+
+        .ai-msg {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .ai-msg-header {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .04em;
+        }
+
+        .ai-msg.user .ai-msg-header {
+            color: var(--text-muted);
+            justify-content: flex-end;
+        }
+
+        .ai-msg.zora .ai-msg-header {
+            color: var(--accent);
+        }
+
+        .ai-msg-bubble {
+            padding: 9px 11px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        .ai-msg.user .ai-msg-bubble {
+            background: rgba(255, 255, 255, .06);
+            color: var(--text-secondary);
+            border-radius: 8px 8px 2px 8px;
+            align-self: flex-end;
+            max-width: 92%;
+        }
+
+        .ai-msg.zora .ai-msg-bubble {
+            background: rgba(0, 153, 204, .07);
+            border: 1px solid rgba(0, 153, 204, .14);
+            color: var(--text-primary);
+            border-radius: 2px 8px 8px 8px;
+        }
+
+        .ai-msg.zora .ai-msg-bubble code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: rgba(0, 0, 0, .35);
+            border-radius: 3px;
+            padding: 0 4px;
+            color: #ce9178;
+        }
+
+        .ai-input-area {
+            border-top: 1px solid var(--border);
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        .ai-input-box {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 9px;
+            transition: border-color .2s;
+        }
+
+        .ai-input-box:focus-within {
+            border-color: var(--accent-border);
+        }
+
+        .ai-textarea {
+            width: 100%;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+            resize: none;
+            line-height: 1.5;
+            min-height: 36px;
+            max-height: 100px;
+        }
+
+        .ai-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .ai-input-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .ai-input-left {
+            display: flex;
+            gap: 4px;
+        }
+
+        .ai-input-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: color .1s;
+        }
+
+        .ai-input-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .ai-send-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--accent);
+            border: none;
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: opacity .15s, transform .1s;
+        }
+
+        .ai-send-btn:hover {
+            opacity: .85;
+            transform: scale(1.05);
+        }
+
+        .ai-thinking {
+            display: flex;
+            gap: 4px;
+            padding: 8px 11px;
+        }
+
+        .ai-thinking span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: aiDot 1.2s infinite;
+        }
+
+        .ai-thinking span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .ai-thinking span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes aiDot {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(.6);
+                opacity: .4;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ── STATUS BAR ── */
+        .statusbar {
+            height: var(--statusbar-h);
+            background: var(--statusbar-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .statusbar-left,
+        .statusbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .statusbar-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, .85);
+            cursor: pointer;
+            padding: 0 4px;
+            border-radius: 3px;
+            height: 18px;
+            transition: background .1s;
+            white-space: nowrap;
+        }
+
+        .statusbar-item:hover {
+            background: rgba(255, 255, 255, .12);
+        }
+
+        .statusbar-item i {
+            font-size: 10px;
+        }
+
+        /* ── CONTEXT MENU ── */
+        .context-menu {
+            position: fixed;
+            background: #252526;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            min-width: 180px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
+            z-index: 9999;
+            padding: 4px 0;
+            display: none;
+        }
+
+        .context-menu.visible {
+            display: block;
+        }
+
+        .ctx-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 16px 5px 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: background .1s, color .1s;
+        }
+
+        .ctx-item:hover {
+            background: var(--accent-dim);
+            color: var(--text-primary);
+        }
+
+        .ctx-item.danger:hover {
+            background: rgba(244, 71, 71, .15);
+            color: var(--danger);
+        }
+
+        .ctx-sep {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .ctx-icon {
+            width: 14px;
+            text-align: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: #252526;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            width: 460px;
+            max-width: 94vw;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, .7);
+            transform: translateY(12px);
+            transition: transform .2s;
+            overflow: hidden;
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 11px;
+            transition: color .1s, background .1s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: var(--hover);
+        }
+
+        .modal-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: #1e1e1e;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 7px 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .modal-input:focus {
+            border-color: var(--accent);
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 7px;
+        }
+
+        .template-card {
+            background: #1e1e1e;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 11px 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all .15s;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-border);
+            background: var(--accent-dim);
+        }
+
+        .template-card.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .template-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .template-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 6px 16px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            transition: all .15s;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            opacity: .85;
+        }
+
+        /* ── TOAST ── */
+        .toast-container {
+            position: fixed;
+            bottom: 32px;
+            right: 16px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #323233;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 9px 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+            animation: toastIn .2s ease;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .toast.success {
+            border-left: 3px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 3px solid var(--danger);
+        }
+
+        .toast.info {
+            border-left: 3px solid var(--accent);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── SEARCH PANEL ── */
+        .search-panel {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .search-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #3c3c3c;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+
+        .search-input-wrap:focus-within {
+            border-color: var(--accent-border);
+        }
+
+        .search-inp {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .search-inp::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-results {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <!-- ══ MENUBAR ══ -->
+        <div class="menubar">
+            <a class="menubar-logo" href="/labs/index.html">
+                <img src="/assets/images/logo/logo.png" alt="ZORA"> ZORA CODE
+            </a>
+            <div class="menubar-menus">
+                <div class="menu-item" data-menu="file">
+                    <button class="menu-trigger">File</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-dd-item" data-action="new-project"><span>New Project</span><span
+                                class="kbd">Ctrl+Shift+N</span></div>
+                        <div class="menu-dd-item" data-action="new-file"><span>New File</span><span
+                                class="kbd">Ctrl+N</span></div>
+                        <div class="menu-dd-sep"></div>
+                        <div class="menu-dd-item" data-action="open-file"><span>Open File…</span><span
+                                class="kbd">Ctrl+O</span></div>
+                        <div class="menu-dd-sep"></div>
+                        <div class="menu-dd-item" data-action="save"><span>Save</span><span class="kbd">Ctrl+S</span>
+                        </div>
+                        <div class="menu-dd-item" data-action="save-all"><span>Save All</span><span
+                                class="kbd">Ctrl+Shift+S</span></div>
+                    </div>
+                </div>
+                <div class="menu-item" data-menu="edit">
+                    <button class="menu-trigger">Edit</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-dd-item" data-action="undo"><span>Undo</span><span class="kbd">Ctrl+Z</span>
+                        </div>
+                        <div class="menu-dd-item" data-action="redo"><span>Redo</span><span class="kbd">Ctrl+Y</span>
+                        </div>
+                        <div class="menu-dd-sep"></div>
+                        <div class="menu-dd-item" data-action="find"><span>Find</span><span class="kbd">Ctrl+F</span>
+                        </div>
+                        <div class="menu-dd-item" data-action="toggle-comment"><span>Toggle Comment</span><span
+                                class="kbd">Ctrl+/</span></div>
+                    </div>
+                </div>
+                <div class="menu-item" data-menu="view">
+                    <button class="menu-trigger">View</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-dd-item" data-action="toggle-sidebar"><span>Toggle Sidebar</span><span
+                                class="kbd">Ctrl+B</span></div>
+                        <div class="menu-dd-item" data-action="toggle-terminal"><span>Toggle Terminal</span><span
+                                class="kbd">Ctrl+`</span></div>
+                        <div class="menu-dd-item" data-action="toggle-ai"><span>Toggle AI Panel</span><span
+                                class="kbd">Ctrl+K Z</span></div>
+                    </div>
+                </div>
+                <div class="menu-item" data-menu="run">
+                    <button class="menu-trigger">Run</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-dd-item" data-action="run-file"><span>Run Current File</span><span
+                                class="kbd">Ctrl+Enter</span></div>
+                        <div class="menu-dd-item disabled"><span>Stop</span><span class="kbd">Shift+F5</span></div>
+                    </div>
+                </div>
+                <div class="menu-item" data-menu="terminal">
+                    <button class="menu-trigger">Terminal</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-dd-item" data-action="new-terminal"><span>New Terminal</span></div>
+                        <div class="menu-dd-item" data-action="toggle-terminal"><span>Toggle Terminal</span><span
+                                class="kbd">Ctrl+`</span></div>
+                        <div class="menu-dd-sep"></div>
+                        <div class="menu-dd-item" data-action="clear-terminal"><span>Clear Terminal</span></div>
+                    </div>
+                </div>
+                <div class="menu-item" data-menu="help">
+                    <button class="menu-trigger">Help</button>
+                    <div class="menu-dropdown">
+                        <div class="menu-dd-item" data-action="shortcuts"><span>Keyboard Shortcuts</span></div>
+                        <div class="menu-dd-sep"></div>
+                        <div class="menu-dd-item" data-action="docs"><span>ZORA Docs</span></div>
+                        <div class="menu-dd-item" data-action="back-chat"><span>Back to Chat</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="menubar-right">
+                <button class="menubar-icon-btn" data-action="run-file" title="Run (Ctrl+Enter)"><i
+                        class="fi fi-rr-play"></i></button>
+                <button class="menubar-icon-btn" id="aiToggleBtn" title="AI Panel (Ctrl+K Z)"><i
+                        class="fi fi-rr-brain-circuit"></i></button>
+            </div>
+        </div>
+
+        <!-- ══ MAIN BODY ══ -->
+        <div class="main-body">
+
+            <!-- ── ACTIVITY BAR ── -->
+            <div class="actbar">
+                <button class="actbar-btn active" data-panel="explorer">
+                    <i class="fi fi-rr-copy-alt"></i>
+                    <span class="tooltip">Explorer</span>
+                </button>
+                <button class="actbar-btn" data-panel="search">
+                    <i class="fi fi-rr-search"></i>
+                    <span class="tooltip">Search</span>
+                </button>
+                <button class="actbar-btn" data-panel="git">
+                    <i class="fi fi-rr-code-branch"></i>
+                    <span class="tooltip">Source Control</span>
+                </button>
+                <button class="actbar-btn" data-panel="extensions">
+                    <i class="fi fi-rr-grid"></i>
+                    <span class="tooltip">Extensions</span>
+                </button>
+                <div class="actbar-spacer"></div>
+                <button class="actbar-btn" data-panel="settings">
+                    <i class="fi fi-rr-settings"></i>
+                    <span class="tooltip">Settings</span>
+                </button>
+            </div>
+
+            <!-- ── SIDE PANEL ── -->
+            <div class="side-panel" id="sidePanel">
+
+                <!-- Explorer -->
+                <div class="panel-view active" id="panel-explorer">
+                    <div class="panel-header">
+                        <span class="panel-title" id="explorerTitle">Explorer</span>
+                        <div class="panel-actions">
+                            <button class="panel-action-btn" data-action="new-file" title="New File"><i
+                                    class="fi fi-rr-file-add"></i></button>
+                            <button class="panel-action-btn" data-action="new-folder" title="New Folder"><i
+                                    class="fi fi-rr-folder-add"></i></button>
+                            <button class="panel-action-btn" data-action="refresh-tree" title="Refresh"><i
+                                    class="fi fi-rr-refresh"></i></button>
+                        </div>
+                    </div>
+                    <div class="file-explorer" id="fileExplorer">
+                        <div class="no-project-state" id="noProjectState">
+                            <div class="np-icon">📁</div>
+                            <div class="np-title">No project open</div>
+                            <div style="margin-bottom:12px;">Create a new project to get started.</div>
+                            <button class="btn btn-primary" style="font-size:11px;padding:5px 14px;"
+                                data-action="new-project">New Project</button>
+                        </div>
+                        <div id="fileTree" class="file-tree" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="panel-view" id="panel-search">
+                    <div class="panel-header"><span class="panel-title">Search</span></div>
+                    <div class="search-panel">
+                        <div class="search-input-wrap">
+                            <i class="fi fi-rr-search" style="font-size:11px;color:var(--text-muted);"></i>
+                            <input type="text" class="search-inp" id="globalSearchInput" placeholder="Search files…">
+                        </div>
+                        <div class="search-results" id="searchResults">Type to search across files</div>
+                    </div>
+                </div>
+
+                <!-- Git -->
+                <div class="panel-view" id="panel-git">
+                    <div class="panel-header"><span class="panel-title">Source Control</span></div>
+                    <div
+                        style="padding:24px 16px;text-align:center;color:var(--text-muted);font-size:12px;line-height:1.7;">
+                        <div style="font-size:22px;margin-bottom:8px;opacity:.3">🔀</div>
+                        <div style="font-weight:700;color:var(--text-secondary);margin-bottom:4px;">Git Integration
+                        </div>
+                        Coming in Phase 5
+                    </div>
+                </div>
+
+                <!-- Extensions -->
+                <div class="panel-view" id="panel-extensions">
+                    <div class="panel-header"><span class="panel-title">Extensions</span></div>
+                    <div
+                        style="padding:24px 16px;text-align:center;color:var(--text-muted);font-size:12px;line-height:1.7;">
+                        <div style="font-size:22px;margin-bottom:8px;opacity:.3">🧩</div>
+                        <div style="font-weight:700;color:var(--text-secondary);margin-bottom:4px;">Marketplace</div>
+                        Coming in Phase 4
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="panel-view" id="panel-settings">
+                    <div class="panel-header"><span class="panel-title">Settings</span></div>
+                    <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+                        <div
+                            style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;">
+                            Editor</div>
+                        <label
+                            style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;justify-content:space-between;">
+                            Font Size
+                            <input type="number" id="settingFontSize" value="14" min="10" max="24"
+                                style="width:48px;background:#1e1e1e;border:1px solid var(--border);border-radius:4px;color:var(--text-primary);padding:2px 6px;font-size:12px;font-family:inherit;outline:none;">
+                        </label>
+                        <label
+                            style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;justify-content:space-between;">
+                            Tab Size
+                            <select id="settingTabSize"
+                                style="background:#1e1e1e;border:1px solid var(--border);border-radius:4px;color:var(--text-primary);padding:2px 6px;font-size:12px;font-family:inherit;outline:none;">
+                                <option value="2">2</option>
+                                <option value="4" selected>4</option>
+                                <option value="8">8</option>
+                            </select>
+                        </label>
+                        <label
+                            style="font-size:12px;color:var(--text-secondary);display:flex;align-items:center;justify-content:space-between;">
+                            Word Wrap
+                            <input type="checkbox" id="settingWordWrap" checked style="accent-color:var(--accent);">
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── CENTER AREA ── -->
+            <div class="center-area">
+
+                <!-- Tab Bar -->
+                <div class="tab-bar" id="tabBar">
+                    <div class="tab-new-btn" data-action="new-file" title="New File">+</div>
+                </div>
+
+                <!-- Breadcrumb -->
+                <div class="breadcrumb-bar" id="breadcrumb">
+                    <span style="color:var(--text-muted);font-size:11px;">ZORA Code — Open a file to start
+                        editing</span>
+                </div>
+
+                <!-- Editor Wrapper -->
+                <div class="editor-wrapper">
+                    <div class="welcome-screen" id="welcomeScreen">
+                        <img src="/assets/images/logo/logo.png" alt="" class="welcome-logo">
+                        <div class="welcome-title">ZORA Code</div>
+                        <div class="welcome-grid">
+                            <div class="welcome-shortcut"><span>New Project</span><kbd>Ctrl+Shift+N</kbd></div>
+                            <div class="welcome-shortcut"><span>Open File</span><kbd>Ctrl+O</kbd></div>
+                            <div class="welcome-shortcut"><span>Toggle Terminal</span><kbd>Ctrl+`</kbd></div>
+                            <div class="welcome-shortcut"><span>AI Agent</span><kbd>Ctrl+K Z</kbd></div>
+                            <div class="welcome-shortcut"><span>Save File</span><kbd>Ctrl+S</kbd></div>
+                            <div class="welcome-shortcut"><span>Toggle Sidebar</span><kbd>Ctrl+B</kbd></div>
+                        </div>
+                    </div>
+                    <div id="cmHost"></div>
+                </div>
+
+                <!-- Resizer -->
+                <div class="resizer" id="termResizer"></div>
+
+                <!-- Terminal Panel -->
+                <div class="terminal-panel" id="terminalPanel">
+                    <div class="terminal-header">
+                        <div class="terminal-tabs" id="terminalTabs">
+                            <div class="terminal-tab active">
+                                <i class="fi fi-rr-terminal" style="font-size:10px;"></i>
+                                <span>bash</span>
+                                <span class="terminal-tab-close">✕</span>
+                            </div>
+                        </div>
+                        <div class="terminal-actions">
+                            <button class="term-act-btn" data-action="new-terminal" title="New Terminal"><i
+                                    class="fi fi-rr-add"></i></button>
+                            <button class="term-act-btn" data-action="clear-terminal" title="Clear"><i
+                                    class="fi fi-rr-clean"></i></button>
+                            <button class="term-act-btn" data-action="toggle-terminal" title="Close Panel"><i
+                                    class="fi fi-rr-cross"></i></button>
+                        </div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-fake" id="termOutput">
+                            <div class="term-line">
+                                <span class="term-prompt">ZORA@code:~$</span>
+                                <span class="term-cmd">Welcome to ZORA Code Terminal v1.0</span>
+                            </div>
+                            <div class="term-output" style="color:var(--accent);margin:2px 0 6px;">✦ Phase 1 Shell —
+                                Type <span style="color:#fff;">help</span> for available commands</div>
+                            <div class="term-input-line">
+                                <span class="term-prompt">ZORA@code:~$</span>
+                                <input type="text" class="term-input" id="termInput" placeholder="Type a command…"
+                                    autocomplete="off" spellcheck="false">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── AI PANEL ── -->
+            <div class="ai-panel" id="aiPanel">
+                <div class="ai-panel-header">
+                    <img src="/assets/images/logo/logo.png" alt="ZORA" class="ai-panel-logo">
+                    <span class="ai-panel-title">ZORA AI</span>
+                    <div class="ai-panel-mode">
+                        <button class="ai-mode-btn active" data-mode="chat">Chat</button>
+                        <button class="ai-mode-btn" data-mode="agent">Agent</button>
+                    </div>
+                </div>
+                <div class="ai-chat-area" id="aiChatArea">
+                    <div class="ai-welcome" id="aiWelcome">
+                        <div class="ai-welcome-icon"><i class="fi fi-rr-brain-circuit"></i></div>
+                        <div class="ai-welcome-title">ZORA Code AI</div>
+                        <div class="ai-welcome-desc">Powered by Qwen — Ask me to write, debug, explain, or refactor your
+                            code.</div>
+                        <div class="ai-suggestions">
+                            <button class="ai-suggestion-chip" data-prompt="Explain the code in the current file">💡
+                                Explain this file</button>
+                            <button class="ai-suggestion-chip"
+                                data-prompt="Find and fix any bugs in the current file">🐛 Find & fix bugs</button>
+                            <button class="ai-suggestion-chip" data-prompt="Write unit tests for the current file">🧪
+                                Generate tests</button>
+                            <button class="ai-suggestion-chip" data-prompt="Refactor this code for better readability">⚡
+                                Refactor code</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-input-area">
+                    <div class="ai-input-box">
+                        <textarea class="ai-textarea" id="aiInput"
+                            placeholder="Ask ZORA to write, fix, or explain code…" rows="2"></textarea>
+                        <div class="ai-input-actions">
+                            <div class="ai-input-left">
+                                <button class="ai-input-btn" title="Attach context"><i
+                                        class="fi fi-rr-clip"></i></button>
+                                <button class="ai-input-btn" title="Extended thinking"><i
+                                        class="fi fi-rr-bolt"></i></button>
+                            </div>
+                            <button class="ai-send-btn" id="aiSendBtn"><i class="fi fi-rr-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ STATUS BAR ══ -->
+        <div class="statusbar">
+            <div class="statusbar-left">
+                <div class="statusbar-item"><i class="fi fi-rr-code-branch"></i><span>main</span></div>
+                <div class="statusbar-item" id="sbErrors"><i class="fi fi-rr-cross-circle"></i><span>0</span> <i
+                        class="fi fi-rr-triangle-warning" style="margin-left:4px;"></i><span>0</span></div>
+            </div>
+            <div class="statusbar-right">
+                <div class="statusbar-item" id="sbLang">Plain Text</div>
+                <div class="statusbar-item" id="sbCursor">Ln 1, Col 1</div>
+                <div class="statusbar-item">UTF-8</div>
+                <div class="statusbar-item">LF</div>
+                <div class="statusbar-item"><i class="fi fi-rr-brain-circuit"></i><span>ZORA AI</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── CONTEXT MENU ── -->
+    <div class="context-menu" id="contextMenu">
+        <div class="ctx-item" data-ctx="open"><span class="ctx-icon"><i class="fi fi-rr-file"></i></span>Open</div>
+        <div class="ctx-item" data-ctx="rename"><span class="ctx-icon"><i class="fi fi-rr-pencil"></i></span>Rename
+        </div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item" data-ctx="new-file"><span class="ctx-icon"><i class="fi fi-rr-file-add"></i></span>New
+            File</div>
+        <div class="ctx-item" data-ctx="new-folder"><span class="ctx-icon"><i class="fi fi-rr-folder-add"></i></span>New
+            Folder</div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item" data-ctx="copy-path"><span class="ctx-icon"><i class="fi fi-rr-link"></i></span>Copy Path
+        </div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item danger" data-ctx="delete"><span class="ctx-icon"><i
+                    class="fi fi-rr-trash"></i></span>Delete</div>
+    </div>
+
+    <!-- ── NEW PROJECT MODAL ── -->
+    <div class="modal-overlay" id="newProjectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">New Project</span>
+                <button class="modal-close" data-close="newProjectModal"><i class="fi fi-rr-cross"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label>Project Name</label>
+                    <input type="text" class="modal-input" id="projectNameInput" placeholder="my-awesome-project"
+                        value="my-project">
+                </div>
+                <div class="modal-field">
+                    <label>Template</label>
+                    <div class="template-grid">
+                        <div class="template-card selected" data-template="vanilla">
+                            <div class="template-icon">📄</div>
+                            <div class="template-name">Vanilla JS</div>
+                        </div>
+                        <div class="template-card" data-template="node">
+                            <div class="template-icon">🟢</div>
+                            <div class="template-name">Node.js</div>
+                        </div>
+                        <div class="template-card" data-template="react">
+                            <div class="template-icon">⚛️</div>
+                            <div class="template-name">React</div>
+                        </div>
+                        <div class="template-card" data-template="python">
+                            <div class="template-icon">🐍</div>
+                            <div class="template-name">Python</div>
+                        </div>
+                        <div class="template-card" data-template="typescript">
+                            <div class="template-icon">🔷</div>
+                            <div class="template-name">TypeScript</div>
+                        </div>
+                        <div class="template-card" data-template="blank">
+                            <div class="template-icon">⬜</div>
+                            <div class="template-name">Blank</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" data-close="newProjectModal">Cancel</button>
+                <button class="btn btn-primary" id="createProjectBtn">Create Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TOAST CONTAINER ── -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script type="module">
+        // ═══════════════════════════════════════════
+        //  ZORA CODE — Phase 1 Core Logic
+        // ═══════════════════════════════════════════
+
+        import { EditorState } from 'https://cdn.jsdelivr.net/npm/@codemirror/state@6/dist/index.js';
+        import {
+            EditorView, keymap, lineNumbers, highlightActiveLineGutter,
+            highlightSpecialChars, drawSelection, dropCursor,
+            rectangularSelection, highlightActiveLine
+        } from 'https://cdn.jsdelivr.net/npm/@codemirror/view@6/dist/index.js';
+        import { defaultKeymap, history, historyKeymap, indentWithTab } from 'https://cdn.jsdelivr.net/npm/@codemirror/commands@6/dist/index.js';
+        import {
+            foldGutter, indentOnInput, syntaxHighlighting,
+            bracketMatching, foldKeymap
+        } from 'https://cdn.jsdelivr.net/npm/@codemirror/language@6/dist/index.js';
+        import {
+            closeBrackets, autocompletion, closeBracketsKeymap,
+            completionKeymap
+        } from 'https://cdn.jsdelivr.net/npm/@codemirror/autocomplete@6/dist/index.js';
+        import { searchKeymap, highlightSelectionMatches } from 'https://cdn.jsdelivr.net/npm/@codemirror/search@6/dist/index.js';
+        import { lintKeymap } from 'https://cdn.jsdelivr.net/npm/@codemirror/lint@6/dist/index.js';
+        import { javascript } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-javascript@6/dist/index.js';
+        import { python } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-python@6/dist/index.js';
+        import { html } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-html@6/dist/index.js';
+        import { css } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-css@6/dist/index.js';
+        import { json } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-json@6/dist/index.js';
+        import { markdown } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-markdown@6/dist/index.js';
+        import { sql } from 'https://cdn.jsdelivr.net/npm/@codemirror/lang-sql@6/dist/index.js';
+        import { tags } from 'https://cdn.jsdelivr.net/npm/@lezer/highlight@1/dist/index.js';
+
+        // ── ZORA Dark Theme ──────────────────────────
+        const zoraDark = EditorView.theme({
+            '&': { backgroundColor: '#1e1e1e', color: '#cccccc', height: '100%' },
+            '.cm-content': { caretColor: '#0099CC', padding: '10px 0' },
+            '.cm-cursor': { borderLeftColor: '#0099CC', borderLeftWidth: '2px' },
+            '.cm-selectionBackground, ::selection': { backgroundColor: 'rgba(0,153,204,.25)' },
+            '.cm-gutters': { backgroundColor: '#1e1e1e', color: '#5a5a5a', border: 'none', borderRight: '1px solid #3e3e42' },
+            '.cm-gutterElement': { padding: '0 8px 0 4px' },
+            '.cm-lineNumbers .cm-gutterElement': { minWidth: '46px', textAlign: 'right' },
+            '.cm-activeLineGutter': { backgroundColor: 'rgba(255,255,255,.04)', color: '#aaa' },
+            '.cm-activeLine': { backgroundColor: 'rgba(255,255,255,.025)' },
+            '.cm-foldGutter': { width: '14px' },
+            '.cm-searchMatch': { backgroundColor: 'rgba(234,197,71,.3)', outline: '1px solid rgba(234,197,71,.5)' },
+            '.cm-searchMatch.cm-searchMatch-selected': { backgroundColor: 'rgba(0,153,204,.35)' },
+            '.cm-selectionMatch': { backgroundColor: 'rgba(255,255,255,.07)' },
+            '.cm-matchingBracket': { backgroundColor: 'rgba(0,153,204,.2)', outline: '1px solid rgba(0,153,204,.5)' },
+            '.cm-tooltip': { backgroundColor: '#252526', border: '1px solid #454545', borderRadius: '4px', boxShadow: '0 4px 16px rgba(0,0,0,.4)' },
+            '.cm-tooltip.cm-tooltip-autocomplete > ul > li[aria-selected]': { backgroundColor: 'rgba(0,153,204,.25)' },
+            '.cm-scroller': { overflow: 'auto' },
+        }, { dark: true });
+
+        const zoraSyntax = syntaxHighlighting([
+            { tag: tags.keyword, color: '#569cd6' },
+            { tag: tags.controlKeyword, color: '#c586c0' },
+            { tag: tags.string, color: '#ce9178' },
+            { tag: tags.special(tags.string), color: '#ce9178' },
+            { tag: tags.number, color: '#b5cea8' },
+            { tag: tags.bool, color: '#569cd6' },
+            { tag: tags.null, color: '#569cd6' },
+            { tag: tags.comment, color: '#6a9955', fontStyle: 'italic' },
+            { tag: tags.lineComment, color: '#6a9955', fontStyle: 'italic' },
+            { tag: tags.blockComment, color: '#6a9955', fontStyle: 'italic' },
+            { tag: tags.function(tags.variableName), color: '#dcdcaa' },
+            { tag: tags.definition(tags.variableName), color: '#9cdcfe' },
+            { tag: tags.variableName, color: '#9cdcfe' },
+            { tag: tags.propertyName, color: '#9cdcfe' },
+            { tag: tags.attributeName, color: '#9cdcfe' },
+            { tag: tags.className, color: '#4ec9b0' },
+            { tag: tags.typeName, color: '#4ec9b0' },
+            { tag: tags.tagName, color: '#569cd6' },
+            { tag: tags.angleBracket, color: '#808080' },
+            { tag: tags.regexp, color: '#d16969' },
+            { tag: tags.escape, color: '#d7ba7d' },
+            { tag: tags.operator, color: '#cccccc' },
+            { tag: tags.punctuation, color: '#cccccc' },
+            { tag: tags.bracket, color: '#ffd700' },
+            { tag: tags.meta, color: '#9cdcfe' },
+            { tag: tags.atom, color: '#569cd6' },
+            { tag: tags.invalid, color: '#f44747', textDecoration: 'underline wavy' },
+        ]);
+
+        // ── Helpers ──────────────────────────────────
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        function showToast(msg, type = 'info', ms = 2500) {
+            const c = $('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<span>${{ success: '✓', error: '✕', info: 'ℹ' }[type] || 'ℹ'}</span> ${msg}`;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), ms);
+        }
+
+        // ── Language helpers ──────────────────────────
+        function getLang(name) {
+            const e = name.split('.').pop().toLowerCase();
+            const m = {
+                js: javascript(), mjs: javascript(), cjs: javascript(),
+                jsx: javascript({ jsx: true }), ts: javascript({ typescript: true }),
+                tsx: javascript({ jsx: true, typescript: true }),
+                py: python(), html: html(), htm: html(),
+                css: css(), scss: css(), json: json(), md: markdown(), sql: sql()
+            };
+            return m[e] || [];
+        }
+
+        function getLangName(name) {
+            const e = name.split('.').pop().toLowerCase();
+            return {
+                js: 'JavaScript', jsx: 'JSX', ts: 'TypeScript', tsx: 'TSX', py: 'Python',
+                html: 'HTML', css: 'CSS', scss: 'SCSS', json: 'JSON', md: 'Markdown', sql: 'SQL',
+                sh: 'Shell', go: 'Go', rs: 'Rust', java: 'Java', cpp: 'C++', c: 'C',
+                yaml: 'YAML', yml: 'YAML', toml: 'TOML', txt: 'Plain Text'
+            }[e] || 'Plain Text';
+        }
+
+        function getIcon(name, isDir = false) {
+            if (isDir) return { i: 'fi fi-rr-folder', c: 'icon-folder' };
+            const e = name.split('.').pop().toLowerCase();
+            const icons = {
+                js: 'fi fi-rr-file-code', jsx: 'fi fi-rr-file-code', ts: 'fi fi-rr-file-code',
+                tsx: 'fi fi-rr-file-code', py: 'fi fi-rr-file-code', html: 'fi fi-rr-code',
+                css: 'fi fi-rr-css3-alt', scss: 'fi fi-rr-css3-alt', json: 'fi fi-rr-brackets-curly',
+                md: 'fi fi-rr-text', sql: 'fi fi-rr-database', sh: 'fi fi-rr-terminal',
+                env: 'fi fi-rr-settings'
+            };
+            const colors = {
+                js: 'icon-js', jsx: 'icon-jsx', ts: 'icon-ts', tsx: 'icon-tsx',
+                py: 'icon-py', html: 'icon-html', css: 'icon-css', scss: 'icon-css',
+                json: 'icon-json', md: 'icon-md', sql: 'icon-sql', sh: 'icon-sh', env: 'icon-env'
+            };
+            return { i: icons[e] || 'fi fi-rr-file', c: colors[e] || 'icon-default' };
+        }
+
+        // ── File System (localStorage) ────────────────
+        const FS = {
+            _k: 'zc_fs_v1',
+            load() { try { return JSON.parse(localStorage.getItem(this._k)) || {}; } catch { return {}; } },
+            save(d) { localStorage.setItem(this._k, JSON.stringify(d)); },
+            read(p) { return this.load()[p] ?? null; },
+            write(p, c) { const d = this.load(); d[p] = c; this.save(d); },
+            del(p) { const d = this.load(); Object.keys(d).forEach(k => { if (k === p || k.startsWith(p + '/')) delete d[k]; }); this.save(d); },
+            list(proj) { const d = this.load(), pfx = proj + '/'; return Object.keys(d).filter(k => k.startsWith(pfx)).map(k => k.slice(pfx.length)); },
+            projects() { const d = this.load(), s = new Set(); Object.keys(d).forEach(k => s.add(k.split('/')[0])); return [...s]; },
+        };
+
+        // ── Tab Manager ───────────────────────────────
+        class TabManager {
+            constructor() {
+                this.tabs = [];
+                this.activeId = null;
+                this._bar = $('tabBar');
+                this._host = $('cmHost');
+                this._welcome = $('welcomeScreen');
+            }
+
+            get active() { return this.tabs.find(t => t.id === this.activeId) || null; }
+
+            open(path, name, content = '') {
+                const ex = this.tabs.find(t => t.path === path);
+                if (ex) { this.activate(ex.id); return; }
+
+                const id = 'tab_' + Date.now();
+                const exts = [
+                    lineNumbers(), highlightActiveLineGutter(), highlightSpecialChars(),
+                    history(), foldGutter(), drawSelection(), dropCursor(),
+                    EditorState.allowMultipleSelections.of(true), indentOnInput(),
+                    zoraSyntax, bracketMatching(), closeBrackets(), autocompletion(),
+                    rectangularSelection(), highlightActiveLine(), highlightSelectionMatches(),
+                    keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...searchKeymap,
+                    ...historyKeymap, ...foldKeymap, ...completionKeymap, ...lintKeymap, indentWithTab]),
+                    zoraDark, getLang(name), EditorView.lineWrapping,
+                    EditorView.updateListener.of(u => {
+                        if (u.docChanged) { const tab = this.tabs.find(t => t.id === id); if (tab && !tab.dirty) { tab.dirty = true; this._markDirty(id); } }
+                        if (u.selectionSet) {
+                            const sel = u.state.selection.main, line = u.state.doc.lineAt(sel.head);
+                            $('sbCursor').textContent = `Ln ${line.number}, Col ${sel.head - line.from + 1}`;
+                        }
+                    }),
+                ];
+
+                const view = new EditorView({ state: EditorState.create({ doc: content, extensions: exts }), parent: this._host });
+                view.dom.style.cssText = 'display:none;height:100%;';
+                view.dom.dataset.tid = id;
+
+                this.tabs.push({ id, path, name, dirty: false, view });
+                this._addTabEl(id, name);
+                this.activate(id);
+            }
+
+            activate(id) {
+                this.activeId = id;
+                const tab = this.tabs.find(t => t.id === id);
+                this._host.querySelectorAll(':scope>.cm-editor').forEach(el => el.style.display = 'none');
+                if (tab) {
+                    this._welcome.style.display = 'none';
+                    this._host.style.cssText = 'display:flex;flex:1;';
+                    tab.view.dom.style.cssText = 'display:block;height:100%;';
+                    setTimeout(() => tab.view.focus(), 30);
+                    this._breadcrumb(tab.path);
+                    $('sbLang').textContent = getLangName(tab.name);
+                }
+                document.querySelectorAll('.editor-tab').forEach(el => el.classList.toggle('active', el.dataset.tid === id));
+            }
+
+            close(id) {
+                const idx = this.tabs.findIndex(t => t.id === id);
+                if (idx < 0) return;
+                const tab = this.tabs[idx];
+                if (tab.dirty) FS.write(tab.path, tab.view.state.doc.toString());
+                tab.view.destroy();
+                this.tabs.splice(idx, 1);
+                document.querySelector(`.editor-tab[data-tid="${id}"]`)?.remove();
+                if (!this.tabs.length) {
+                    this.activeId = null;
+                    this._host.style.display = 'none';
+                    this._welcome.style.display = 'flex';
+                    $('breadcrumb').innerHTML = '<span style="color:var(--text-muted);font-size:11px;">No file open</span>';
+                    $('sbLang').textContent = 'Plain Text';
+                } else {
+                    this.activate(this.tabs[Math.min(idx, this.tabs.length - 1)].id);
+                }
+            }
+
+            save(id) {
+                const tab = this.tabs.find(t => t.id === (id || this.activeId));
+                if (!tab) return;
+                FS.write(tab.path, tab.view.state.doc.toString());
+                tab.dirty = false; this._markDirty(tab.id);
+                showToast(`Saved: ${tab.name}`, 'success');
+            }
+
+            saveAll() { this.tabs.forEach(t => { FS.write(t.path, t.view.state.doc.toString()); t.dirty = false; this._markDirty(t.id); }); showToast('All files saved', 'success'); }
+            content(id) { const t = this.tabs.find(t => t.id === (id || this.activeId)); return t ? t.view.state.doc.toString() : ''; }
+
+            _addTabEl(id, name) {
+                const { i, c } = getIcon(name);
+                const el = document.createElement('div');
+                el.className = 'editor-tab'; el.dataset.tid = id;
+                el.innerHTML = `<span class="tab-icon ${c}"><i class="${i}"></i></span><span class="tab-name">${name}</span><span class="tab-close">✕</span>`;
+                el.addEventListener('click', e => { if (!e.target.closest('.tab-close')) this.activate(id); });
+                el.querySelector('.tab-close').addEventListener('click', e => { e.stopPropagation(); this.close(id); });
+                this._bar.insertBefore(el, this._bar.querySelector('.tab-new-btn'));
+            }
+
+            _markDirty(id) { document.querySelector(`.editor-tab[data-tid="${id}"]`)?.classList.toggle('dirty', this.tabs.find(t => t.id === id)?.dirty || false); }
+
+            _breadcrumb(path) {
+                const parts = path.split('/');
+                $('breadcrumb').innerHTML = parts.map((p, i) =>
+                    `<span class="breadcrumb-item${i === parts.length - 1 ? ' current' : ''}">${p}</span>${i < parts.length - 1 ? '<span class="breadcrumb-sep"> › </span>' : ''}`
+                ).join('');
+            }
+        }
+
+        // ── File Tree ─────────────────────────────────
+        let currentProject = null;
+
+        function buildTree(files) {
+            const tree = {};
+            files.forEach(f => {
+                const parts = f.split('/'); let node = tree;
+                parts.forEach((p, i) => { if (!node[p]) node[p] = i === parts.length - 1 ? null : {}; if (i < parts.length - 1) node = node[p]; });
+            });
+            return tree;
+        }
+
+        function renderTree(tree, container, prefix, tabMgr, depth = 0) {
+            Object.entries(tree)
+                .sort(([a, av], [b, bv]) => { const aF = av !== null && typeof av === 'object', bF = bv !== null && typeof bv === 'object'; if (aF && !bF) return -1; if (!aF && bF) return 1; return a.localeCompare(b); })
+                .forEach(([name, children]) => {
+                    const isDir = children !== null && typeof children === 'object';
+                    const fullPath = prefix + '/' + name;
+                    const { i, c } = getIcon(name, isDir);
+                    const item = document.createElement('div');
+                    item.className = 'tree-item'; item.dataset.path = fullPath;
+                    item.style.paddingLeft = (8 + depth * 16) + 'px';
+                    item.innerHTML = `
+                <span class="tree-arrow ${isDir ? '' : 'leaf'}">›</span>
+                <span class="tree-icon ${c}"><i class="${i}"></i></span>
+                <span class="tree-item-name">${name}</span>
+                <span class="tree-item-actions">
+                    <button class="tree-act-btn" data-del="${fullPath}" title="Delete"><i class="fi fi-rr-trash"></i></button>
+                </span>`;
+                    container.appendChild(item);
+
+                    if (isDir) {
+                        const childWrap = document.createElement('div');
+                        childWrap.className = 'tree-children';
+                        container.appendChild(childWrap);
+                        const arrow = item.querySelector('.tree-arrow');
+                        const ico = item.querySelector('.tree-icon i');
+                        item.addEventListener('click', e => {
+                            if (e.target.closest('[data-del]')) return;
+                            const open = childWrap.classList.toggle('open');
+                            arrow.classList.toggle('open', open);
+                            ico.className = open ? 'fi fi-rr-folder-open' : 'fi fi-rr-folder';
+                        });
+                        item.addEventListener('contextmenu', e => { e.preventDefault(); showCtx(e, fullPath, true, tabMgr); });
+                        renderTree(children, childWrap, fullPath, tabMgr, depth + 1);
+                    } else {
+                        item.addEventListener('click', e => {
+                            if (e.target.closest('[data-del]')) return;
+                            document.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'));
+                            item.classList.add('active');
+                            tabMgr.open(fullPath, name, FS.read(fullPath) || '');
+                        });
+                        item.addEventListener('contextmenu', e => { e.preventDefault(); showCtx(e, fullPath, false, tabMgr); });
+                    }
+
+                    item.querySelector('[data-del]')?.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (confirm(`Delete "${name}"?`)) { FS.del(fullPath); refreshExplorer(tabMgr); }
+                    });
+                });
+        }
+
+        function refreshExplorer(tabMgr) {
+            if (!currentProject) return;
+            const files = FS.list(currentProject);
+            const tree = buildTree(files);
+            const ft = $('fileTree'), np = $('noProjectState');
+            ft.innerHTML = ''; ft.style.display = 'block'; np.style.display = 'none';
+            $('explorerTitle').textContent = currentProject;
+            renderTree(tree, ft, currentProject, tabMgr);
+        }
+
+        function promptNewFile(parentPath, tabMgr) {
+            const name = prompt('File name:');
+            if (!name) return;
+            const fullPath = (parentPath || currentProject) + '/' + name;
+            FS.write(fullPath, '');
+            refreshExplorer(tabMgr);
+            tabMgr.open(fullPath, name, '');
+        }
+
+        // ── Context Menu ──────────────────────────────
+        let _ctxPath = '', _ctxIsDir = false, _ctxTabMgr = null;
+
+        function showCtx(e, path, isDir, tabMgr) {
+            _ctxPath = path; _ctxIsDir = isDir; _ctxTabMgr = tabMgr;
+            const m = $('contextMenu');
+            m.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
+            m.style.top = Math.min(e.clientY, window.innerHeight - 200) + 'px';
+            m.classList.add('visible');
+        }
+
+        document.addEventListener('click', () => $('contextMenu').classList.remove('visible'));
+
+        $('contextMenu').addEventListener('click', e => {
+            const ctx = e.target.closest('[data-ctx]')?.dataset.ctx;
+            if (!ctx) return;
+            if (ctx === 'open' && !_ctxIsDir) _ctxTabMgr.open(_ctxPath, _ctxPath.split('/').pop(), FS.read(_ctxPath) || '');
+            if (ctx === 'delete') { if (confirm('Delete?')) { FS.del(_ctxPath); refreshExplorer(_ctxTabMgr); } }
+            if (ctx === 'new-file') promptNewFile(_ctxIsDir ? _ctxPath : _ctxPath.split('/').slice(0, -1).join('/'), _ctxTabMgr);
+            if (ctx === 'copy-path') { navigator.clipboard.writeText(_ctxPath); showToast('Path copied', 'info'); }
+            if (ctx === 'rename') {
+                const n = prompt('New name:', _ctxPath.split('/').pop());
+                if (!n) return;
+                const newPath = _ctxPath.split('/').slice(0, -1).join('/') + '/' + n;
+                const d = FS.load();
+                Object.keys(d).forEach(k => { if (k === _ctxPath || k.startsWith(_ctxPath + '/')) { const v = d[k]; delete d[k]; d[k.replace(_ctxPath, newPath)] = v; } });
+                FS.save(d); refreshExplorer(_ctxTabMgr);
+            }
+        });
+
+        // ── Activity Bar ──────────────────────────────
+        function initActivityBar() {
+            document.querySelectorAll('.actbar-btn[data-panel]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const panel = btn.dataset.panel, sp = $('sidePanel'), isActive = btn.classList.contains('active');
+                    document.querySelectorAll('.actbar-btn').forEach(b => b.classList.remove('active'));
+                    if (isActive) { sp.classList.add('collapsed'); return; }
+                    btn.classList.add('active');
+                    sp.classList.remove('collapsed');
+                    document.querySelectorAll('.panel-view').forEach(p => {
+                        const show = p.id === 'panel-' + panel;
+                        p.classList.toggle('active', show);
+                    });
+                });
+            });
+        }
+
+        // ── Terminal ──────────────────────────────────
+        function initTerminal() {
+            const out = $('termOutput'), inp = $('termInput');
+            const hist = []; let hidx = -1;
+
+            inp.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    const cmd = inp.value.trim(); if (!cmd) return;
+                    hist.unshift(cmd); hidx = -1;
+                    const cl = document.createElement('div'); cl.className = 'term-line';
+                    cl.innerHTML = `<span class="term-prompt">ZORA@code:~$</span><span class="term-cmd">${esc(cmd)}</span>`;
+                    out.insertBefore(cl, out.querySelector('.term-input-line'));
+                    const res = runCmd(cmd);
+                    if (res !== null) {
+                        const ol = document.createElement('div'); ol.className = 'term-output'; ol.innerHTML = res;
+                        out.insertBefore(ol, out.querySelector('.term-input-line'));
+                    }
+                    inp.value = ''; out.scrollTop = 99999;
+                }
+                if (e.key === 'ArrowUp') { hidx = Math.min(hidx + 1, hist.length - 1); inp.value = hist[hidx] || ''; }
+                if (e.key === 'ArrowDown') { hidx = Math.max(hidx - 1, -1); inp.value = hidx === -1 ? '' : hist[hidx]; }
+            });
+
+            document.getElementById('terminalPanel').addEventListener('click', () => inp.focus());
+        }
+
+        function runCmd(cmd) {
+            const [base, ...args] = cmd.trim().split(/\s+/);
+            const map = {
+                help: () => `<span style="color:var(--accent)">Commands:</span> clear, echo, ls, pwd, cat, help, node --version, python --version`,
+                clear: () => { const out = $('termOutput'), il = out.querySelector('.term-input-line'); out.innerHTML = ''; out.appendChild(il); return null; },
+                ls: () => currentProject ? FS.list(currentProject).join('  ') || '(empty)' : '(no project)',
+                pwd: () => `/workspace/${currentProject || '~'}`,
+                echo: () => args.join(' '),
+                cat: () => { const p = `${currentProject}/${args[0]}`; const c = FS.read(p); return c !== null ? esc(c).replace(/\n/g, '<br>') : `<span style="color:var(--danger)">No such file: ${esc(args[0])}</span>`; },
+                node: () => args[0] === '--version' ? 'v22.0.0 (simulated)' : `<span style="color:var(--warn)">Real execution: Phase 2</span>`,
+                python: () => args[0] === '--version' ? 'Python 3.12.0 (simulated)' : `<span style="color:var(--warn)">Real execution: Phase 2</span>`,
+                python3: () => args[0] === '--version' ? 'Python 3.12.0 (simulated)' : `<span style="color:var(--warn)">Real execution: Phase 2</span>`,
+                npm: () => `<span style="color:var(--warn)">npm: Phase 2</span>`,
+                git: () => `<span style="color:var(--warn)">git: Phase 5</span>`,
+            };
+            const fn = map[base.toLowerCase()];
+            if (fn) return fn();
+            return `<span style="color:var(--danger)">Command not found: ${esc(base)}</span> — try <span style="color:var(--accent)">help</span>`;
+        }
+
+        // ── Terminal Resize ───────────────────────────
+        function initResize() {
+            const r = $('termResizer'), t = $('terminalPanel');
+            let sy, sh;
+            r.addEventListener('mousedown', e => {
+                sy = e.clientY; sh = t.offsetHeight; r.classList.add('dragging');
+                const mv = e => { const h = Math.max(80, Math.min(window.innerHeight * .65, sh + (sy - e.clientY))); t.style.height = h + 'px'; };
+                const up = () => { r.classList.remove('dragging'); document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
+                document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+            });
+        }
+
+        // ── Menu System ───────────────────────────────
+        function initMenus() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.querySelector('.menu-trigger').addEventListener('click', e => {
+                    e.stopPropagation();
+                    const open = item.classList.contains('open');
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('open'));
+                    if (!open) item.classList.add('open');
+                });
+            });
+            document.addEventListener('click', () => document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('open')));
+        }
+
+        // ── AI Panel ──────────────────────────────────
+        function initAI(tabMgr) {
+            const inp = $('aiInput'), btn = $('aiSendBtn'), area = $('aiChatArea'), welcome = $('aiWelcome');
+
+            document.querySelectorAll('.ai-mode-btn').forEach(b => {
+                b.addEventListener('click', () => { document.querySelectorAll('.ai-mode-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); });
+            });
+
+            document.querySelectorAll('.ai-suggestion-chip').forEach(chip => {
+                chip.addEventListener('click', () => { inp.value = chip.dataset.prompt; sendAI(tabMgr, area, welcome, inp); });
+            });
+
+            btn.addEventListener('click', () => sendAI(tabMgr, area, welcome, inp));
+            inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAI(tabMgr, area, welcome, inp); } });
+            inp.addEventListener('input', () => { inp.style.height = 'auto'; inp.style.height = Math.min(inp.scrollHeight, 100) + 'px'; });
+        }
+
+        async function sendAI(tabMgr, area, welcome, inp) {
+            const msg = inp.value.trim(); if (!msg) return;
+            if (welcome) welcome.style.display = 'none';
+            addMsg(area, 'user', 'You', msg);
+            inp.value = ''; inp.style.height = 'auto';
+
+            const thinking = document.createElement('div');
+            thinking.className = 'ai-thinking';
+            thinking.innerHTML = '<span></span><span></span><span></span>';
+            area.appendChild(thinking); area.scrollTop = 99999;
+
+            const active = tabMgr.active;
+            const ctx = active ? `Current file: ${active.name}\n\`\`\`\n${tabMgr.content().slice(0, 2000)}\n\`\`\`\n\n` : '';
+
+            try {
+                const token = localStorage.getItem('zora_token');
+                const res = await fetch('/api/labs/code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                    body: JSON.stringify({ prompt: msg, context: ctx, file: active?.name || '' })
+                });
+                thinking.remove();
+                if (res.ok) { const d = await res.json(); addMsg(area, 'zora', 'ZORA', d.data?.response || d.response || 'No response.'); }
+                else { addMsg(area, 'zora', 'ZORA', `<span style="color:var(--danger)">API error ${res.status}. Is the backend running?</span>`); }
+            } catch {
+                thinking.remove();
+                addMsg(area, 'zora', 'ZORA', `**ZORA Code AI** — Backend not connected yet.\n\nIn Phase 2, I'll connect to the ZORA API. For now, explore the editor, file system, and terminal!`);
+            }
+            area.scrollTop = 99999;
+        }
+
+        function addMsg(container, role, sender, text) {
+            const d = document.createElement('div'); d.className = `ai-msg ${role}`;
+            d.innerHTML = `<div class="ai-msg-header">${role === 'zora' ? '<i class="fi fi-rr-brain-circuit" style="font-size:10px;"></i>' : ''}<span>${sender}</span></div><div class="ai-msg-bubble">${fmtAI(text)}</div>`;
+            container.appendChild(d);
+        }
+
+        function fmtAI(t) {
+            return t.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, l, c) => `<pre style="background:rgba(0,0,0,.4);padding:8px;border-radius:5px;overflow-x:auto;margin:5px 0;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ce9178;">${esc(c.trim())}</pre>`)
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // ── Project Templates ─────────────────────────
+        const TEMPLATES = {
+            vanilla: [
+                { p: 'index.html', c: `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>My App</title>\n    <link rel="stylesheet" href="style.css">\n</head>\n<body>\n    <h1>Hello, World!</h1>\n    <script src="main.js"><\/script>\n</body>\n</html>` },
+                { p: 'style.css', c: `* { box-sizing: border-box; margin: 0; padding: 0; }\n\nbody {\n    font-family: system-ui, sans-serif;\n    background: #f5f5f5;\n    color: #111;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    min-height: 100vh;\n}\n\nh1 { font-size: 2rem; }` },
+                { p: 'main.js', c: `// Main JavaScript\nconsole.log('Hello from ZORA Code!');\n\ndocument.querySelector('h1').addEventListener('click', () => {\n    alert('Powered by ZORA Code!');\n});` },
+            ],
+            node: [
+                { p: 'index.js', c: `const http = require('http');\nconst PORT = process.env.PORT || 3000;\n\nconst server = http.createServer((req, res) => {\n    res.writeHead(200, { 'Content-Type': 'application/json' });\n    res.end(JSON.stringify({ message: 'Hello from Node.js!', path: req.url }));\n});\n\nserver.listen(PORT, () => console.log(\`Server: http://localhost:\${PORT}\`));` },
+                { p: 'package.json', c: `{\n  "name": "my-node-app",\n  "version": "1.0.0",\n  "main": "index.js",\n  "scripts": {\n    "start": "node index.js",\n    "dev": "node --watch index.js"\n  }\n}` },
+                { p: '.env', c: `PORT=3000\nNODE_ENV=development` },
+            ],
+            react: [
+                { p: 'src/App.jsx', c: `import { useState } from 'react';\n\nfunction App() {\n    const [count, setCount] = useState(0);\n    return (\n        <div>\n            <h1>ZORA React App</h1>\n            <p>Count: {count}</p>\n            <button onClick={() => setCount(c => c + 1)}>+</button>\n        </div>\n    );\n}\n\nexport default App;` },
+                { p: 'src/main.jsx', c: `import { StrictMode } from 'react';\nimport { createRoot } from 'react-dom/client';\nimport App from './App.jsx';\n\ncreateRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>);` },
+                { p: 'index.html', c: `<!DOCTYPE html>\n<html>\n<head><meta charset="UTF-8"><title>React App</title></head>\n<body><div id="root"></div><script type="module" src="/src/main.jsx"><\/script></body>\n</html>` },
+                { p: 'package.json', c: `{\n  "name": "my-react-app",\n  "version": "0.0.0",\n  "type": "module",\n  "scripts": { "dev": "vite", "build": "vite build" },\n  "dependencies": { "react": "^18.3.1", "react-dom": "^18.3.1" },\n  "devDependencies": { "@vitejs/plugin-react": "^4.3.1", "vite": "^5.4.2" }\n}` },
+            ],
+            python: [
+                { p: 'main.py', c: `#!/usr/bin/env python3\n"""Main application."""\n\ndef greet(name: str) -> str:\n    return f"Hello, {name}! Welcome to ZORA Code."\n\nif __name__ == "__main__":\n    print(greet("World"))` },
+                { p: 'requirements.txt', c: `# Add your dependencies here\n# fastapi==0.115.0\n# uvicorn==0.30.0` },
+                { p: '.env', c: `PYTHON_ENV=development\nDEBUG=true` },
+            ],
+            typescript: [
+                { p: 'src/index.ts', c: `interface User {\n    id: number;\n    name: string;\n    email: string;\n}\n\nfunction greet(user: User): string {\n    return \`Hello, \${user.name}!\`;\n}\n\nconst user: User = { id: 1, name: 'ZORA', email: 'hi@zoraai.com' };\nconsole.log(greet(user));` },
+                { p: 'tsconfig.json', c: `{\n  "compilerOptions": {\n    "target": "ES2022",\n    "module": "commonjs",\n    "outDir": "./dist",\n    "rootDir": "./src",\n    "strict": true,\n    "esModuleInterop": true\n  }\n}` },
+                { p: 'package.json', c: `{\n  "name": "my-ts-app",\n  "version": "1.0.0",\n  "scripts": { "dev": "ts-node src/index.ts", "build": "tsc" },\n  "devDependencies": { "typescript": "^5.5.0", "ts-node": "^10.9.0" }\n}` },
+            ],
+            blank: [
+                { p: 'README.md', c: `# My Project\n\nA new project created with ZORA Code.\n\n## Getting Started\n\nStart creating files to build your project.\n` },
+            ],
+        };
+
+        // ── Keyboard Shortcuts ────────────────────────
+        function initKeys(tabMgr) {
+            let kHeld = false;
+            document.addEventListener('keydown', e => {
+                const ctrl = e.ctrlKey || e.metaKey;
+                if (ctrl && e.shiftKey && e.key === 'N') { e.preventDefault(); showModal('newProjectModal'); }
+                if (ctrl && !e.shiftKey && e.key === 'n') { e.preventDefault(); promptNewFile(null, tabMgr); }
+                if (ctrl && e.key === 's' && !e.shiftKey) { e.preventDefault(); tabMgr.save(); }
+                if (ctrl && e.shiftKey && e.key === 'S') { e.preventDefault(); tabMgr.saveAll(); }
+                if (ctrl && e.key === 'b') { e.preventDefault(); toggleSidebar(); }
+                if (ctrl && e.key === '`') { e.preventDefault(); toggleTerminal(); }
+                if (ctrl && e.key === 'k') { e.preventDefault(); kHeld = true; setTimeout(() => kHeld = false, 1000); }
+                if (kHeld && e.key === 'z') { toggleAI(); kHeld = false; }
+                if (e.key === 'Escape') { document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('open')); $('contextMenu').classList.remove('visible'); }
+            });
+        }
+
+        // ── Modal ─────────────────────────────────────
+        function showModal(id) { $(id).classList.add('visible'); }
+        function hideModal(id) { $(id).classList.remove('visible'); }
+
+        // ── Toggles ───────────────────────────────────
+        function toggleSidebar() { $('sidePanel').classList.toggle('collapsed'); }
+        function toggleTerminal() { $('terminalPanel').classList.toggle('hidden'); }
+        function toggleAI() { $('aiPanel').classList.toggle('collapsed'); }
+
+        // ── Action Dispatcher ─────────────────────────
+        function dispatch(action, tabMgr) {
+            const map = {
+                'new-project': () => showModal('newProjectModal'),
+                'new-file': () => promptNewFile(null, tabMgr),
+                'toggle-sidebar': toggleSidebar,
+                'toggle-terminal': toggleTerminal,
+                'toggle-ai': toggleAI,
+                'save': () => tabMgr.save(),
+                'save-all': () => tabMgr.saveAll(),
+                'docs': () => window.open('/labs/docs.html', '_blank'),
+                'back-chat': () => window.location.href = '/chat/index.html',
+                'clear-terminal': () => { const out = $('termOutput'), il = out.querySelector('.term-input-line'); out.innerHTML = ''; out.appendChild(il); },
+                'new-terminal': () => showToast('Multi-terminal coming in Phase 2', 'info'),
+                'run-file': () => showToast('Code execution coming in Phase 2 — Backend WebSocket', 'info', 3000),
+                'refresh-tree': () => refreshExplorer(tabMgr),
+                'shortcuts': () => showToast('Ctrl+S Save | Ctrl+B Sidebar | Ctrl+` Terminal | Ctrl+Shift+N New Project', 'info', 4000),
+            };
+            if (map[action]) map[action]();
+        }
+
+        // ════════════════════════════════════════
+        //  MAIN INIT
+        // ════════════════════════════════════════
+        const TM = new TabManager();
+
+        initMenus();
+        initActivityBar();
+        initTerminal();
+        initResize();
+        initAI(TM);
+        initKeys(TM);
+
+        // Modal close
+        document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => hideModal(b.dataset.close)));
+        document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('visible'); }));
+
+        // Template selection
+        document.querySelectorAll('.template-card').forEach(c => c.addEventListener('click', () => {
+            document.querySelectorAll('.template-card').forEach(x => x.classList.remove('selected'));
+            c.classList.add('selected');
+        }));
+
+        // Create Project
+        $('createProjectBtn').addEventListener('click', () => {
+            const name = ($('projectNameInput').value.trim() || 'my-project').replace(/\s+/g, '-');
+            const tpl = document.querySelector('.template-card.selected')?.dataset.template || 'blank';
+            const files = TEMPLATES[tpl] || TEMPLATES.blank;
+            files.forEach(({ p, c }) => FS.write(`${name}/${p}`, c));
+            currentProject = name;
+            refreshExplorer(TM);
+            hideModal('newProjectModal');
+            showToast(`Project "${name}" created!`, 'success');
+            if (files.length) { const f = files[0]; TM.open(`${name}/${f.p}`, f.p.split('/').pop(), f.c); }
+        });
+
+        // Global click delegation
+        document.addEventListener('click', e => {
+            const a = e.target.closest('[data-action]');
+            if (a) dispatch(a.dataset.action, TM);
+        });
+
+        // AI toggle
+        $('aiToggleBtn').addEventListener('click', toggleAI);
+
+        // Settings
+        $('settingFontSize')?.addEventListener('input', e => {
+            document.querySelectorAll('#cmHost .cm-scroller').forEach(el => el.style.fontSize = e.target.value + 'px');
+        });
+
+        // Restore last project
+        const projs = FS.projects();
+        if (projs.length) { currentProject = projs[0]; refreshExplorer(TM); showToast(`Restored: ${currentProject}`, 'info'); }
+
+        // Focus terminal
+        setTimeout(() => $('termInput')?.focus(), 200);
+    </script>
+</body>
+
+</html>
