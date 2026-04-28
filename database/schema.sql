@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255),
     google_id VARCHAR(255) UNIQUE,
+    github_id VARCHAR(255) UNIQUE,
+    phone VARCHAR(20) UNIQUE,
     avatar_url VARCHAR(500),
     country VARCHAR(100) DEFAULT 'Unknown',
     is_active BOOLEAN DEFAULT TRUE NOT NULL,
@@ -22,6 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- Indexes for users table
 CREATE INDEX IF NOT EXISTS idx_user_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_user_google_id ON users(google_id);
+CREATE INDEX IF NOT EXISTS idx_user_github_id ON users(github_id);
+CREATE INDEX IF NOT EXISTS idx_user_phone ON users(phone);
 CREATE INDEX IF NOT EXISTS idx_user_created_at ON users(created_at);
 
 -- Comments for documentation
