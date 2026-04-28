@@ -7,8 +7,8 @@ from app.routers.dashboard import (
     aggregate_users_by_country,
     aggregate_users_by_month,
     calculate_total_earnings,
-    is_developer_email,
 )
+from app.routers.settings import is_developer_user
 from app.services.xendit import verify_webhook
 
 
@@ -16,10 +16,10 @@ class DashboardHelperTests(unittest.TestCase):
     def test_total_earnings_uses_per_user_constant(self):
         self.assertEqual(calculate_total_earnings(3), 3 * EARNING_PER_USER)
 
-    def test_is_developer_email_requires_exact_match(self):
-        self.assertTrue(is_developer_email("dev@example.com", "dev@example.com"))
-        self.assertFalse(is_developer_email("user@example.com", "dev@example.com"))
-        self.assertFalse(is_developer_email("user@example.com", ""))
+    def test_is_developer_user_requires_exact_match(self):
+        self.assertTrue(is_developer_user("dev@example.com", "dev@example.com"))
+        self.assertFalse(is_developer_user("user@example.com", "dev@example.com"))
+        self.assertFalse(is_developer_user("user@example.com", ""))
 
     def test_country_aggregation_groups_unknown(self):
         users = [
