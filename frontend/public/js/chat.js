@@ -32,9 +32,9 @@ function getTokenOrRedirect() {
 
 function getDisplayName() {
     return (
-        localStorage.getItem('zora_onboarding_name')
-        || chatState.user?.display_name
+        chatState.user?.display_name
         || chatState.user?.name
+        || localStorage.getItem('zora_onboarding_name')
         || 'User'
     );
 }
@@ -310,7 +310,7 @@ function bindSettingsDropdown() {
 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('zora_token');
+            ['zora_token','zora_onboarding_name','zora_onboarding_topics','zora_language'].forEach(k => localStorage.removeItem(k));
             window.location.href = '/auth/login.html';
         });
     }
@@ -1199,7 +1199,7 @@ function bindSettingsFeatures() {
 
     // ── Logout ────────────────────────────────────────────
     logoutBtn?.addEventListener('click', () => {
-        localStorage.removeItem('zora_token');
+        ['zora_token','zora_onboarding_name','zora_onboarding_topics','zora_language'].forEach(k => localStorage.removeItem(k));
         window.location.href = '/auth/login.html';
     });
 
