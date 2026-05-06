@@ -48,8 +48,10 @@ class Settings(BaseSettings):
     # API Keys
     GEMINI_API_KEY: Optional[str] = None
     NANO_BANANA_API_KEY: Optional[str] = None
-    XENDIT_SECRET_KEY: Optional[str] = None
-    XENDIT_WEBHOOK_TOKEN: Optional[str] = None
+    # XENDIT_SECRET_KEY: Optional[str] = None      # dinonaktifkan, pindah ke Mayar
+    # XENDIT_WEBHOOK_TOKEN: Optional[str] = None   # dinonaktifkan, pindah ke Mayar
+    MAYAR_API_KEY: Optional[str] = None
+    MAYAR_WEBHOOK_TOKEN: Optional[str] = None
     NVIDIA_API_KEY_NEMOTRON: Optional[str] = None
     NVIDIA_API_KEY_DEEPSEEK: Optional[str] = None
     NVIDIA_API_KEY_QWEN: Optional[str] = None

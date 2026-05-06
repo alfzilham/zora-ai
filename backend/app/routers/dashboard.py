@@ -17,7 +17,7 @@ from app.database import get_db
 from app.middleware.auth_middleware import get_current_user
 from app.models.user import User
 from app.models.withdrawal import Withdrawal
-from app.services.xendit import verify_webhook
+from app.services.mayar import verify_webhook
 
 router = APIRouter()
 
@@ -163,19 +163,18 @@ async def create_withdrawal(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Create a withdrawal via Xendit disbursement API, then record locally."""
-    from app.services.xendit import create_disbursement
+    """Create a withdrawal via Mayar payment request, then record locally."""
+    from app.services.mayar import create_payment_request
 
     try:
-        # 1. Hit Xendit API first
-        xendit_result = await create_disbursement(
+        mayar_result = await create_payment_request(
             amount=request.amount,
-            bank_code=request.bank_code.upper(),
-            account_number=request.account_number,
-            account_holder_name=request.account_holder_name,
+            name=request.account_holder_name,
+            email=current_user.email,
+            mobile="08000000000",  # placeholder — Mayar wajib mobile
+            description=request.note or f"ZORA withdrawal - {request.bank_code.upper()} {request.account_number}",
         )
 
-        # 2. Save to local DB with Xendit response data
         withdrawal = Withdrawal(
             amount=request.amount,
             bank_code=request.bank_code.upper(),
@@ -183,24 +182,23 @@ async def create_withdrawal(
             account_holder_name=request.account_holder_name,
             note=request.note,
             status="PENDING",
-            disbursement_id=xendit_result.get("disbursement_id"),
-            xendit_status=xendit_result.get("status"),
+            mayar_id=mayar_result.get("mayar_id"),
+            mayar_status=mayar_result.get("status"),
+            payment_link=mayar_result.get("payment_link"),
         )
         db.add(withdrawal)
         await db.flush()
 
         return api_success(
             withdrawal.to_dict(),
-            f"Disbursement submitted to Xendit successfully. ID: {xendit_result.get('disbursement_id')}",
+            f"Payment request submitted to Mayar. Link: {mayar_result.get('payment_link')}",
         )
 
     except ValueError as exc:
-        # Xendit secret key not configured
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     except Exception as exc:
-        # Xendit API error atau DB error
-        raise HTTPException(status_code=500, detail=f"Failed to create disbursement: {exc}") from exc
+        raise HTTPException(status_code=500, detail=f"Failed to create payment request: {exc}") from exc
 
 
 @router.get("/dashboard/withdrawals")
@@ -305,7 +303,7 @@ async def cancel_withdrawal(
         raise HTTPException(status_code=500, detail=f"Failed to cancel withdrawal: {exc}") from exc
 
 
-@router.post("/dashboard/xendit-webhook")
+@router.post("/dashboard/mayar-webhook")
 async def handle_xendit_webhook(
     request: Request,
     x_callback_token: str | None = Header(default=None, alias="x-callback-token"),
