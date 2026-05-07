@@ -33,9 +33,8 @@ class Withdrawal(Base):
     note = Column(Text, nullable=True)
     status = Column(String(20), nullable=False, default="PENDING")
     # PENDING → COMPLETED → CANCELLED
-    mayar_id = Column(String(255), nullable=True)        # Mayar payment request ID
-    mayar_status = Column(String(50), nullable=True)     # Raw status from Mayar
-    payment_link = Column(String(500), nullable=True)    # Mayar payment link
+    disbursement_id = Column(String(255), nullable=True)   # Xendit disbursement ID
+    xendit_status = Column(String(50), nullable=True)       # Raw status from Xendit
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     confirmed_at = Column(DateTime, nullable=True)
 
@@ -48,9 +47,8 @@ class Withdrawal(Base):
             "account_holder_name": self.account_holder_name,
             "note": self.note,
             "status": self.status,
-            "mayar_id": self.mayar_id,
-            "mayar_status": self.mayar_status,
-            "payment_link": self.payment_link,
+            "disbursement_id": self.disbursement_id,
+            "xendit_status": self.xendit_status,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "confirmed_at": self.confirmed_at.isoformat() if self.confirmed_at else None,
         }
